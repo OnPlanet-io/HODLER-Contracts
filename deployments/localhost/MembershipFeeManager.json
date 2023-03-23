@@ -1,0 +1,579 @@
+{
+  "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "regular",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "upgrade",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "premium",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "team",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "Received",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "SplitFunds",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "emergencyWithdraw",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "feeDistributionScheme",
+      "outputs": [
+        {
+          "internalType": "uint8",
+          "name": "buyBackAndburn",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint8",
+          "name": "rewardPool",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint8",
+          "name": "corporate",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "feeDistributionWallets",
+      "outputs": [
+        {
+          "internalType": "address payable",
+          "name": "buyBackAndburn",
+          "type": "address"
+        },
+        {
+          "internalType": "address payable",
+          "name": "rewardPool",
+          "type": "address"
+        },
+        {
+          "internalType": "address payable",
+          "name": "corporate",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "enum MembershipFeeManager.FeesType",
+          "name": "feeType",
+          "type": "uint8"
+        }
+      ],
+      "name": "getAllFees",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "regular",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "upgrade",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "premium",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "team",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getLatestPriceOfOneUSD",
+      "outputs": [
+        {
+          "internalType": "int256",
+          "name": "",
+          "type": "int256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "enum StakingLibrary.MembershipCategories",
+          "name": "category",
+          "type": "uint8"
+        }
+      ],
+      "name": "getMembershipFee",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "enum StakingLibrary.MembershipCategories",
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "name": "membershipFee",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint8",
+          "name": "buyBackAndburn",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint8",
+          "name": "rewardPool",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint8",
+          "name": "corporate",
+          "type": "uint8"
+        }
+      ],
+      "name": "setDistributionScheme",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "buyBackAndburn",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "rewardPool",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "corporate",
+          "type": "address"
+        }
+      ],
+      "name": "setFeeDistributionWallets",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "regular",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "upgrade",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "premium",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "team",
+          "type": "uint256"
+        }
+      ],
+      "name": "setMembershipFee",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract IUniswapV2Router02",
+          "name": "_uniswapV2Router",
+          "type": "address"
+        }
+      ],
+      "name": "setRouter",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "uniswapV2Router",
+      "outputs": [
+        {
+          "internalType": "contract IUniswapV2Router02",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "stateMutability": "payable",
+      "type": "receive"
+    }
+  ],
+  "transactionHash": "0xcfe549a0e80ece8d08177365db5a488909ef3679b9f90e10f3631c12a2b25c63",
+  "receipt": {
+    "to": null,
+    "from": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    "contractAddress": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+    "transactionIndex": 0,
+    "gasUsed": "1083980",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000240000000000000000000000000000000020000000000000100000800000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000002000000000000001000020000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0xf6417e2b5cae415aa6b9984569c93dca73c479208e7e3f8ae8c273396f05bbcd",
+    "transactionHash": "0xcfe549a0e80ece8d08177365db5a488909ef3679b9f90e10f3631c12a2b25c63",
+    "logs": [
+      {
+        "transactionIndex": 0,
+        "blockNumber": 6,
+        "transactionHash": "0xcfe549a0e80ece8d08177365db5a488909ef3679b9f90e10f3631c12a2b25c63",
+        "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+        "topics": [
+          "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "0x000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb92266"
+        ],
+        "data": "0x",
+        "logIndex": 0,
+        "blockHash": "0xf6417e2b5cae415aa6b9984569c93dca73c479208e7e3f8ae8c273396f05bbcd"
+      }
+    ],
+    "blockNumber": 6,
+    "cumulativeGasUsed": "1083980",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "3",
+    "2",
+    "5",
+    "8"
+  ],
+  "numDeployments": 1,
+  "solcInputHash": "4d1a6f06330d85ddb1b4e56efbcd8da6",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.9+commit.e5eed63a\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"regular\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"upgrade\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"premium\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"team\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"Received\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"SplitFunds\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"emergencyWithdraw\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"feeDistributionScheme\",\"outputs\":[{\"internalType\":\"uint8\",\"name\":\"buyBackAndburn\",\"type\":\"uint8\"},{\"internalType\":\"uint8\",\"name\":\"rewardPool\",\"type\":\"uint8\"},{\"internalType\":\"uint8\",\"name\":\"corporate\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"feeDistributionWallets\",\"outputs\":[{\"internalType\":\"address payable\",\"name\":\"buyBackAndburn\",\"type\":\"address\"},{\"internalType\":\"address payable\",\"name\":\"rewardPool\",\"type\":\"address\"},{\"internalType\":\"address payable\",\"name\":\"corporate\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"enum MembershipFeeManager.FeesType\",\"name\":\"feeType\",\"type\":\"uint8\"}],\"name\":\"getAllFees\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"regular\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"upgrade\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"premium\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"team\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getLatestPriceOfOneUSD\",\"outputs\":[{\"internalType\":\"int256\",\"name\":\"\",\"type\":\"int256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"enum StakingLibrary.MembershipCategories\",\"name\":\"category\",\"type\":\"uint8\"}],\"name\":\"getMembershipFee\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"enum StakingLibrary.MembershipCategories\",\"name\":\"\",\"type\":\"uint8\"}],\"name\":\"membershipFee\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"buyBackAndburn\",\"type\":\"uint8\"},{\"internalType\":\"uint8\",\"name\":\"rewardPool\",\"type\":\"uint8\"},{\"internalType\":\"uint8\",\"name\":\"corporate\",\"type\":\"uint8\"}],\"name\":\"setDistributionScheme\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"buyBackAndburn\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"rewardPool\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"corporate\",\"type\":\"address\"}],\"name\":\"setFeeDistributionWallets\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"regular\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"upgrade\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"premium\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"team\",\"type\":\"uint256\"}],\"name\":\"setMembershipFee\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"contract IUniswapV2Router02\",\"name\":\"_uniswapV2Router\",\"type\":\"address\"}],\"name\":\"setRouter\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"uniswapV2Router\",\"outputs\":[{\"internalType\":\"contract IUniswapV2Router02\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"stateMutability\":\"payable\",\"type\":\"receive\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner.\"},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/Planetmoon/MembershipFeeManager.sol\":\"MembershipFeeManager\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\ninterface AggregatorV3Interface {\\n  function decimals() external view returns (uint8);\\n\\n  function description() external view returns (string memory);\\n\\n  function version() external view returns (uint256);\\n\\n  function getRoundData(uint80 _roundId)\\n    external\\n    view\\n    returns (\\n      uint80 roundId,\\n      int256 answer,\\n      uint256 startedAt,\\n      uint256 updatedAt,\\n      uint80 answeredInRound\\n    );\\n\\n  function latestRoundData()\\n    external\\n    view\\n    returns (\\n      uint80 roundId,\\n      int256 answer,\\n      uint256 startedAt,\\n      uint256 updatedAt,\\n      uint80 answeredInRound\\n    );\\n}\\n\",\"keccak256\":\"0x6e6e4b0835904509406b070ee173b5bc8f677c19421b76be38aea3b1b3d30846\",\"license\":\"MIT\"},\"@openzeppelin/contracts/access/Ownable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v4.7.0) (access/Ownable.sol)\\n\\npragma solidity ^0.8.0;\\n\\nimport \\\"../utils/Context.sol\\\";\\n\\n/**\\n * @dev Contract module which provides a basic access control mechanism, where\\n * there is an account (an owner) that can be granted exclusive access to\\n * specific functions.\\n *\\n * By default, the owner account will be the one that deploys the contract. This\\n * can later be changed with {transferOwnership}.\\n *\\n * This module is used through inheritance. It will make available the modifier\\n * `onlyOwner`, which can be applied to your functions to restrict their use to\\n * the owner.\\n */\\nabstract contract Ownable is Context {\\n    address private _owner;\\n\\n    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);\\n\\n    /**\\n     * @dev Initializes the contract setting the deployer as the initial owner.\\n     */\\n    constructor() {\\n        _transferOwnership(_msgSender());\\n    }\\n\\n    /**\\n     * @dev Throws if called by any account other than the owner.\\n     */\\n    modifier onlyOwner() {\\n        _checkOwner();\\n        _;\\n    }\\n\\n    /**\\n     * @dev Returns the address of the current owner.\\n     */\\n    function owner() public view virtual returns (address) {\\n        return _owner;\\n    }\\n\\n    /**\\n     * @dev Throws if the sender is not the owner.\\n     */\\n    function _checkOwner() internal view virtual {\\n        require(owner() == _msgSender(), \\\"Ownable: caller is not the owner\\\");\\n    }\\n\\n    /**\\n     * @dev Leaves the contract without owner. It will not be possible to call\\n     * `onlyOwner` functions anymore. Can only be called by the current owner.\\n     *\\n     * NOTE: Renouncing ownership will leave the contract without an owner,\\n     * thereby removing any functionality that is only available to the owner.\\n     */\\n    function renounceOwnership() public virtual onlyOwner {\\n        _transferOwnership(address(0));\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Can only be called by the current owner.\\n     */\\n    function transferOwnership(address newOwner) public virtual onlyOwner {\\n        require(newOwner != address(0), \\\"Ownable: new owner is the zero address\\\");\\n        _transferOwnership(newOwner);\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Internal function without access restriction.\\n     */\\n    function _transferOwnership(address newOwner) internal virtual {\\n        address oldOwner = _owner;\\n        _owner = newOwner;\\n        emit OwnershipTransferred(oldOwner, newOwner);\\n    }\\n}\\n\",\"keccak256\":\"0xa94b34880e3c1b0b931662cb1c09e5dfa6662f31cba80e07c5ee71cd135c9673\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/Context.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts v4.4.1 (utils/Context.sol)\\n\\npragma solidity ^0.8.0;\\n\\n/**\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract Context {\\n    function _msgSender() internal view virtual returns (address) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes calldata) {\\n        return msg.data;\\n    }\\n}\\n\",\"keccak256\":\"0xe2e337e6dde9ef6b680e07338c493ebea1b5fd09b43424112868e9cc1706bca7\",\"license\":\"MIT\"},\"contracts/Planetmoon/MembershipFeeManager.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\npragma solidity 0.8.9;\\r\\n\\r\\nimport \\\"@openzeppelin/contracts/access/Ownable.sol\\\";\\r\\nimport \\\"@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol\\\";\\r\\nimport \\\"../library/StakingLibrary.sol\\\";\\r\\nimport \\\"../interfaces/IUniswapV2Router02.sol\\\";\\r\\n\\r\\ncontract MembershipFeeManager is Ownable {\\r\\n    /**\\r\\n    * Network: Goerli\\r\\n    * Aggregator: ETH/USD\\r\\n    * Address: 0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e\\r\\n    */\\r\\n\\r\\n\\r\\n    /**\\r\\n    * Network: BNB Chain Mainnet\\r\\n    * Aggregator: BNB/USD\\r\\n    * Address: 0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE\\r\\n    */\\r\\n\\r\\n    AggregatorV3Interface internal priceFeed = AggregatorV3Interface(0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e);\\r\\n\\r\\n    // IUniswapV2Router02 _uniswapV2Router = IUniswapV2Router02(0x10ED43C718714eb63d5aA57B78B54704E256024E); //Pancakeswap router mainnet - BSC\\r\\n    IUniswapV2Router02 public uniswapV2Router = IUniswapV2Router02(0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D); //Uniswap router goerli testnet - ETH\\r\\n\\r\\n    mapping (StakingLibrary.MembershipCategories => uint256) public membershipFee;\\r\\n    \\r\\n    address DEAD_ADDRESS = 0x000000000000000000000000000000000000dEaD;\\r\\n\\r\\n    event Received(address, uint);\\r\\n    \\r\\n    FeeDistributionScheme public feeDistributionScheme;\\r\\n    struct FeeDistributionScheme {\\r\\n        uint8 buyBackAndburn;\\r\\n        uint8 rewardPool;\\r\\n        uint8 corporate;\\r\\n    }\\r\\n\\r\\n    FeeDistributionWallets public feeDistributionWallets;\\r\\n    struct FeeDistributionWallets {\\r\\n        address payable buyBackAndburn;\\r\\n        address payable rewardPool;\\r\\n        address payable corporate;\\r\\n    }\\r\\n\\r\\n    constructor( uint256 regular, uint256 upgrade, uint256 premium, uint256 team) {\\r\\n        membershipFee[StakingLibrary.MembershipCategories.REGULAR] = regular;\\r\\n        membershipFee[StakingLibrary.MembershipCategories.UPGRAGE] = upgrade;\\r\\n        membershipFee[StakingLibrary.MembershipCategories.PREMIUIM] = premium;\\r\\n        membershipFee[StakingLibrary.MembershipCategories.TEAM] = team;\\r\\n    }\\r\\n\\r\\n    function getMembershipFee(StakingLibrary.MembershipCategories category) public view returns (uint256){\\r\\n        uint256 priceOfOneUSD = uint256(getLatestPriceOfOneUSD());\\r\\n        return membershipFee[category] * priceOfOneUSD;\\r\\n    }\\r\\n\\r\\n    enum FeesType {USD, BNB}\\r\\n\\r\\n    function getAllFees(FeesType feeType) public view returns (\\r\\n        uint256 regular,\\r\\n        uint256 upgrade,\\r\\n        uint256 premium,\\r\\n        uint256 team\\r\\n    ){\\r\\n            regular = membershipFee[StakingLibrary.MembershipCategories.REGULAR];\\r\\n            upgrade = membershipFee[StakingLibrary.MembershipCategories.UPGRAGE];\\r\\n            premium = membershipFee[StakingLibrary.MembershipCategories.PREMIUIM];\\r\\n            team = membershipFee[StakingLibrary.MembershipCategories.TEAM];\\r\\n\\r\\n            if(feeType == FeesType.BNB){\\r\\n                uint256 priceOfOneUSD = uint256(getLatestPriceOfOneUSD());\\r\\n                regular = regular * priceOfOneUSD;\\r\\n                upgrade = upgrade * priceOfOneUSD;\\r\\n                premium = premium * priceOfOneUSD;\\r\\n                team = team * priceOfOneUSD;\\r\\n            }\\r\\n\\r\\n    }\\r\\n\\r\\n    function setMembershipFee(uint256 regular, uint256 upgrade, uint256 premium, uint256 team) public onlyOwner {\\r\\n        membershipFee[StakingLibrary.MembershipCategories.REGULAR] = regular;\\r\\n        membershipFee[StakingLibrary.MembershipCategories.UPGRAGE] = upgrade;\\r\\n        membershipFee[StakingLibrary.MembershipCategories.PREMIUIM] = premium;\\r\\n        membershipFee[StakingLibrary.MembershipCategories.TEAM] = team;\\r\\n    }\\r\\n\\r\\n    function setDistributionScheme(uint8 buyBackAndburn, uint8 rewardPool, uint8 corporate ) public onlyOwner {\\r\\n        feeDistributionScheme.buyBackAndburn = buyBackAndburn;\\r\\n        feeDistributionScheme.rewardPool = rewardPool;\\r\\n        feeDistributionScheme.corporate = corporate;\\r\\n    }\\r\\n\\r\\n    function setFeeDistributionWallets(address buyBackAndburn, address rewardPool, address corporate) public onlyOwner {\\r\\n        feeDistributionWallets.buyBackAndburn = payable(buyBackAndburn);\\r\\n        feeDistributionWallets.rewardPool = payable(rewardPool);\\r\\n        feeDistributionWallets.corporate = payable(corporate);\\r\\n    }\\r\\n\\r\\n    function SplitFunds() public onlyOwner {\\r\\n\\r\\n        require(\\r\\n            feeDistributionWallets.buyBackAndburn != address(0) && \\r\\n            feeDistributionWallets.rewardPool != address(0) && \\r\\n            feeDistributionWallets.corporate != address(0), \\r\\n            \\\"Distribution wallets are not being set\\\" \\r\\n        );\\r\\n\\r\\n        uint256 totalBalance = address(this).balance;\\r\\n        require(totalBalance > 0, \\\"No balance avaialble for split\\\");\\r\\n\\r\\n        uint256 corporateShare =  (totalBalance * feeDistributionScheme.corporate) / 100;\\r\\n        uint256 rewardPoolShare =  (totalBalance * feeDistributionScheme.rewardPool) / 100;\\r\\n        uint256 buyBackAndBurnShare =  totalBalance - corporateShare - rewardPoolShare;\\r\\n\\r\\n        feeDistributionWallets.corporate.transfer(corporateShare);\\r\\n        feeDistributionWallets.rewardPool.transfer(rewardPoolShare);\\r\\n        swapETHForTokensNoFee(feeDistributionWallets.buyBackAndburn, DEAD_ADDRESS, buyBackAndBurnShare);\\r\\n        // swapETHForTokens(feeDistributionWallets.buyBackAndburn, sendTokensto, buyBackAndBurnShare);\\r\\n        \\r\\n    }\\r\\n\\r\\n    function emergencyWithdraw() public onlyOwner {\\r\\n        uint256 totalBalance = address(this).balance;\\r\\n        require(totalBalance > 0, \\\"No balance avaialble for withdraw\\\");\\r\\n        payable(owner()).transfer(totalBalance);\\r\\n    }\\r\\n\\r\\n    function setRouter(IUniswapV2Router02 _uniswapV2Router) public onlyOwner {\\r\\n        uniswapV2Router = _uniswapV2Router;\\r\\n    }\\r\\n\\r\\n    function swapETHForTokensNoFee(\\r\\n        address tokenAddress,\\r\\n        address toAddress,\\r\\n        uint256 amount\\r\\n    ) private {\\r\\n        // generate the uniswap pair path of token -> weth\\r\\n        address[] memory path = new address[](2);\\r\\n        path[0] = uniswapV2Router.WETH();\\r\\n        path[1] = tokenAddress;\\r\\n\\r\\n        uniswapV2Router.swapExactETHForTokens{\\r\\n            value: amount\\r\\n        }(\\r\\n            0, // accept any amount of Tokens\\r\\n            path,\\r\\n            toAddress, // The contract\\r\\n            block.timestamp + 500\\r\\n        );      \\r\\n\\r\\n    }\\r\\n\\r\\n    function getLatestPriceOfOneUSD() public view returns (int) {\\r\\n\\r\\n        // (, int price,,,) = priceFeed.latestRoundData();\\r\\n        \\r\\n        // this is the price of 1 Eth in USDs  => 1 ETh = price USDs\\r\\n        // Find price of 1 USD => 1 USD = 1/price ETH\\r\\n\\r\\n        // int ONE_ETH = 1 ether;\\r\\n        // return (ONE_ETH * 10**8)/price;\\r\\n\\r\\n        // int random = 756881949122395;\\r\\n        return int(756881949122395);\\r\\n\\r\\n    }\\r\\n\\r\\n    receive() external payable {\\r\\n        emit Received(msg.sender, msg.value);\\r\\n    }\\r\\n\\r\\n}\\r\\n\",\"keccak256\":\"0x7f4a72a7e8890c8ad376ce07b48b01f7e5891220e0df3a3c391a3dd84831362b\",\"license\":\"MIT\"},\"contracts/interfaces/IUniswapV2Router01.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\npragma solidity 0.8.9;\\r\\n\\r\\ninterface IUniswapV2Router01 {\\r\\n    function factory() external pure returns (address);\\r\\n    function WETH() external pure returns (address);\\r\\n\\r\\n    function addLiquidity(\\r\\n        address tokenA,\\r\\n        address tokenB,\\r\\n        uint amountADesired,\\r\\n        uint amountBDesired,\\r\\n        uint amountAMin,\\r\\n        uint amountBMin,\\r\\n        address to,\\r\\n        uint deadline\\r\\n    ) external returns (uint amountA, uint amountB, uint liquidity);\\r\\n    function addLiquidityETH(\\r\\n        address token,\\r\\n        uint amountTokenDesired,\\r\\n        uint amountTokenMin,\\r\\n        uint amountETHMin,\\r\\n        address to,\\r\\n        uint deadline\\r\\n    ) external payable returns (uint amountToken, uint amountETH, uint liquidity);\\r\\n    function removeLiquidity(\\r\\n        address tokenA,\\r\\n        address tokenB,\\r\\n        uint liquidity,\\r\\n        uint amountAMin,\\r\\n        uint amountBMin,\\r\\n        address to,\\r\\n        uint deadline\\r\\n    ) external returns (uint amountA, uint amountB);\\r\\n    function removeLiquidityETH(\\r\\n        address token,\\r\\n        uint liquidity,\\r\\n        uint amountTokenMin,\\r\\n        uint amountETHMin,\\r\\n        address to,\\r\\n        uint deadline\\r\\n    ) external returns (uint amountToken, uint amountETH);\\r\\n    function removeLiquidityWithPermit(\\r\\n        address tokenA,\\r\\n        address tokenB,\\r\\n        uint liquidity,\\r\\n        uint amountAMin,\\r\\n        uint amountBMin,\\r\\n        address to,\\r\\n        uint deadline,\\r\\n        bool approveMax, uint8 v, bytes32 r, bytes32 s\\r\\n    ) external returns (uint amountA, uint amountB);\\r\\n    function removeLiquidityETHWithPermit(\\r\\n        address token,\\r\\n        uint liquidity,\\r\\n        uint amountTokenMin,\\r\\n        uint amountETHMin,\\r\\n        address to,\\r\\n        uint deadline,\\r\\n        bool approveMax, uint8 v, bytes32 r, bytes32 s\\r\\n    ) external returns (uint amountToken, uint amountETH);\\r\\n    function swapExactTokensForTokens(\\r\\n        uint amountIn,\\r\\n        uint amountOutMin,\\r\\n        address[] calldata path,\\r\\n        address to,\\r\\n        uint deadline\\r\\n    ) external returns (uint[] memory amounts);\\r\\n    function swapTokensForExactTokens(\\r\\n        uint amountOut,\\r\\n        uint amountInMax,\\r\\n        address[] calldata path,\\r\\n        address to,\\r\\n        uint deadline\\r\\n    ) external returns (uint[] memory amounts);\\r\\n    function swapExactETHForTokens(uint amountOutMin, address[] calldata path, address to, uint deadline)\\r\\n        external\\r\\n        payable\\r\\n        returns (uint[] memory amounts);\\r\\n    function swapTokensForExactETH(uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline)\\r\\n        external\\r\\n        returns (uint[] memory amounts);\\r\\n    function swapExactTokensForETH(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)\\r\\n        external\\r\\n        returns (uint[] memory amounts);\\r\\n    function swapETHForExactTokens(uint amountOut, address[] calldata path, address to, uint deadline)\\r\\n        external\\r\\n        payable\\r\\n        returns (uint[] memory amounts);\\r\\n\\r\\n    function quote(uint amountA, uint reserveA, uint reserveB) external pure returns (uint amountB);\\r\\n    function getAmountOut(uint amountIn, uint reserveIn, uint reserveOut) external pure returns (uint amountOut);\\r\\n    function getAmountIn(uint amountOut, uint reserveIn, uint reserveOut) external pure returns (uint amountIn);\\r\\n    function getAmountsOut(uint amountIn, address[] calldata path) external view returns (uint[] memory amounts);\\r\\n    function getAmountsIn(uint amountOut, address[] calldata path) external view returns (uint[] memory amounts);\\r\\n}\\r\\n\",\"keccak256\":\"0xbd0efab4476d5d6b65f8b9a5f80060d0d50c8b5c8f2fb282ebdfabf26257695b\",\"license\":\"MIT\"},\"contracts/interfaces/IUniswapV2Router02.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\npragma solidity 0.8.9;\\r\\n\\r\\nimport './IUniswapV2Router01.sol';\\r\\n\\r\\ninterface IUniswapV2Router02 is IUniswapV2Router01 {\\r\\n    function removeLiquidityETHSupportingFeeOnTransferTokens(\\r\\n        address token,\\r\\n        uint liquidity,\\r\\n        uint amountTokenMin,\\r\\n        uint amountETHMin,\\r\\n        address to,\\r\\n        uint deadline\\r\\n    ) external returns (uint amountETH);\\r\\n    function removeLiquidityETHWithPermitSupportingFeeOnTransferTokens(\\r\\n        address token,\\r\\n        uint liquidity,\\r\\n        uint amountTokenMin,\\r\\n        uint amountETHMin,\\r\\n        address to,\\r\\n        uint deadline,\\r\\n        bool approveMax, uint8 v, bytes32 r, bytes32 s\\r\\n    ) external returns (uint amountETH);\\r\\n\\r\\n    function swapExactTokensForTokensSupportingFeeOnTransferTokens(\\r\\n        uint amountIn,\\r\\n        uint amountOutMin,\\r\\n        address[] calldata path,\\r\\n        address to,\\r\\n        uint deadline\\r\\n    ) external;\\r\\n    function swapExactETHForTokensSupportingFeeOnTransferTokens(\\r\\n        uint amountOutMin,\\r\\n        address[] calldata path,\\r\\n        address to,\\r\\n        uint deadline\\r\\n    ) external payable;\\r\\n    function swapExactTokensForETHSupportingFeeOnTransferTokens(\\r\\n        uint amountIn,\\r\\n        uint amountOutMin,\\r\\n        address[] calldata path,\\r\\n        address to,\\r\\n        uint deadline\\r\\n    ) external;\\r\\n}\\r\\n\",\"keccak256\":\"0x6a7de32da180b1a8225fe41c4335ef9e6bce9c85b2d8a23b896af54884ff77cb\",\"license\":\"MIT\"},\"contracts/library/StakingLibrary.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\npragma solidity 0.8.9;\\r\\n\\r\\nlibrary StakingLibrary {\\r\\n\\r\\n    enum UnstakingCategories {\\r\\n        REWARD_0pc,\\r\\n        REWARD_30pc,\\r\\n        REWARD_50pc,\\r\\n        REWARD_100pc\\r\\n    }\\r\\n\\r\\n    enum MembershipCategories {\\r\\n        REGULAR,\\r\\n        UPGRAGE,\\r\\n        PREMIUIM,\\r\\n        TEAM\\r\\n    }\\r\\n\\r\\n    enum CampaignCategories {\\r\\n        SILVER,\\r\\n        GOLD,\\r\\n        DIAMOND\\r\\n    }\\r\\n\\r\\n    struct PoolInfo {\\r\\n        uint256 poolId;\\r\\n        address poolAddress;\\r\\n        uint256 remainingPool;\\r\\n        uint256 totalTokensStaked;\\r\\n        uint256 totalParicipants;\\r\\n        uint256 tokenCounter;\\r\\n        address poolOwner;\\r\\n    }\\r\\n\\r\\n    enum ProfileType {NONE, TEAM, USER}\\r\\n\\r\\n    struct ProjectInfo {\\r\\n        CampaignCategories category;\\r\\n        string projectName;\\r\\n        string projectSymbol;\\r\\n        address tokenAddress;\\r\\n        uint8 tokenDecimals;\\r\\n        string tokenSymbol;\\r\\n        ProfileType profileType;\\r\\n        uint256 profileId;\\r\\n    }\\r\\n\\r\\n    struct RewardPoolInfo {\\r\\n        uint256 startedAt;\\r\\n        uint256 poolAmount;\\r\\n    }\\r\\n\\r\\n    struct Images {\\r\\n        string image_3_months;\\r\\n        string image_6_months;\\r\\n        string image_12_months;\\r\\n    }\\r\\n       \\r\\n    struct TokenData {\\r\\n        address poolAddress;\\r\\n        uint256 poolId;\\r\\n        uint256 tokenStaked;\\r\\n        address tokenAddress;\\r\\n        address owner;\\r\\n        address creator;\\r\\n        uint256 tokenId;\\r\\n        string tokenUri;\\r\\n        uint8 stakingType;\\r\\n        uint256 stakingTime;\\r\\n        uint256 unlockTime;\\r\\n        uint256 expectedReward;\\r\\n        bool isUnskated;\\r\\n        uint256 redeemedReward;\\r\\n        uint8 pcReceived;\\r\\n    }\\r\\n\\r\\n    struct PoolFullInfo {\\r\\n        PoolInfo poolInfo;\\r\\n        ProjectInfo projectInfo; \\r\\n        RewardPoolInfo rewardPoolInfo; \\r\\n        Images images;\\r\\n    }\\r\\n\\r\\n    struct UserDetail {\\r\\n        uint256 memberSince;\\r\\n        uint256 memberId;\\r\\n        bool isPremium;\\r\\n    }\\r\\n\\r\\n\\r\\n\\r\\n\\r\\n}\\r\\n\\r\\n\\r\\n\",\"keccak256\":\"0xfd4441f9ea3767d5dcabc5e52dc7ee35801ecdd99cfe5bd76c3d9dc21b3c2157\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x6080604052600180546001600160a01b031990811673d4a33860578de61dbabdc8bfdb98fd742fa7028e17909155600280548216737a250d5630b4cf539739df2c5dacb4c659f2488d1790556004805490911661dead17905534801561006457600080fd5b5060405161110a38038061110a8339810160408190526100839161017c565b61008c3361012c565b600360208190527f3617319a054d772f909f7c479a2cebe5066e836a939412e32403c99029b92eff949094557fa15bc60c955c405d20d9149c709e2460f1c2d9a497496a7f46004d1772c3054c929092557fc3a24b0501bd2c13a7e57f2db4369ec4c223447539fc0724a9d55ac4a06ebd4d556000919091527fcbc4e5fb02c3d1de23a9f1e014b4d2ee5aeaea9505df5e855c9210bf472495af556101b2565b600080546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b6000806000806080858703121561019257600080fd5b505082516020840151604085015160609095015191969095509092509050565b610f49806101c16000396000f3fe6080604052600436106100f75760003560e01c8063715018a61161008a578063c691068d11610059578063c691068d14610317578063db2e21bc1461036e578063f2fde38b14610383578063f6dfc669146103a357600080fd5b8063715018a6146102a45780638da5cb5b146102b95780639b5e831a146102d7578063c0d78655146102f757600080fd5b80634d3520e2116100c65780634d3520e21461020457806358041b57146102245780635e1129c1146102445780636680649d1461026457600080fd5b806302a64a4b1461013b5780631694505e14610164578063178e8e3d1461019c57806329a3bcbf146101ed57600080fd5b3661013657604080513381523460208201527f88a5966d370b9919b20f3e2c13ff65706f196a4e32cc2c12bf57088f88525874910160405180910390a1005b600080fd5b34801561014757600080fd5b506602b0614fb6df5b5b6040519081526020015b60405180910390f35b34801561017057600080fd5b50600254610184906001600160a01b031681565b6040516001600160a01b03909116815260200161015b565b3480156101a857600080fd5b506005546101c99060ff808216916101008104821691620100009091041683565b6040805160ff9485168152928416602084015292169181019190915260600161015b565b3480156101f957600080fd5b506102026103d0565b005b34801561021057600080fd5b5061020261021f366004610bd1565b6105c1565b34801561023057600080fd5b5061020261023f366004610c32565b610608565b34801561025057600080fd5b5061020261025f366004610c75565b610646565b34801561027057600080fd5b5061028461027f366004610ca7565b6106eb565b60408051948552602085019390935291830152606082015260800161015b565b3480156102b057600080fd5b506102026107de565b3480156102c557600080fd5b506000546001600160a01b0316610184565b3480156102e357600080fd5b506101516102f2366004610cc8565b6107f2565b34801561030357600080fd5b50610202610312366004610ce9565b610842565b34801561032357600080fd5b50600654600754600854610344926001600160a01b03908116928116911683565b604080516001600160a01b039485168152928416602084015292169181019190915260600161015b565b34801561037a57600080fd5b5061020261086c565b34801561038f57600080fd5b5061020261039e366004610ce9565b610909565b3480156103af57600080fd5b506101516103be366004610cc8565b60036020526000908152604090205481565b6103d8610982565b6006546001600160a01b0316158015906103fc57506007546001600160a01b031615155b801561041257506008546001600160a01b031615155b6104725760405162461bcd60e51b815260206004820152602660248201527f446973747269627574696f6e2077616c6c65747320617265206e6f74206265696044820152651b99c81cd95d60d21b60648201526084015b60405180910390fd5b47806104c05760405162461bcd60e51b815260206004820152601e60248201527f4e6f2062616c616e63652061766169616c626c6520666f722073706c697400006044820152606401610469565b6005546000906064906104dc9062010000900460ff1684610d1c565b6104e69190610d3b565b60055490915060009060649061050490610100900460ff1685610d1c565b61050e9190610d3b565b905060008161051d8486610d5d565b6105279190610d5d565b6008546040519192506001600160a01b03169084156108fc029085906000818181858888f19350505050158015610562573d6000803e3d6000fd5b506007546040516001600160a01b039091169083156108fc029084906000818181858888f1935050505015801561059d573d6000803e3d6000fd5b506006546004546105bb916001600160a01b039081169116836109dc565b50505050565b6105c9610982565b600680546001600160a01b039485166001600160a01b031991821617909155600780549385169382169390931790925560088054919093169116179055565b610610610982565b6005805460ff94851661ffff1990911617610100938516939093029290921762ff00001916620100009190931602919091179055565b61064e610982565b600360208190527f3617319a054d772f909f7c479a2cebe5066e836a939412e32403c99029b92eff949094557fa15bc60c955c405d20d9149c709e2460f1c2d9a497496a7f46004d1772c3054c929092557fc3a24b0501bd2c13a7e57f2db4369ec4c223447539fc0724a9d55ac4a06ebd4d556000919091527fcbc4e5fb02c3d1de23a9f1e014b4d2ee5aeaea9505df5e855c9210bf472495af55565b600360208190527f3617319a054d772f909f7c479a2cebe5066e836a939412e32403c99029b92eff547fa15bc60c955c405d20d9149c709e2460f1c2d9a497496a7f46004d1772c3054c547fc3a24b0501bd2c13a7e57f2db4369ec4c223447539fc0724a9d55ac4a06ebd4d546000939093527fcbc4e5fb02c3d1de23a9f1e014b4d2ee5aeaea9505df5e855c9210bf472495af54919290916001858181111561079757610797610d74565b14156107d7576602b0614fb6df5b6107af8186610d1c565b94506107bb8185610d1c565b93506107c78184610d1c565b92506107d38183610d1c565b9150505b9193509193565b6107e6610982565b6107f06000610b6c565b565b60006602b0614fb6df5b80600383858281111561081157610811610d74565b600381111561082257610822610d74565b81526020019081526020016000205461083b9190610d1c565b9392505050565b61084a610982565b600280546001600160a01b0319166001600160a01b0392909216919091179055565b610874610982565b47806108cc5760405162461bcd60e51b815260206004820152602160248201527f4e6f2062616c616e63652061766169616c626c6520666f7220776974686472616044820152607760f81b6064820152608401610469565b600080546040516001600160a01b039091169183156108fc02918491818181858888f19350505050158015610905573d6000803e3d6000fd5b5050565b610911610982565b6001600160a01b0381166109765760405162461bcd60e51b815260206004820152602660248201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160448201526564647265737360d01b6064820152608401610469565b61097f81610b6c565b50565b6000546001600160a01b031633146107f05760405162461bcd60e51b815260206004820181905260248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e65726044820152606401610469565b6040805160028082526060820183526000926020830190803683375050600254604080516315ab88c960e31b815290519394506001600160a01b039091169263ad5c464892506004808301926020929190829003018186803b158015610a4157600080fd5b505afa158015610a55573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610a799190610da0565b81600081518110610a8c57610a8c610dbd565b60200260200101906001600160a01b031690816001600160a01b0316815250508381600181518110610ac057610ac0610dbd565b6001600160a01b03928316602091820292909201015260025416637ff36ab58360008487610af0426101f4610dd3565b6040518663ffffffff1660e01b8152600401610b0f9493929190610deb565b6000604051808303818588803b158015610b2857600080fd5b505af1158015610b3c573d6000803e3d6000fd5b50505050506040513d6000823e601f3d908101601f19168201604052610b659190810190610e55565b5050505050565b600080546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b6001600160a01b038116811461097f57600080fd5b600080600060608486031215610be657600080fd5b8335610bf181610bbc565b92506020840135610c0181610bbc565b91506040840135610c1181610bbc565b809150509250925092565b803560ff81168114610c2d57600080fd5b919050565b600080600060608486031215610c4757600080fd5b610c5084610c1c565b9250610c5e60208501610c1c565b9150610c6c60408501610c1c565b90509250925092565b60008060008060808587031215610c8b57600080fd5b5050823594602084013594506040840135936060013592509050565b600060208284031215610cb957600080fd5b81356002811061083b57600080fd5b600060208284031215610cda57600080fd5b81356004811061083b57600080fd5b600060208284031215610cfb57600080fd5b813561083b81610bbc565b634e487b7160e01b600052601160045260246000fd5b6000816000190483118215151615610d3657610d36610d06565b500290565b600082610d5857634e487b7160e01b600052601260045260246000fd5b500490565b600082821015610d6f57610d6f610d06565b500390565b634e487b7160e01b600052602160045260246000fd5b634e487b7160e01b600052604160045260246000fd5b600060208284031215610db257600080fd5b815161083b81610bbc565b634e487b7160e01b600052603260045260246000fd5b60008219821115610de657610de6610d06565b500190565b600060808201868352602060808185015281875180845260a086019150828901935060005b81811015610e355784516001600160a01b031683529383019391830191600101610e10565b50506001600160a01b039690961660408501525050506060015292915050565b60006020808385031215610e6857600080fd5b825167ffffffffffffffff80821115610e8057600080fd5b818501915085601f830112610e9457600080fd5b815181811115610ea657610ea6610d8a565b8060051b604051601f19603f83011681018181108582111715610ecb57610ecb610d8a565b604052918252848201925083810185019188831115610ee957600080fd5b938501935b82851015610f0757845184529385019392850192610eee565b9897505050505050505056fea26469706673582212207dce78c950882906ba6af67e23eeafe826ac27d32d41d3485ba61d11ffed617464736f6c63430008090033",
+  "deployedBytecode": "0x6080604052600436106100f75760003560e01c8063715018a61161008a578063c691068d11610059578063c691068d14610317578063db2e21bc1461036e578063f2fde38b14610383578063f6dfc669146103a357600080fd5b8063715018a6146102a45780638da5cb5b146102b95780639b5e831a146102d7578063c0d78655146102f757600080fd5b80634d3520e2116100c65780634d3520e21461020457806358041b57146102245780635e1129c1146102445780636680649d1461026457600080fd5b806302a64a4b1461013b5780631694505e14610164578063178e8e3d1461019c57806329a3bcbf146101ed57600080fd5b3661013657604080513381523460208201527f88a5966d370b9919b20f3e2c13ff65706f196a4e32cc2c12bf57088f88525874910160405180910390a1005b600080fd5b34801561014757600080fd5b506602b0614fb6df5b5b6040519081526020015b60405180910390f35b34801561017057600080fd5b50600254610184906001600160a01b031681565b6040516001600160a01b03909116815260200161015b565b3480156101a857600080fd5b506005546101c99060ff808216916101008104821691620100009091041683565b6040805160ff9485168152928416602084015292169181019190915260600161015b565b3480156101f957600080fd5b506102026103d0565b005b34801561021057600080fd5b5061020261021f366004610bd1565b6105c1565b34801561023057600080fd5b5061020261023f366004610c32565b610608565b34801561025057600080fd5b5061020261025f366004610c75565b610646565b34801561027057600080fd5b5061028461027f366004610ca7565b6106eb565b60408051948552602085019390935291830152606082015260800161015b565b3480156102b057600080fd5b506102026107de565b3480156102c557600080fd5b506000546001600160a01b0316610184565b3480156102e357600080fd5b506101516102f2366004610cc8565b6107f2565b34801561030357600080fd5b50610202610312366004610ce9565b610842565b34801561032357600080fd5b50600654600754600854610344926001600160a01b03908116928116911683565b604080516001600160a01b039485168152928416602084015292169181019190915260600161015b565b34801561037a57600080fd5b5061020261086c565b34801561038f57600080fd5b5061020261039e366004610ce9565b610909565b3480156103af57600080fd5b506101516103be366004610cc8565b60036020526000908152604090205481565b6103d8610982565b6006546001600160a01b0316158015906103fc57506007546001600160a01b031615155b801561041257506008546001600160a01b031615155b6104725760405162461bcd60e51b815260206004820152602660248201527f446973747269627574696f6e2077616c6c65747320617265206e6f74206265696044820152651b99c81cd95d60d21b60648201526084015b60405180910390fd5b47806104c05760405162461bcd60e51b815260206004820152601e60248201527f4e6f2062616c616e63652061766169616c626c6520666f722073706c697400006044820152606401610469565b6005546000906064906104dc9062010000900460ff1684610d1c565b6104e69190610d3b565b60055490915060009060649061050490610100900460ff1685610d1c565b61050e9190610d3b565b905060008161051d8486610d5d565b6105279190610d5d565b6008546040519192506001600160a01b03169084156108fc029085906000818181858888f19350505050158015610562573d6000803e3d6000fd5b506007546040516001600160a01b039091169083156108fc029084906000818181858888f1935050505015801561059d573d6000803e3d6000fd5b506006546004546105bb916001600160a01b039081169116836109dc565b50505050565b6105c9610982565b600680546001600160a01b039485166001600160a01b031991821617909155600780549385169382169390931790925560088054919093169116179055565b610610610982565b6005805460ff94851661ffff1990911617610100938516939093029290921762ff00001916620100009190931602919091179055565b61064e610982565b600360208190527f3617319a054d772f909f7c479a2cebe5066e836a939412e32403c99029b92eff949094557fa15bc60c955c405d20d9149c709e2460f1c2d9a497496a7f46004d1772c3054c929092557fc3a24b0501bd2c13a7e57f2db4369ec4c223447539fc0724a9d55ac4a06ebd4d556000919091527fcbc4e5fb02c3d1de23a9f1e014b4d2ee5aeaea9505df5e855c9210bf472495af55565b600360208190527f3617319a054d772f909f7c479a2cebe5066e836a939412e32403c99029b92eff547fa15bc60c955c405d20d9149c709e2460f1c2d9a497496a7f46004d1772c3054c547fc3a24b0501bd2c13a7e57f2db4369ec4c223447539fc0724a9d55ac4a06ebd4d546000939093527fcbc4e5fb02c3d1de23a9f1e014b4d2ee5aeaea9505df5e855c9210bf472495af54919290916001858181111561079757610797610d74565b14156107d7576602b0614fb6df5b6107af8186610d1c565b94506107bb8185610d1c565b93506107c78184610d1c565b92506107d38183610d1c565b9150505b9193509193565b6107e6610982565b6107f06000610b6c565b565b60006602b0614fb6df5b80600383858281111561081157610811610d74565b600381111561082257610822610d74565b81526020019081526020016000205461083b9190610d1c565b9392505050565b61084a610982565b600280546001600160a01b0319166001600160a01b0392909216919091179055565b610874610982565b47806108cc5760405162461bcd60e51b815260206004820152602160248201527f4e6f2062616c616e63652061766169616c626c6520666f7220776974686472616044820152607760f81b6064820152608401610469565b600080546040516001600160a01b039091169183156108fc02918491818181858888f19350505050158015610905573d6000803e3d6000fd5b5050565b610911610982565b6001600160a01b0381166109765760405162461bcd60e51b815260206004820152602660248201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160448201526564647265737360d01b6064820152608401610469565b61097f81610b6c565b50565b6000546001600160a01b031633146107f05760405162461bcd60e51b815260206004820181905260248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e65726044820152606401610469565b6040805160028082526060820183526000926020830190803683375050600254604080516315ab88c960e31b815290519394506001600160a01b039091169263ad5c464892506004808301926020929190829003018186803b158015610a4157600080fd5b505afa158015610a55573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610a799190610da0565b81600081518110610a8c57610a8c610dbd565b60200260200101906001600160a01b031690816001600160a01b0316815250508381600181518110610ac057610ac0610dbd565b6001600160a01b03928316602091820292909201015260025416637ff36ab58360008487610af0426101f4610dd3565b6040518663ffffffff1660e01b8152600401610b0f9493929190610deb565b6000604051808303818588803b158015610b2857600080fd5b505af1158015610b3c573d6000803e3d6000fd5b50505050506040513d6000823e601f3d908101601f19168201604052610b659190810190610e55565b5050505050565b600080546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b6001600160a01b038116811461097f57600080fd5b600080600060608486031215610be657600080fd5b8335610bf181610bbc565b92506020840135610c0181610bbc565b91506040840135610c1181610bbc565b809150509250925092565b803560ff81168114610c2d57600080fd5b919050565b600080600060608486031215610c4757600080fd5b610c5084610c1c565b9250610c5e60208501610c1c565b9150610c6c60408501610c1c565b90509250925092565b60008060008060808587031215610c8b57600080fd5b5050823594602084013594506040840135936060013592509050565b600060208284031215610cb957600080fd5b81356002811061083b57600080fd5b600060208284031215610cda57600080fd5b81356004811061083b57600080fd5b600060208284031215610cfb57600080fd5b813561083b81610bbc565b634e487b7160e01b600052601160045260246000fd5b6000816000190483118215151615610d3657610d36610d06565b500290565b600082610d5857634e487b7160e01b600052601260045260246000fd5b500490565b600082821015610d6f57610d6f610d06565b500390565b634e487b7160e01b600052602160045260246000fd5b634e487b7160e01b600052604160045260246000fd5b600060208284031215610db257600080fd5b815161083b81610bbc565b634e487b7160e01b600052603260045260246000fd5b60008219821115610de657610de6610d06565b500190565b600060808201868352602060808185015281875180845260a086019150828901935060005b81811015610e355784516001600160a01b031683529383019391830191600101610e10565b50506001600160a01b039690961660408501525050506060015292915050565b60006020808385031215610e6857600080fd5b825167ffffffffffffffff80821115610e8057600080fd5b818501915085601f830112610e9457600080fd5b815181811115610ea657610ea6610d8a565b8060051b604051601f19603f83011681018181108582111715610ecb57610ecb610d8a565b604052918252848201925083810185019188831115610ee957600080fd5b938501935b82851015610f0757845184529385019392850192610eee565b9897505050505050505056fea26469706673582212207dce78c950882906ba6af67e23eeafe826ac27d32d41d3485ba61d11ffed617464736f6c63430008090033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {
+      "owner()": {
+        "details": "Returns the address of the current owner."
+      },
+      "renounceOwnership()": {
+        "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner."
+      },
+      "transferOwnership(address)": {
+        "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 53,
+        "contract": "contracts/Planetmoon/MembershipFeeManager.sol:MembershipFeeManager",
+        "label": "_owner",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 7604,
+        "contract": "contracts/Planetmoon/MembershipFeeManager.sol:MembershipFeeManager",
+        "label": "priceFeed",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_contract(AggregatorV3Interface)45"
+      },
+      {
+        "astId": 7610,
+        "contract": "contracts/Planetmoon/MembershipFeeManager.sol:MembershipFeeManager",
+        "label": "uniswapV2Router",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_contract(IUniswapV2Router02)10334"
+      },
+      {
+        "astId": 7615,
+        "contract": "contracts/Planetmoon/MembershipFeeManager.sol:MembershipFeeManager",
+        "label": "membershipFee",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_mapping(t_enum(MembershipCategories)10346,t_uint256)"
+      },
+      {
+        "astId": 7618,
+        "contract": "contracts/Planetmoon/MembershipFeeManager.sol:MembershipFeeManager",
+        "label": "DEAD_ADDRESS",
+        "offset": 0,
+        "slot": "4",
+        "type": "t_address"
+      },
+      {
+        "astId": 7627,
+        "contract": "contracts/Planetmoon/MembershipFeeManager.sol:MembershipFeeManager",
+        "label": "feeDistributionScheme",
+        "offset": 0,
+        "slot": "5",
+        "type": "t_struct(FeeDistributionScheme)7634_storage"
+      },
+      {
+        "astId": 7637,
+        "contract": "contracts/Planetmoon/MembershipFeeManager.sol:MembershipFeeManager",
+        "label": "feeDistributionWallets",
+        "offset": 0,
+        "slot": "6",
+        "type": "t_struct(FeeDistributionWallets)7644_storage"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_address_payable": {
+        "encoding": "inplace",
+        "label": "address payable",
+        "numberOfBytes": "20"
+      },
+      "t_contract(AggregatorV3Interface)45": {
+        "encoding": "inplace",
+        "label": "contract AggregatorV3Interface",
+        "numberOfBytes": "20"
+      },
+      "t_contract(IUniswapV2Router02)10334": {
+        "encoding": "inplace",
+        "label": "contract IUniswapV2Router02",
+        "numberOfBytes": "20"
+      },
+      "t_enum(MembershipCategories)10346": {
+        "encoding": "inplace",
+        "label": "enum StakingLibrary.MembershipCategories",
+        "numberOfBytes": "1"
+      },
+      "t_mapping(t_enum(MembershipCategories)10346,t_uint256)": {
+        "encoding": "mapping",
+        "key": "t_enum(MembershipCategories)10346",
+        "label": "mapping(enum StakingLibrary.MembershipCategories => uint256)",
+        "numberOfBytes": "32",
+        "value": "t_uint256"
+      },
+      "t_struct(FeeDistributionScheme)7634_storage": {
+        "encoding": "inplace",
+        "label": "struct MembershipFeeManager.FeeDistributionScheme",
+        "members": [
+          {
+            "astId": 7629,
+            "contract": "contracts/Planetmoon/MembershipFeeManager.sol:MembershipFeeManager",
+            "label": "buyBackAndburn",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8"
+          },
+          {
+            "astId": 7631,
+            "contract": "contracts/Planetmoon/MembershipFeeManager.sol:MembershipFeeManager",
+            "label": "rewardPool",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_uint8"
+          },
+          {
+            "astId": 7633,
+            "contract": "contracts/Planetmoon/MembershipFeeManager.sol:MembershipFeeManager",
+            "label": "corporate",
+            "offset": 2,
+            "slot": "0",
+            "type": "t_uint8"
+          }
+        ],
+        "numberOfBytes": "32"
+      },
+      "t_struct(FeeDistributionWallets)7644_storage": {
+        "encoding": "inplace",
+        "label": "struct MembershipFeeManager.FeeDistributionWallets",
+        "members": [
+          {
+            "astId": 7639,
+            "contract": "contracts/Planetmoon/MembershipFeeManager.sol:MembershipFeeManager",
+            "label": "buyBackAndburn",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_address_payable"
+          },
+          {
+            "astId": 7641,
+            "contract": "contracts/Planetmoon/MembershipFeeManager.sol:MembershipFeeManager",
+            "label": "rewardPool",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_address_payable"
+          },
+          {
+            "astId": 7643,
+            "contract": "contracts/Planetmoon/MembershipFeeManager.sol:MembershipFeeManager",
+            "label": "corporate",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_address_payable"
+          }
+        ],
+        "numberOfBytes": "96"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      },
+      "t_uint8": {
+        "encoding": "inplace",
+        "label": "uint8",
+        "numberOfBytes": "1"
+      }
+    }
+  }
+}

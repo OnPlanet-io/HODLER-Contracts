@@ -1,0 +1,316 @@
+{
+  "address": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_giveAwayManager",
+          "type": "address"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint8",
+              "name": "firstPrize",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint8",
+              "name": "remainingPrize",
+              "type": "uint8"
+            }
+          ],
+          "internalType": "struct PMAirDropper.GiveAwayPrizeScheme",
+          "name": "_giveAwayPrizeScheme",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "Received",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "firstWinner",
+          "type": "address"
+        },
+        {
+          "internalType": "address[]",
+          "name": "remainingWinners",
+          "type": "address[]"
+        }
+      ],
+      "name": "distributeGiveAwayReward",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "emergencyWithdraw",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getLatestPriceOfOneUSD",
+      "outputs": [
+        {
+          "internalType": "int256",
+          "name": "",
+          "type": "int256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "giveAwayManager",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "giveAwayPrizeScheme",
+      "outputs": [
+        {
+          "internalType": "uint8",
+          "name": "firstPrize",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint8",
+          "name": "remainingPrize",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "stateMutability": "payable",
+      "type": "receive"
+    }
+  ],
+  "transactionHash": "0xa1fb8b1d761159fdd82d76780e1468c3c703cdd93b250328d8326379d7f7b919",
+  "receipt": {
+    "to": null,
+    "from": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    "contractAddress": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
+    "transactionIndex": 0,
+    "gasUsed": "562426",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000800000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000020000000000000000020000000000000100000800000000000000000040000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000002000000000000000000020000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x3988f5a98d834c76692f8792ea6f0ac371ec56049eeb11a66698bcc7ed8b1bde",
+    "transactionHash": "0xa1fb8b1d761159fdd82d76780e1468c3c703cdd93b250328d8326379d7f7b919",
+    "logs": [
+      {
+        "transactionIndex": 0,
+        "blockNumber": 11,
+        "transactionHash": "0xa1fb8b1d761159fdd82d76780e1468c3c703cdd93b250328d8326379d7f7b919",
+        "address": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
+        "topics": [
+          "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "0x000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb92266"
+        ],
+        "data": "0x",
+        "logIndex": 0,
+        "blockHash": "0x3988f5a98d834c76692f8792ea6f0ac371ec56049eeb11a66698bcc7ed8b1bde"
+      }
+    ],
+    "blockNumber": 11,
+    "cumulativeGasUsed": "562426",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    {
+      "firstPrize": 100,
+      "remainingPrize": 2
+    }
+  ],
+  "numDeployments": 1,
+  "solcInputHash": "4d1a6f06330d85ddb1b4e56efbcd8da6",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.9+commit.e5eed63a\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_giveAwayManager\",\"type\":\"address\"},{\"components\":[{\"internalType\":\"uint8\",\"name\":\"firstPrize\",\"type\":\"uint8\"},{\"internalType\":\"uint8\",\"name\":\"remainingPrize\",\"type\":\"uint8\"}],\"internalType\":\"struct PMAirDropper.GiveAwayPrizeScheme\",\"name\":\"_giveAwayPrizeScheme\",\"type\":\"tuple\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"Received\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"firstWinner\",\"type\":\"address\"},{\"internalType\":\"address[]\",\"name\":\"remainingWinners\",\"type\":\"address[]\"}],\"name\":\"distributeGiveAwayReward\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"emergencyWithdraw\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getLatestPriceOfOneUSD\",\"outputs\":[{\"internalType\":\"int256\",\"name\":\"\",\"type\":\"int256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"giveAwayManager\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"giveAwayPrizeScheme\",\"outputs\":[{\"internalType\":\"uint8\",\"name\":\"firstPrize\",\"type\":\"uint8\"},{\"internalType\":\"uint8\",\"name\":\"remainingPrize\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"stateMutability\":\"payable\",\"type\":\"receive\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner.\"},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/Planetmoon/PMAirDropper.sol\":\"PMAirDropper\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\ninterface AggregatorV3Interface {\\n  function decimals() external view returns (uint8);\\n\\n  function description() external view returns (string memory);\\n\\n  function version() external view returns (uint256);\\n\\n  function getRoundData(uint80 _roundId)\\n    external\\n    view\\n    returns (\\n      uint80 roundId,\\n      int256 answer,\\n      uint256 startedAt,\\n      uint256 updatedAt,\\n      uint80 answeredInRound\\n    );\\n\\n  function latestRoundData()\\n    external\\n    view\\n    returns (\\n      uint80 roundId,\\n      int256 answer,\\n      uint256 startedAt,\\n      uint256 updatedAt,\\n      uint80 answeredInRound\\n    );\\n}\\n\",\"keccak256\":\"0x6e6e4b0835904509406b070ee173b5bc8f677c19421b76be38aea3b1b3d30846\",\"license\":\"MIT\"},\"@openzeppelin/contracts/access/Ownable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v4.7.0) (access/Ownable.sol)\\n\\npragma solidity ^0.8.0;\\n\\nimport \\\"../utils/Context.sol\\\";\\n\\n/**\\n * @dev Contract module which provides a basic access control mechanism, where\\n * there is an account (an owner) that can be granted exclusive access to\\n * specific functions.\\n *\\n * By default, the owner account will be the one that deploys the contract. This\\n * can later be changed with {transferOwnership}.\\n *\\n * This module is used through inheritance. It will make available the modifier\\n * `onlyOwner`, which can be applied to your functions to restrict their use to\\n * the owner.\\n */\\nabstract contract Ownable is Context {\\n    address private _owner;\\n\\n    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);\\n\\n    /**\\n     * @dev Initializes the contract setting the deployer as the initial owner.\\n     */\\n    constructor() {\\n        _transferOwnership(_msgSender());\\n    }\\n\\n    /**\\n     * @dev Throws if called by any account other than the owner.\\n     */\\n    modifier onlyOwner() {\\n        _checkOwner();\\n        _;\\n    }\\n\\n    /**\\n     * @dev Returns the address of the current owner.\\n     */\\n    function owner() public view virtual returns (address) {\\n        return _owner;\\n    }\\n\\n    /**\\n     * @dev Throws if the sender is not the owner.\\n     */\\n    function _checkOwner() internal view virtual {\\n        require(owner() == _msgSender(), \\\"Ownable: caller is not the owner\\\");\\n    }\\n\\n    /**\\n     * @dev Leaves the contract without owner. It will not be possible to call\\n     * `onlyOwner` functions anymore. Can only be called by the current owner.\\n     *\\n     * NOTE: Renouncing ownership will leave the contract without an owner,\\n     * thereby removing any functionality that is only available to the owner.\\n     */\\n    function renounceOwnership() public virtual onlyOwner {\\n        _transferOwnership(address(0));\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Can only be called by the current owner.\\n     */\\n    function transferOwnership(address newOwner) public virtual onlyOwner {\\n        require(newOwner != address(0), \\\"Ownable: new owner is the zero address\\\");\\n        _transferOwnership(newOwner);\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Internal function without access restriction.\\n     */\\n    function _transferOwnership(address newOwner) internal virtual {\\n        address oldOwner = _owner;\\n        _owner = newOwner;\\n        emit OwnershipTransferred(oldOwner, newOwner);\\n    }\\n}\\n\",\"keccak256\":\"0xa94b34880e3c1b0b931662cb1c09e5dfa6662f31cba80e07c5ee71cd135c9673\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/Context.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts v4.4.1 (utils/Context.sol)\\n\\npragma solidity ^0.8.0;\\n\\n/**\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract Context {\\n    function _msgSender() internal view virtual returns (address) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes calldata) {\\n        return msg.data;\\n    }\\n}\\n\",\"keccak256\":\"0xe2e337e6dde9ef6b680e07338c493ebea1b5fd09b43424112868e9cc1706bca7\",\"license\":\"MIT\"},\"contracts/Planetmoon/PMAirDropper.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\npragma solidity 0.8.9;\\r\\n\\r\\nimport \\\"@openzeppelin/contracts/access/Ownable.sol\\\";\\r\\nimport \\\"@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol\\\";\\r\\nimport \\\"../library/StakingLibrary.sol\\\";\\r\\nimport \\\"../interfaces/IUniswapV2Router02.sol\\\";\\r\\n\\r\\ncontract PMAirDropper is Ownable {\\r\\n    /**\\r\\n    * Network: Goerli\\r\\n    * Aggregator: ETH/USD\\r\\n    * Address: 0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e\\r\\n    */\\r\\n\\r\\n\\r\\n    /**\\r\\n    * Network: BNB Chain Mainnet\\r\\n    * Aggregator: BNB/USD\\r\\n    * Address: 0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE\\r\\n    */\\r\\n\\r\\n    AggregatorV3Interface internal priceFeed = AggregatorV3Interface(0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e);\\r\\n\\r\\n    event Received(address, uint);\\r\\n\\r\\n    address public giveAwayManager;\\r\\n    GiveAwayPrizeScheme public giveAwayPrizeScheme;\\r\\n\\r\\n    struct GiveAwayPrizeScheme {\\r\\n        uint8 firstPrize;\\r\\n        uint8 remainingPrize;\\r\\n    }\\r\\n\\r\\n\\r\\n    constructor(\\r\\n        address _giveAwayManager, \\r\\n        GiveAwayPrizeScheme memory _giveAwayPrizeScheme){\\r\\n        giveAwayManager = _giveAwayManager;\\r\\n        giveAwayPrizeScheme = _giveAwayPrizeScheme;\\r\\n    }\\r\\n\\r\\n    modifier onlyGiveAwayManager(){\\r\\n        require(msg.sender == giveAwayManager, \\\"No Authorized\\\");\\r\\n        _;\\r\\n    }\\r\\n\\r\\n    function distributeGiveAwayReward(address firstWinner, address[] memory remainingWinners) public onlyGiveAwayManager {\\r\\n\\r\\n        uint256 priceOfOneUSD = uint256(getLatestPriceOfOneUSD());\\r\\n\\r\\n        uint256 totalPrize = priceOfOneUSD * \\r\\n            (giveAwayPrizeScheme.firstPrize + \\r\\n            remainingWinners.length * giveAwayPrizeScheme.remainingPrize);\\r\\n        \\r\\n        uint256 totalBalance = address(this).balance;\\r\\n\\r\\n        require(totalBalance >=  totalPrize, \\\"Not Enough balance to distribute Reward\\\");\\r\\n\\r\\n        payable(firstWinner).transfer(priceOfOneUSD * giveAwayPrizeScheme.firstPrize);\\r\\n\\r\\n        for(uint8 i=0; i < remainingWinners.length; i++){\\r\\n            payable(remainingWinners[i]).transfer(priceOfOneUSD * giveAwayPrizeScheme.remainingPrize);\\r\\n        }\\r\\n\\r\\n    }\\r\\n\\r\\n\\r\\n    function getLatestPriceOfOneUSD() public view returns (int) {\\r\\n\\r\\n        // (, int price,,,) = priceFeed.latestRoundData();\\r\\n        \\r\\n        // this is the price of 1 Eth in USDs  => 1 ETh = price USDs\\r\\n        // Find price of 1 USD => 1 USD = 1/price ETH\\r\\n\\r\\n        // int ONE_ETH = 1 ether;\\r\\n        // return (ONE_ETH * 10**8)/price;\\r\\n\\r\\n        // int random = 756881949122395;\\r\\n        return int(756881949122395);\\r\\n\\r\\n    }\\r\\n\\r\\n    function emergencyWithdraw() public onlyOwner {\\r\\n        uint256 totalBalance = address(this).balance;\\r\\n        require(totalBalance > 0, \\\"No balance avaialble for withdraw\\\");\\r\\n        payable(owner()).transfer(totalBalance);\\r\\n    }\\r\\n\\r\\n    receive() external payable {\\r\\n        emit Received(msg.sender, msg.value);\\r\\n    }\\r\\n\\r\\n}\\r\\n\",\"keccak256\":\"0x8143a2625a9d1da6c52ef60e46a5cafcb8104c8e4ec1ebcfbc27ec0e44138319\",\"license\":\"MIT\"},\"contracts/interfaces/IUniswapV2Router01.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\npragma solidity 0.8.9;\\r\\n\\r\\ninterface IUniswapV2Router01 {\\r\\n    function factory() external pure returns (address);\\r\\n    function WETH() external pure returns (address);\\r\\n\\r\\n    function addLiquidity(\\r\\n        address tokenA,\\r\\n        address tokenB,\\r\\n        uint amountADesired,\\r\\n        uint amountBDesired,\\r\\n        uint amountAMin,\\r\\n        uint amountBMin,\\r\\n        address to,\\r\\n        uint deadline\\r\\n    ) external returns (uint amountA, uint amountB, uint liquidity);\\r\\n    function addLiquidityETH(\\r\\n        address token,\\r\\n        uint amountTokenDesired,\\r\\n        uint amountTokenMin,\\r\\n        uint amountETHMin,\\r\\n        address to,\\r\\n        uint deadline\\r\\n    ) external payable returns (uint amountToken, uint amountETH, uint liquidity);\\r\\n    function removeLiquidity(\\r\\n        address tokenA,\\r\\n        address tokenB,\\r\\n        uint liquidity,\\r\\n        uint amountAMin,\\r\\n        uint amountBMin,\\r\\n        address to,\\r\\n        uint deadline\\r\\n    ) external returns (uint amountA, uint amountB);\\r\\n    function removeLiquidityETH(\\r\\n        address token,\\r\\n        uint liquidity,\\r\\n        uint amountTokenMin,\\r\\n        uint amountETHMin,\\r\\n        address to,\\r\\n        uint deadline\\r\\n    ) external returns (uint amountToken, uint amountETH);\\r\\n    function removeLiquidityWithPermit(\\r\\n        address tokenA,\\r\\n        address tokenB,\\r\\n        uint liquidity,\\r\\n        uint amountAMin,\\r\\n        uint amountBMin,\\r\\n        address to,\\r\\n        uint deadline,\\r\\n        bool approveMax, uint8 v, bytes32 r, bytes32 s\\r\\n    ) external returns (uint amountA, uint amountB);\\r\\n    function removeLiquidityETHWithPermit(\\r\\n        address token,\\r\\n        uint liquidity,\\r\\n        uint amountTokenMin,\\r\\n        uint amountETHMin,\\r\\n        address to,\\r\\n        uint deadline,\\r\\n        bool approveMax, uint8 v, bytes32 r, bytes32 s\\r\\n    ) external returns (uint amountToken, uint amountETH);\\r\\n    function swapExactTokensForTokens(\\r\\n        uint amountIn,\\r\\n        uint amountOutMin,\\r\\n        address[] calldata path,\\r\\n        address to,\\r\\n        uint deadline\\r\\n    ) external returns (uint[] memory amounts);\\r\\n    function swapTokensForExactTokens(\\r\\n        uint amountOut,\\r\\n        uint amountInMax,\\r\\n        address[] calldata path,\\r\\n        address to,\\r\\n        uint deadline\\r\\n    ) external returns (uint[] memory amounts);\\r\\n    function swapExactETHForTokens(uint amountOutMin, address[] calldata path, address to, uint deadline)\\r\\n        external\\r\\n        payable\\r\\n        returns (uint[] memory amounts);\\r\\n    function swapTokensForExactETH(uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline)\\r\\n        external\\r\\n        returns (uint[] memory amounts);\\r\\n    function swapExactTokensForETH(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)\\r\\n        external\\r\\n        returns (uint[] memory amounts);\\r\\n    function swapETHForExactTokens(uint amountOut, address[] calldata path, address to, uint deadline)\\r\\n        external\\r\\n        payable\\r\\n        returns (uint[] memory amounts);\\r\\n\\r\\n    function quote(uint amountA, uint reserveA, uint reserveB) external pure returns (uint amountB);\\r\\n    function getAmountOut(uint amountIn, uint reserveIn, uint reserveOut) external pure returns (uint amountOut);\\r\\n    function getAmountIn(uint amountOut, uint reserveIn, uint reserveOut) external pure returns (uint amountIn);\\r\\n    function getAmountsOut(uint amountIn, address[] calldata path) external view returns (uint[] memory amounts);\\r\\n    function getAmountsIn(uint amountOut, address[] calldata path) external view returns (uint[] memory amounts);\\r\\n}\\r\\n\",\"keccak256\":\"0xbd0efab4476d5d6b65f8b9a5f80060d0d50c8b5c8f2fb282ebdfabf26257695b\",\"license\":\"MIT\"},\"contracts/interfaces/IUniswapV2Router02.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\npragma solidity 0.8.9;\\r\\n\\r\\nimport './IUniswapV2Router01.sol';\\r\\n\\r\\ninterface IUniswapV2Router02 is IUniswapV2Router01 {\\r\\n    function removeLiquidityETHSupportingFeeOnTransferTokens(\\r\\n        address token,\\r\\n        uint liquidity,\\r\\n        uint amountTokenMin,\\r\\n        uint amountETHMin,\\r\\n        address to,\\r\\n        uint deadline\\r\\n    ) external returns (uint amountETH);\\r\\n    function removeLiquidityETHWithPermitSupportingFeeOnTransferTokens(\\r\\n        address token,\\r\\n        uint liquidity,\\r\\n        uint amountTokenMin,\\r\\n        uint amountETHMin,\\r\\n        address to,\\r\\n        uint deadline,\\r\\n        bool approveMax, uint8 v, bytes32 r, bytes32 s\\r\\n    ) external returns (uint amountETH);\\r\\n\\r\\n    function swapExactTokensForTokensSupportingFeeOnTransferTokens(\\r\\n        uint amountIn,\\r\\n        uint amountOutMin,\\r\\n        address[] calldata path,\\r\\n        address to,\\r\\n        uint deadline\\r\\n    ) external;\\r\\n    function swapExactETHForTokensSupportingFeeOnTransferTokens(\\r\\n        uint amountOutMin,\\r\\n        address[] calldata path,\\r\\n        address to,\\r\\n        uint deadline\\r\\n    ) external payable;\\r\\n    function swapExactTokensForETHSupportingFeeOnTransferTokens(\\r\\n        uint amountIn,\\r\\n        uint amountOutMin,\\r\\n        address[] calldata path,\\r\\n        address to,\\r\\n        uint deadline\\r\\n    ) external;\\r\\n}\\r\\n\",\"keccak256\":\"0x6a7de32da180b1a8225fe41c4335ef9e6bce9c85b2d8a23b896af54884ff77cb\",\"license\":\"MIT\"},\"contracts/library/StakingLibrary.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\npragma solidity 0.8.9;\\r\\n\\r\\nlibrary StakingLibrary {\\r\\n\\r\\n    enum UnstakingCategories {\\r\\n        REWARD_0pc,\\r\\n        REWARD_30pc,\\r\\n        REWARD_50pc,\\r\\n        REWARD_100pc\\r\\n    }\\r\\n\\r\\n    enum MembershipCategories {\\r\\n        REGULAR,\\r\\n        UPGRAGE,\\r\\n        PREMIUIM,\\r\\n        TEAM\\r\\n    }\\r\\n\\r\\n    enum CampaignCategories {\\r\\n        SILVER,\\r\\n        GOLD,\\r\\n        DIAMOND\\r\\n    }\\r\\n\\r\\n    struct PoolInfo {\\r\\n        uint256 poolId;\\r\\n        address poolAddress;\\r\\n        uint256 remainingPool;\\r\\n        uint256 totalTokensStaked;\\r\\n        uint256 totalParicipants;\\r\\n        uint256 tokenCounter;\\r\\n        address poolOwner;\\r\\n    }\\r\\n\\r\\n    enum ProfileType {NONE, TEAM, USER}\\r\\n\\r\\n    struct ProjectInfo {\\r\\n        CampaignCategories category;\\r\\n        string projectName;\\r\\n        string projectSymbol;\\r\\n        address tokenAddress;\\r\\n        uint8 tokenDecimals;\\r\\n        string tokenSymbol;\\r\\n        ProfileType profileType;\\r\\n        uint256 profileId;\\r\\n    }\\r\\n\\r\\n    struct RewardPoolInfo {\\r\\n        uint256 startedAt;\\r\\n        uint256 poolAmount;\\r\\n    }\\r\\n\\r\\n    struct Images {\\r\\n        string image_3_months;\\r\\n        string image_6_months;\\r\\n        string image_12_months;\\r\\n    }\\r\\n       \\r\\n    struct TokenData {\\r\\n        address poolAddress;\\r\\n        uint256 poolId;\\r\\n        uint256 tokenStaked;\\r\\n        address tokenAddress;\\r\\n        address owner;\\r\\n        address creator;\\r\\n        uint256 tokenId;\\r\\n        string tokenUri;\\r\\n        uint8 stakingType;\\r\\n        uint256 stakingTime;\\r\\n        uint256 unlockTime;\\r\\n        uint256 expectedReward;\\r\\n        bool isUnskated;\\r\\n        uint256 redeemedReward;\\r\\n        uint8 pcReceived;\\r\\n    }\\r\\n\\r\\n    struct PoolFullInfo {\\r\\n        PoolInfo poolInfo;\\r\\n        ProjectInfo projectInfo; \\r\\n        RewardPoolInfo rewardPoolInfo; \\r\\n        Images images;\\r\\n    }\\r\\n\\r\\n    struct UserDetail {\\r\\n        uint256 memberSince;\\r\\n        uint256 memberId;\\r\\n        bool isPremium;\\r\\n    }\\r\\n\\r\\n\\r\\n\\r\\n\\r\\n}\\r\\n\\r\\n\\r\\n\",\"keccak256\":\"0xfd4441f9ea3767d5dcabc5e52dc7ee35801ecdd99cfe5bd76c3d9dc21b3c2157\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x6080604052600180546001600160a01b03191673d4a33860578de61dbabdc8bfdb98fd742fa7028e17905534801561003657600080fd5b5060405161093038038061093083398101604081905261005591610113565b61005e336100ad565b600280546001600160a01b039093166001600160a01b03199093169290921790915580516003805460209093015160ff9081166101000261ffff199094169216919091179190911790556101b0565b600080546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b805160ff8116811461010e57600080fd5b919050565b600080828403606081121561012757600080fd5b83516001600160a01b038116811461013e57600080fd5b92506040601f198201121561015257600080fd5b50604080519081016001600160401b038111828210171561018357634e487b7160e01b600052604160045260246000fd5b604052610192602085016100fd565b81526101a0604085016100fd565b6020820152809150509250929050565b610771806101bf6000396000f3fe60806040526004361061007f5760003560e01c80638da5cb5b1161004e5780638da5cb5b1461015e578063db2e21bc14610190578063f206f2db146101a5578063f2fde38b146101c557600080fd5b806302a64a4b146100c357806349eef668146100ea57806366593f1b14610127578063715018a61461014957600080fd5b366100be57604080513381523460208201527f88a5966d370b9919b20f3e2c13ff65706f196a4e32cc2c12bf57088f88525874910160405180910390a1005b600080fd5b3480156100cf57600080fd5b506040516602b0614fb6df5b81526020015b60405180910390f35b3480156100f657600080fd5b5060035461010d9060ff8082169161010090041682565b6040805160ff9384168152929091166020830152016100e1565b34801561013357600080fd5b506101476101423660046105be565b6101e5565b005b34801561015557600080fd5b506101476103b8565b34801561016a57600080fd5b506000546001600160a01b03165b6040516001600160a01b0390911681526020016100e1565b34801561019c57600080fd5b506101476103cc565b3480156101b157600080fd5b50600254610178906001600160a01b031681565b3480156101d157600080fd5b506101476101e0366004610696565b610469565b6002546001600160a01b031633146102345760405162461bcd60e51b815260206004820152600d60248201526c139bc8105d5d1a1bdc9a5e9959609a1b60448201526064015b60405180910390fd5b60035481516602b0614fb6df5b9160009161025791610100900460ff16906106ce565b600354610267919060ff166106ed565b61027190836106ce565b905047818110156102d45760405162461bcd60e51b815260206004820152602760248201527f4e6f7420456e6f7567682062616c616e636520746f20646973747269627574656044820152660814995dd85c9960ca1b606482015260840161022b565b6003546001600160a01b038616906108fc906102f39060ff16866106ce565b6040518115909202916000818181858888f1935050505015801561031b573d6000803e3d6000fd5b5060005b84518160ff1610156103b057848160ff168151811061034057610340610705565b60200260200101516001600160a01b03166108fc600360000160019054906101000a900460ff1660ff168661037591906106ce565b6040518115909202916000818181858888f1935050505015801561039d573d6000803e3d6000fd5b50806103a88161071b565b91505061031f565b505050505050565b6103c06104e2565b6103ca600061053c565b565b6103d46104e2565b478061042c5760405162461bcd60e51b815260206004820152602160248201527f4e6f2062616c616e63652061766169616c626c6520666f7220776974686472616044820152607760f81b606482015260840161022b565b600080546040516001600160a01b039091169183156108fc02918491818181858888f19350505050158015610465573d6000803e3d6000fd5b5050565b6104716104e2565b6001600160a01b0381166104d65760405162461bcd60e51b815260206004820152602660248201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160448201526564647265737360d01b606482015260840161022b565b6104df8161053c565b50565b6000546001600160a01b031633146103ca5760405162461bcd60e51b815260206004820181905260248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e6572604482015260640161022b565b600080546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b80356001600160a01b03811681146105a357600080fd5b919050565b634e487b7160e01b600052604160045260246000fd5b600080604083850312156105d157600080fd5b6105da8361058c565b915060208084013567ffffffffffffffff808211156105f857600080fd5b818601915086601f83011261060c57600080fd5b81358181111561061e5761061e6105a8565b8060051b604051601f19603f83011681018181108582111715610643576106436105a8565b60405291825284820192508381018501918983111561066157600080fd5b938501935b82851015610686576106778561058c565b84529385019392850192610666565b8096505050505050509250929050565b6000602082840312156106a857600080fd5b6106b18261058c565b9392505050565b634e487b7160e01b600052601160045260246000fd5b60008160001904831182151516156106e8576106e86106b8565b500290565b60008219821115610700576107006106b8565b500190565b634e487b7160e01b600052603260045260246000fd5b600060ff821660ff811415610732576107326106b8565b6001019291505056fea264697066735822122055e38c434cc62f14c3a9bb6a4b78dde1fc6c378f7c780018b094eeda4acc94d664736f6c63430008090033",
+  "deployedBytecode": "0x60806040526004361061007f5760003560e01c80638da5cb5b1161004e5780638da5cb5b1461015e578063db2e21bc14610190578063f206f2db146101a5578063f2fde38b146101c557600080fd5b806302a64a4b146100c357806349eef668146100ea57806366593f1b14610127578063715018a61461014957600080fd5b366100be57604080513381523460208201527f88a5966d370b9919b20f3e2c13ff65706f196a4e32cc2c12bf57088f88525874910160405180910390a1005b600080fd5b3480156100cf57600080fd5b506040516602b0614fb6df5b81526020015b60405180910390f35b3480156100f657600080fd5b5060035461010d9060ff8082169161010090041682565b6040805160ff9384168152929091166020830152016100e1565b34801561013357600080fd5b506101476101423660046105be565b6101e5565b005b34801561015557600080fd5b506101476103b8565b34801561016a57600080fd5b506000546001600160a01b03165b6040516001600160a01b0390911681526020016100e1565b34801561019c57600080fd5b506101476103cc565b3480156101b157600080fd5b50600254610178906001600160a01b031681565b3480156101d157600080fd5b506101476101e0366004610696565b610469565b6002546001600160a01b031633146102345760405162461bcd60e51b815260206004820152600d60248201526c139bc8105d5d1a1bdc9a5e9959609a1b60448201526064015b60405180910390fd5b60035481516602b0614fb6df5b9160009161025791610100900460ff16906106ce565b600354610267919060ff166106ed565b61027190836106ce565b905047818110156102d45760405162461bcd60e51b815260206004820152602760248201527f4e6f7420456e6f7567682062616c616e636520746f20646973747269627574656044820152660814995dd85c9960ca1b606482015260840161022b565b6003546001600160a01b038616906108fc906102f39060ff16866106ce565b6040518115909202916000818181858888f1935050505015801561031b573d6000803e3d6000fd5b5060005b84518160ff1610156103b057848160ff168151811061034057610340610705565b60200260200101516001600160a01b03166108fc600360000160019054906101000a900460ff1660ff168661037591906106ce565b6040518115909202916000818181858888f1935050505015801561039d573d6000803e3d6000fd5b50806103a88161071b565b91505061031f565b505050505050565b6103c06104e2565b6103ca600061053c565b565b6103d46104e2565b478061042c5760405162461bcd60e51b815260206004820152602160248201527f4e6f2062616c616e63652061766169616c626c6520666f7220776974686472616044820152607760f81b606482015260840161022b565b600080546040516001600160a01b039091169183156108fc02918491818181858888f19350505050158015610465573d6000803e3d6000fd5b5050565b6104716104e2565b6001600160a01b0381166104d65760405162461bcd60e51b815260206004820152602660248201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160448201526564647265737360d01b606482015260840161022b565b6104df8161053c565b50565b6000546001600160a01b031633146103ca5760405162461bcd60e51b815260206004820181905260248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e6572604482015260640161022b565b600080546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b80356001600160a01b03811681146105a357600080fd5b919050565b634e487b7160e01b600052604160045260246000fd5b600080604083850312156105d157600080fd5b6105da8361058c565b915060208084013567ffffffffffffffff808211156105f857600080fd5b818601915086601f83011261060c57600080fd5b81358181111561061e5761061e6105a8565b8060051b604051601f19603f83011681018181108582111715610643576106436105a8565b60405291825284820192508381018501918983111561066157600080fd5b938501935b82851015610686576106778561058c565b84529385019392850192610666565b8096505050505050509250929050565b6000602082840312156106a857600080fd5b6106b18261058c565b9392505050565b634e487b7160e01b600052601160045260246000fd5b60008160001904831182151516156106e8576106e86106b8565b500290565b60008219821115610700576107006106b8565b500190565b634e487b7160e01b600052603260045260246000fd5b600060ff821660ff811415610732576107326106b8565b6001019291505056fea264697066735822122055e38c434cc62f14c3a9bb6a4b78dde1fc6c378f7c780018b094eeda4acc94d664736f6c63430008090033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {
+      "owner()": {
+        "details": "Returns the address of the current owner."
+      },
+      "renounceOwnership()": {
+        "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner."
+      },
+      "transferOwnership(address)": {
+        "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 53,
+        "contract": "contracts/Planetmoon/PMAirDropper.sol:PMAirDropper",
+        "label": "_owner",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 8143,
+        "contract": "contracts/Planetmoon/PMAirDropper.sol:PMAirDropper",
+        "label": "priceFeed",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_contract(AggregatorV3Interface)45"
+      },
+      {
+        "astId": 8151,
+        "contract": "contracts/Planetmoon/PMAirDropper.sol:PMAirDropper",
+        "label": "giveAwayManager",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_address"
+      },
+      {
+        "astId": 8154,
+        "contract": "contracts/Planetmoon/PMAirDropper.sol:PMAirDropper",
+        "label": "giveAwayPrizeScheme",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_struct(GiveAwayPrizeScheme)8159_storage"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_contract(AggregatorV3Interface)45": {
+        "encoding": "inplace",
+        "label": "contract AggregatorV3Interface",
+        "numberOfBytes": "20"
+      },
+      "t_struct(GiveAwayPrizeScheme)8159_storage": {
+        "encoding": "inplace",
+        "label": "struct PMAirDropper.GiveAwayPrizeScheme",
+        "members": [
+          {
+            "astId": 8156,
+            "contract": "contracts/Planetmoon/PMAirDropper.sol:PMAirDropper",
+            "label": "firstPrize",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8"
+          },
+          {
+            "astId": 8158,
+            "contract": "contracts/Planetmoon/PMAirDropper.sol:PMAirDropper",
+            "label": "remainingPrize",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_uint8"
+          }
+        ],
+        "numberOfBytes": "32"
+      },
+      "t_uint8": {
+        "encoding": "inplace",
+        "label": "uint8",
+        "numberOfBytes": "1"
+      }
+    }
+  }
+}

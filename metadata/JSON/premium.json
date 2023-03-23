@@ -1,0 +1,9 @@
+{
+    "name": "PlanetMoon Premium Membership",
+    "description": "Membership NFT for the PlanetMoon Gaming and Staking Platform",
+    "image": "https://bafybeiaudagd4hck763457h6l6dulq3quvnzc2kkfxnnkee62ksiltgnsi.ipfs.nftstorage.link",
+    "properties": {
+        "type" : "User Membership"
+    }
+}
+
