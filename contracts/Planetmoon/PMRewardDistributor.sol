@@ -11,8 +11,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 // import "hardhat/console.sol";
 
 error NOT_ENOUGH_BALANCE();
-
-contract PMRewardDistributor is Ownable {
+error CONTRACT_IS_PAUSED();
 
     /**
     * Network: Goerli
@@ -27,17 +26,19 @@ contract PMRewardDistributor is Ownable {
     * Address: 0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE
     */
 
+contract PMRewardDistributor is Ownable {
+
     AggregatorV3Interface internal priceFeed = AggregatorV3Interface(0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE);
     // AggregatorV3Interface internal priceFeed = AggregatorV3Interface(0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e);
 
     IUniswapV2Router02 public uniswapV2Router = IUniswapV2Router02(0x10ED43C718714eb63d5aA57B78B54704E256024E); //Pancakeswap router mainnet - BSC
     // IUniswapV2Router02 public uniswapV2Router = IUniswapV2Router02(0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D); //Uniswap router goerli testnet - ETH
 
-
     event Received(address, uint);
     event RewardApplied(address, address, uint256, uint8);
 
     address public giveAwayManager;
+    bool public pause = false;
 
     constructor( address _giveAwayManager ){
         giveAwayManager = _giveAwayManager;
@@ -48,11 +49,12 @@ contract PMRewardDistributor is Ownable {
         _;
     }
 
-    function updateGiveAwayManager(address _giveAwayManager) public onlyOwner {
-        giveAwayManager = _giveAwayManager;
-    }
-
     function distributeReward(address winner, uint8 prizeUSD) public onlyGiveAwayManager {
+
+        if(pause){
+            revert CONTRACT_IS_PAUSED();
+        }
+
 
         uint256 priceOfOneUSD = uint256(getLatestPriceOfOneUSD());
 
@@ -67,19 +69,12 @@ contract PMRewardDistributor is Ownable {
 
     }
 
-    function getLatestPriceOfOneUSD() public pure returns (int price) {
-
-        // this is the price of 1 Eth in USDs  => 1 ETh = price USDs
-        // Find price of 1 USD => 1 USD = 1/price ETH
-
-        // (, int price,,,) = priceFeed.latestRoundData();
-        // int ONE_ETH = 1 ether;
-        // price = (ONE_ETH * 10**8)/price;
-        price = int(756881949122395); 
-
-    }
-
     function applyRewardToACampaing(address campaign, address user, uint8 amountUSD, StakingLibrary.StakingType _type) public onlyGiveAwayManager {
+
+        if(pause){
+            revert CONTRACT_IS_PAUSED();
+        }
+
 
         uint256 priceOfOneUSD = uint256(getLatestPriceOfOneUSD());
 
@@ -130,14 +125,36 @@ contract PMRewardDistributor is Ownable {
         return boughtTokens;
     }
 
+    function getLatestPriceOfOneUSD() public pure returns (int price) {
+
+        // this is the price of 1 Eth in USDs  => 1 ETh = price USDs
+        // Find price of 1 USD => 1 USD = 1/price ETH
+
+        // (, int price,,,) = priceFeed.latestRoundData();
+        // int ONE_ETH = 1 ether;
+        // price = (ONE_ETH * 10**8)/price;
+        price = int(756881949122395); 
+
+    }
+
+    /* Admin Functions */
+
     function emergencyWithdraw() public onlyOwner{
         uint256 totalBalance = address(this).balance;
         require(totalBalance > 0, "No balance avaialble for withdraw");
         payable(owner()).transfer(totalBalance);
     }
 
+    function changePauseStatus(bool action) public onlyOwner {
+        pause = action;
+    }
+
     function setRouter(IUniswapV2Router02 _uniswapV2Router) public onlyOwner {
         uniswapV2Router = _uniswapV2Router;
+    }
+
+    function updateGiveAwayManager(address _giveAwayManager) public onlyOwner {
+        giveAwayManager = _giveAwayManager;
     }
 
     receive() external payable {

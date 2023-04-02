@@ -18,6 +18,7 @@ error START_TIME_SHOULD_BE_FUTURE();
 error PROFILE_IS_ALREADY_SET();
 error NOT_THE_CAMPAIGN_OWNER();
 error FAILED_TO_TRANSFER_TOKENS();
+error CONTRACT_IS_PAUSED();
 
 contract StakingPoolFactory is Ownable {
 
@@ -25,8 +26,9 @@ contract StakingPoolFactory is Ownable {
     address public pmMembership;
     address public pmTeamManager;
     address public creatorManager;
-
+    
     uint256 public projectsCount;
+    bool public pause = false;
 
     mapping(address => uint256[]) private poolsOfAUser;
     mapping(uint256 => uint256[]) private poolsOfATeam;
@@ -52,6 +54,10 @@ contract StakingPoolFactory is Ownable {
         StakingLibrary.Images memory images
         ) public payable {
         
+        if(pause){
+            revert CONTRACT_IS_PAUSED();
+        }
+
         bool hasTeam = IPMTeamManager(pmTeamManager).balanceOf(msg.sender) > 0;
         bool isPremiumMember = IPMMembership(pmMembership).getUserTokenData(msg.sender).isPremium;
 
@@ -107,6 +113,8 @@ contract StakingPoolFactory is Ownable {
 
     }
 
+    /* Getter Functions */
+
     function getPoolsByToken(address token) public view returns (address[] memory) {
         return stakingPoolsByToken[token];
     }
@@ -121,6 +129,12 @@ contract StakingPoolFactory is Ownable {
 
     function getPoolIdsOfATeam(uint256 teamId) public view returns (uint256[] memory) {
         return poolsOfATeam[teamId];
+    }
+
+    /* Admin Functions */
+
+    function changePauseStatus(bool action) public onlyOwner {
+        pause = action;
     }
 
     function updateCampaignFeeManager( address _campaignFeeManager ) public onlyOwner {

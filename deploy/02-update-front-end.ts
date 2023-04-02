@@ -61,13 +61,17 @@ async function updateContractAddresses() {
     const chainId = network.config.chainId;
 
     if (chainId === 31337) {
+        
         const CreatorManager = await deployments.get("CreatorManager");
         const StakingPoolFactory = await deployments.get("StakingPoolFactory");
+        
         const PMMembershipManager = await deployments.get("PMMembershipManager");
         const PMTeamManager = await deployments.get("PMTeamManager");
+        
         const CampaignFeeManager = await deployments.get("CampaignFeeManager");
         const MembershipFeeManager = await deployments.get("MembershipFeeManager");
-
+        const PMRewardDistributor = await deployments.get("PMRewardDistributor");
+        
 
         const StakingToken = await deployments.get("StakingToken");
         const ERC721Token = await deployments.get("ERC721Token");
@@ -83,6 +87,7 @@ async function updateContractAddresses() {
             PMTeamManager: PMTeamManager.address,
             CampaignFeeManager: CampaignFeeManager.address,
             MembershipFeeManager: MembershipFeeManager.address, 
+            PMRewardDistributor:PMRewardDistributor.address,
 
             StakingToken: StakingToken.address,
             ERC721Token: ERC721Token.address,
@@ -100,8 +105,10 @@ async function updateContractAddresses() {
         const StakingPoolFactory = await deployments.get("StakingPoolFactory");
         const PMMembershipManager = await deployments.get("PMMembershipManager");
         const PMTeamManager = await deployments.get("PMTeamManager");
+        
         const CampaignFeeManager = await deployments.get("CampaignFeeManager");
         const MembershipFeeManager = await deployments.get("MembershipFeeManager");
+        const PMRewardDistributor = await deployments.get("PMRewardDistributor");
 
         let contractAddresses = JSON.parse(fs.readFileSync(frontEndContractsFile, "utf8"))
 
@@ -112,6 +119,7 @@ async function updateContractAddresses() {
             PMTeamManager: PMTeamManager.address,
             CampaignFeeManager: CampaignFeeManager.address,
             MembershipFeeManager: MembershipFeeManager.address,
+            PMRewardDistributor:PMRewardDistributor.address,
             chainId: chainId
         }
 

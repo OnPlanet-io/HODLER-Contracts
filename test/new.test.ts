@@ -2,12 +2,6 @@ import { time } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import { network, ethers } from "hardhat";
 
-
-// import { ethers } from "hardhat";
-// const provider = network.provider;
-// const { solidity } = require('ethereum-waffle')
-
-
 import { BigNumber, ContractReceipt } from "ethers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
@@ -151,14 +145,11 @@ describe("Planet Moon Test Stack", function () {
         const UniswapV2Pair: UniswapV2Pair__factory = await ethers.getContractFactory('UniswapV2Pair');
         const UniswapV2Router02: UniswapV2Router02__factory = await ethers.getContractFactory('UniswapV2Router02');
         const WETH: WETH9__factory = await ethers.getContractFactory('WETH9');
-        // const BuyBackToken: Token__factory = await ethers.getContractFactory("Token");
-
 
         let myWETH = await WETH.deploy();
         let factory = await UniswapV2Factory.deploy(deployer.address);
         let router = await UniswapV2Router02.deploy(factory.address, myWETH.address);
 
-        // let buyBackToken = await BuyBackToken.deploy("BuyBackToken", "BBT");
         await pmRewardDistributor.setRouter(router.address);
 
         await factory.createPair(myWETH.address, stakingToken.address);
@@ -274,6 +265,15 @@ describe("Planet Moon Test Stack", function () {
 
             })
 
+            it("only owner can change the pause status of membershipManager of the contract", async () => {
+
+                await expect(pmMembershipManager.connect(user1).changePauseStatus(true))
+                    .to.be.rejectedWith("Ownable: caller is not the owner");
+
+                await pmMembershipManager.changePauseStatus(true);
+
+            })
+
         })
 
         describe("Team Manager", () => {
@@ -352,6 +352,16 @@ describe("Planet Moon Test Stack", function () {
                 expect(await pmTeamManager.tokenURI(1)).to.equal(teamTokenURI);
 
             })
+
+            it("only owner can change the pause status of teamManager of the contract", async () => {
+
+                await expect(pmTeamManager.connect(user1).changePauseStatus(true))
+                    .to.be.rejectedWith("Ownable: caller is not the owner");
+
+                await pmTeamManager.changePauseStatus(true);
+
+            })
+
 
         })
 
@@ -643,6 +653,56 @@ describe("Planet Moon Test Stack", function () {
 
             })
 
+            it("No one can create a team if teamManager contract is paused", async () => {
+
+                const teamFee = await membershipFeeManager.getMembershipFee(MembershipCategory.TEAM);
+                
+                await pmTeamManager.changePauseStatus(true);
+
+                await expect(pmTeamManager.connect(user1).createATeam(user1.address, { value: teamFee }))
+                    .to.be.rejectedWith("CONTRACT_IS_PAUSED");
+
+                await pmTeamManager.changePauseStatus(false);
+
+                await expect(() => pmTeamManager.connect(user1).createATeam(user1.address, { value: teamFee }))
+                    .to.changeEtherBalances([user1, membershipFeeManager], [teamFee.mul(-1), teamFee]);
+
+
+            })
+
+            it("No one can become regular member if membershipManager contract is paused", async () => {
+
+                const regularFee = await membershipFeeManager.getMembershipFee(MembershipCategory.REGULAR);
+                
+                await pmMembershipManager.changePauseStatus(true);
+
+                await expect(pmMembershipManager.connect(user1).becomeMember(user1.address, { value: regularFee }))
+                    .to.be.rejectedWith("CONTRACT_IS_PAUSED");
+
+                await pmMembershipManager.changePauseStatus(false);
+
+                await expect(() => pmMembershipManager.connect(user1).becomeMember(user1.address, { value: regularFee }))
+                    .to.changeEtherBalances([user1, membershipFeeManager], [regularFee.mul(-1), regularFee]);
+
+
+            })
+
+            it("No one can become premium member if membershipManager contract is paused", async () => {
+
+                const premiumFee = await membershipFeeManager.getMembershipFee(MembershipCategory.PREMIUM);
+                
+                await pmMembershipManager.changePauseStatus(true);
+
+                await expect(pmMembershipManager.connect(user1).becomePremiumMember(user1.address, { value: premiumFee }))
+                    .to.be.rejectedWith("CONTRACT_IS_PAUSED");
+
+                await pmMembershipManager.changePauseStatus(false);
+
+                await expect(() => pmMembershipManager.connect(user1).becomePremiumMember(user1.address, { value: premiumFee }))
+                    .to.changeEtherBalances([user1, membershipFeeManager], [premiumFee.mul(-1), premiumFee]);
+
+
+            })
 
         })
 
@@ -655,6 +715,46 @@ describe("Planet Moon Test Stack", function () {
 
             it("deploying alright", () => {
                 expect(stakingPoolFactory.address).is.properAddress
+            })
+
+            it("only owner can change the pause status of pool factory contract", async () => {
+
+                await expect(stakingPoolFactory.connect(user1).changePauseStatus(true))
+                    .to.be.rejectedWith("Ownable: caller is not the owner");
+
+                await stakingPoolFactory.changePauseStatus(true);
+
+            })
+
+            it("No one can create the campaign if contract is paused", async () => {
+
+                const regularFee = await membershipFeeManager.getMembershipFee(MembershipCategory.REGULAR);
+                const upgradeFee = await membershipFeeManager.getMembershipFee(MembershipCategory.UPGRADE);
+
+                // Create a campaign with a regular + upgraded member
+                await expect(startAStakingPool(CampaignCategory.SILVER, user2)).to.be.rejectedWith("NOT_PREMIUM_OR_TEAM");
+
+                await expect(() => pmMembershipManager.connect(user2).becomeMember(user2.address, { value: regularFee }))
+                    .to.changeEtherBalances([user2, membershipFeeManager], [regularFee.mul(-1), regularFee]);
+
+                await expect(startAStakingPool(CampaignCategory.SILVER, user2)).to.be.rejectedWith("NOT_PREMIUM_OR_TEAM");
+
+                await expect(() => pmMembershipManager.connect(user2).upgradeToPremium(user2.address, { value: upgradeFee }))
+                    .to.changeEtherBalances([user2, membershipFeeManager], [upgradeFee.mul(-1), upgradeFee]);
+
+                const { poolId } = await startAStakingPool(CampaignCategory.SILVER, user2);
+                expect(poolId).not.be.equal(0);
+
+
+
+                await stakingPoolFactory.connect(deployer).changePauseStatus(true);
+                await expect(startAStakingPool(CampaignCategory.SILVER, user2)).to.be.rejectedWith("CONTRACT_IS_PAUSED");
+                await stakingPoolFactory.connect(deployer).changePauseStatus(false);
+
+                const { poolId: poolId2 } = await startAStakingPool(CampaignCategory.SILVER, user2);
+                expect(poolId2).not.be.equal(0);
+
+
             })
 
             it("Non-members and regular members can't create campaigns", async () => {
@@ -1951,6 +2051,11 @@ describe("Planet Moon Test Stack", function () {
             expect(await pmRewardDistributor.giveAwayManager()).is.equal(user1.address);
         })
 
+        it("Only Owner can change the pause status of the contract", async () => {
+            await expect(pmRewardDistributor.connect(user1).changePauseStatus(false))
+                .to.be.rejectedWith("Ownable: caller is not the owner");
+        })
+
         it("Only owner can drain the contract in case of emergency", async () => {
 
             await user1.sendTransaction({
@@ -1968,6 +2073,31 @@ describe("Planet Moon Test Stack", function () {
                 );
 
             expect(await ethers.provider.getBalance(pmRewardDistributor.address)).to.be.equal("0");
+
+        })
+
+        it("Giveaway manager cannot distributeReward reward if contract is paused", async () => {
+
+            await user1.sendTransaction({
+                to: pmRewardDistributor.address,
+                value: ethers.utils.parseEther("5")
+            });
+
+            await expect(pmRewardDistributor.connect(user1).distributeReward(user1.address, 1))
+                .to.be.rejectedWith("No Authorized");
+            await expect(pmRewardDistributor.connect(deployer).distributeReward(user1.address, 1))
+                .to.be.rejectedWith("No Authorized");
+
+            await pmRewardDistributor.connect(rewardManger).distributeReward(user1.address, 1);
+
+
+            await pmRewardDistributor.connect(deployer).changePauseStatus(true);
+
+            await expect(pmRewardDistributor.connect(rewardManger).distributeReward(user1.address, 1))
+                .to.be.rejectedWith("CONTRACT_IS_PAUSED");
+
+            await pmRewardDistributor.connect(deployer).changePauseStatus(false);
+            await pmRewardDistributor.connect(rewardManger).distributeReward(user1.address, 1);
 
         })
 
@@ -2043,6 +2173,40 @@ describe("Planet Moon Test Stack", function () {
             await expect(pmRewardDistributor.connect(rewardManger)
                 .applyRewardToACampaing(poolContract.address, user1.address, 2, StakingType.THREE_MONTH))
                 .to.be.rejectedWith("NOT_ENOUGH_BALANCE");
+        })
+
+        it("if contract is paused then should throw an error on applyRewardToACampaing", async () => {
+
+            await user1.sendTransaction({
+                to: pmRewardDistributor.address,
+                value: ethers.utils.parseEther("5")
+            });
+            await provideLiquidity();
+
+            const premiumFee = await membershipFeeManager.getMembershipFee(MembershipCategory.PREMIUM);
+            await pmMembershipManager.becomePremiumMember(user1.address, { value: premiumFee });
+
+            const { poolContract } = await startAStakingPool(CampaignCategory.DIAMOND, user1);
+            await network.provider.send("evm_increaseTime", [15 * 60 * 1000]);
+            await network.provider.send("evm_mine");
+
+            const PriceOfOneUSD = await pmRewardDistributor.getLatestPriceOfOneUSD();
+
+            await pmRewardDistributor.connect(deployer).changePauseStatus(true);
+
+            await expect(pmRewardDistributor.connect(rewardManger)
+                .applyRewardToACampaing(poolContract.address, user1.address, 2, StakingType.THREE_MONTH))
+                .to.be.rejectedWith("CONTRACT_IS_PAUSED");
+
+            await pmRewardDistributor.connect(deployer).changePauseStatus(false);
+
+            await expect(() => pmRewardDistributor.connect(rewardManger).
+                applyRewardToACampaing(poolContract.address, user1.address, 2, StakingType.THREE_MONTH))
+                .to.changeEtherBalances(
+                    [pmRewardDistributor],
+                    [PriceOfOneUSD.mul(-2)]
+                );
+
         })
 
         it("Users can apply Reward To A Campaing", async () => {

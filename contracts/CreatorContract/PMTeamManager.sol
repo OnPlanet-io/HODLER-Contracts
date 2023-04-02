@@ -15,6 +15,7 @@ error INSUFFICIENT_FUNDS();
 error FAILED_TO_TRANSFER_BNBS();
 error NOT_OWNER_OF_TEAM();
 error TOKEN_DONT_EXIST();
+error CONTRACT_IS_PAUSED();
 
 contract PMTeamManager is ERC721Enumerable, Ownable {
 
@@ -25,6 +26,8 @@ contract PMTeamManager is ERC721Enumerable, Ownable {
 
     string public teamTokenURI = "https://bafkreiaftkut5zfxzfffa7elss6tu3bluwjp2kli4zaqwm2qlpp7u7jbr4.ipfs.nftstorage.link";
     
+    bool public pause = false;
+
     mapping (uint256 => Team) private team;
     struct Team {
         uint256 teamId;
@@ -38,6 +41,10 @@ contract PMTeamManager is ERC721Enumerable, Ownable {
     }
 
     function createATeam( address to ) public payable {
+
+        if(pause){
+            revert CONTRACT_IS_PAUSED();
+        }
 
         uint256 fee = IMembershipFeeManager(membershipFeeManager)
             .getMembershipFee(StakingLibrary.MembershipCategories.TEAM);
@@ -110,8 +117,14 @@ contract PMTeamManager is ERC721Enumerable, Ownable {
         return teamTokenURI;
     }
 
+    /* Admin Functions */
+
     function updateMembershipFeeManager(address _membershipFeeManager) public onlyOwner {
         membershipFeeManager = payable(_membershipFeeManager);
+    }
+
+    function changePauseStatus(bool action) public onlyOwner {
+        pause = action;
     }
 
     event TeamCreated(uint256 teamId, uint256 createdAt);

@@ -16,6 +16,7 @@ error FAILED_TO_TRANSFER_BNBS();
 error NOT_A_MEMBER();
 error ALREADY_A_PREMIUM_MEMBER();
 error TOKEN_DONT_EXIST();
+error CONTRACT_IS_PAUSED();
 
 contract PMMembershipManager is ERC721, Ownable {
 
@@ -27,6 +28,8 @@ contract PMMembershipManager is ERC721, Ownable {
     string public regularURI = "https://bafkreifrj2c6ds4j4onfxmoelibfyhwf6xrccroh2tf7ej55lrplbggi6a.ipfs.nftstorage.link";
     string public premiumURI = "https://bafkreifihh4pd5r7kq6zig7oy6dzm7avtkhphetq6qsjzmdufzv5mumhjy.ipfs.nftstorage.link";
     
+    bool public pause = false;
+
     mapping (address => StakingLibrary.UserDetail) private userDetail;
     mapping (uint256 => bool) private isPremium;
 
@@ -34,24 +37,15 @@ contract PMMembershipManager is ERC721, Ownable {
         membershipFeeManager = payable(_membershipFeeManager);
     }
 
-    function giveAwayMembership(address[] memory to) public onlyOwner {
-        
-        for(uint8 i = 0; i < to.length; i++ ){
-            if(balanceOf(to[i]) == 0){
-                _tokenIdCounter.increment();
-                uint256 tokenId = _tokenIdCounter.current();
-                userDetail[to[i]] = StakingLibrary.UserDetail(block.timestamp, tokenId, true);
-                _safeMint(to[i], tokenId);
-            }
-        }
-
-    }
-
     function getUserTokenData(address userAddress) public view returns (StakingLibrary.UserDetail memory){
         return userDetail[userAddress];
     }   
 
     function becomeMember(address to) public payable {
+
+        if(pause){
+            revert CONTRACT_IS_PAUSED();
+        }
 
         if(balanceOf(to) > 0){
             revert ALREADY_A_MEMBER();
@@ -107,6 +101,10 @@ contract PMMembershipManager is ERC721, Ownable {
 
     function becomePremiumMember(address to) public payable {
 
+        if(pause){
+            revert CONTRACT_IS_PAUSED();
+        }
+
         if(balanceOf(to) > 0){
             revert ALREADY_A_MEMBER();
         }
@@ -156,8 +154,27 @@ contract PMMembershipManager is ERC721, Ownable {
         }
     }
 
+    /* Admin Functions */
+
     function updateMembershipFeeManager(address _membershipFeeManager) public onlyOwner {
         membershipFeeManager = payable(_membershipFeeManager);
+    }
+
+    function giveAwayMembership(address[] memory to) public onlyOwner {
+        
+        for(uint8 i = 0; i < to.length; i++ ){
+            if(balanceOf(to[i]) == 0){
+                _tokenIdCounter.increment();
+                uint256 tokenId = _tokenIdCounter.current();
+                userDetail[to[i]] = StakingLibrary.UserDetail(block.timestamp, tokenId, true);
+                _safeMint(to[i], tokenId);
+            }
+        }
+
+    }
+
+    function changePauseStatus(bool action) public onlyOwner {
+        pause = action;
     }
 
 }

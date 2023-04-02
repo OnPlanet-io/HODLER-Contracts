@@ -8,13 +8,11 @@ import "../interfaces/IUniswapV2Router02.sol";
 
 import "hardhat/console.sol";
 
-contract MembershipFeeManager is Ownable {
     /**
     * Network: Goerli
     * Aggregator: ETH/USD
     * Address: 0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e
     */
-
 
     /**
     * Network: BNB Chain Mainnet
@@ -22,11 +20,14 @@ contract MembershipFeeManager is Ownable {
     * Address: 0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE
     */
 
-    AggregatorV3Interface internal priceFeed = AggregatorV3Interface(0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE);
-    // AggregatorV3Interface internal priceFeed = AggregatorV3Interface(0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e);
+contract MembershipFeeManager is Ownable {
 
-    IUniswapV2Router02 public uniswapV2Router = IUniswapV2Router02(0x10ED43C718714eb63d5aA57B78B54704E256024E); //Pancakeswap router mainnet - BSC
-    // IUniswapV2Router02 public uniswapV2Router = IUniswapV2Router02(0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D); //Uniswap router goerli testnet - ETH
+    // AggregatorV3Interface internal priceFeed = AggregatorV3Interface(0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE); // BNB Chain Mainnet BNB/USD
+    AggregatorV3Interface internal priceFeed = AggregatorV3Interface(0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e);  // Goerli ETH/USD
+
+    // IUniswapV2Router02 public uniswapV2Router = IUniswapV2Router02(0x10ED43C718714eb63d5aA57B78B54704E256024E); //Pancakeswap router mainnet - BSC
+    IUniswapV2Router02 public uniswapV2Router = IUniswapV2Router02(0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D); //Uniswap router goerli testnet - ETH
+
 
     mapping (StakingLibrary.MembershipCategories => uint256) public membershipFee;
     
