@@ -239,6 +239,24 @@ describe("Planet Moon Test Stack", function () {
 
             })
 
+            it("Giveaway memberships works for already members as well", async () => {
+
+                await expect(pmMembershipManager.connect(user1).giveAwayMembership([user1.address, user2.address]))
+                    .to.be.rejectedWith("Ownable: caller is not the owner");
+
+                await expect(() => pmMembershipManager.giveAwayMembership([user1.address]))
+                    .to.changeEtherBalances([deployer, membershipFeeManager], [0, 0]);
+                await pmMembershipManager.giveAwayMembership([user1.address, user2.address]);
+                await pmMembershipManager.giveAwayMembership([user2.address, user3.address]);
+
+                expect(await pmMembershipManager.totalSupply()).to.equal(3);
+                expect((await pmMembershipManager.getUserTokenData(user1.address)).isPremium).to.equal(true);
+                expect((await pmMembershipManager.getUserTokenData(user2.address)).isPremium).to.equal(true);
+                expect((await pmMembershipManager.getUserTokenData(user3.address)).isPremium).to.equal(true);
+
+            })
+
+
             it("Token URIs works fine", async () => {
 
                 const regularFee = await membershipFeeManager.getMembershipFee(MembershipCategory.REGULAR);
@@ -2238,7 +2256,41 @@ describe("Planet Moon Test Stack", function () {
 
         })
 
-        // function applyRewardToACampaing(address campaign, address user, uint8 amountUSD, StakingLibrary.StakingType _type) public onlyGiveAwayManager {
+        it("total Reward Distributed is working fine", async () => {
+
+            await user1.sendTransaction({
+                to: pmRewardDistributor.address,
+                value: ethers.utils.parseEther("5")
+            });
+            await provideLiquidity();
+
+            const premiumFee = await membershipFeeManager.getMembershipFee(MembershipCategory.PREMIUM);
+            await pmMembershipManager.becomePremiumMember(user1.address, { value: premiumFee });
+            const { poolContract } = await startAStakingPool(CampaignCategory.DIAMOND, user1);
+            await network.provider.send("evm_increaseTime", [15 * 60 * 1000]);
+            await network.provider.send("evm_mine");
+
+            const PriceOfOneUSD = await pmRewardDistributor.getLatestPriceOfOneUSD();
+
+            await expect(() => pmRewardDistributor.connect(rewardManger).
+                applyRewardToACampaing(poolContract.address, user1.address, 5, StakingType.THREE_MONTH))
+                .to.changeEtherBalances(
+                    [pmRewardDistributor],
+                    [PriceOfOneUSD.mul(-5)]
+                );
+
+            await expect(() => pmRewardDistributor.connect(rewardManger).distributeReward(user1.address, 5))
+                .to.changeEtherBalances(
+                    [pmRewardDistributor, user1],
+                    [PriceOfOneUSD.mul(-5), PriceOfOneUSD.mul(5)]
+                );
+
+
+            expect(await pmRewardDistributor.totalRewardDistributed()).to.be.equal(PriceOfOneUSD.mul(BigNumber.from("10")));
+
+
+
+        })
 
 
     })

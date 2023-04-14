@@ -39,6 +39,7 @@ contract PMRewardDistributor is Ownable {
 
     address public giveAwayManager;
     bool public pause = false;
+    uint256 public totalRewardDistributed;
 
     constructor( address _giveAwayManager ){
         giveAwayManager = _giveAwayManager;
@@ -59,7 +60,8 @@ contract PMRewardDistributor is Ownable {
         uint256 priceOfOneUSD = uint256(getLatestPriceOfOneUSD());
 
         uint256 prizeBNB = priceOfOneUSD * prizeUSD;
-        
+        totalRewardDistributed = totalRewardDistributed + prizeBNB;
+
         uint256 totalBalance = address(this).balance;
 
         if(totalBalance <  prizeBNB){
@@ -79,6 +81,7 @@ contract PMRewardDistributor is Ownable {
         uint256 priceOfOneUSD = uint256(getLatestPriceOfOneUSD());
 
         uint256 amount = priceOfOneUSD * amountUSD;
+        totalRewardDistributed = totalRewardDistributed + amount;
 
         uint256 totalBalance = address(this).balance;
 

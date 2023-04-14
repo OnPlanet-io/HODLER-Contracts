@@ -17,7 +17,8 @@ module.exports = async ({ getNamedAccounts, deployments }: HardhatRuntimeEnviron
 
     console.log("chainId: ", chainId);
     console.log("deployer: ", deployer);
-
+    console.log("master: ", master.address);
+    
     const ownerShipTo = "0xE813d775f33a97BDA25D71240525C724423D4Cd0";
 
     if (chainId == 31337) {
@@ -130,13 +131,23 @@ module.exports = async ({ getNamedAccounts, deployments }: HardhatRuntimeEnviron
     }
     else {
 
+        let baseNonce = ethers.provider.getTransactionCount(deployer);
+        let nonceOffset = 0;
+
+        const getNonce = () => {
+            return baseNonce.then((nonce) => (nonce + (nonceOffset++)));
+        }
+
+        const nounce = await getNonce();
+        console.log("nounce: ",  nounce)
+        
         const CreatorManager = await deploy("CreatorManager", {
             from: deployer,
             args: [],
             log: true,
         })
 
-
+        
         const campaignFeeManagerArgs = [
             "0", "0", "0", // silver, gold, diamond
             "0", "0", "0", "0" // reward_0pc, reward_30pc, reward_50pc, reward_100pc   
@@ -154,6 +165,7 @@ module.exports = async ({ getNamedAccounts, deployments }: HardhatRuntimeEnviron
             "0","0","0","0" //"3", "2", "5", "8"
         ]
         const MembershipFeeManager = await deploy("MembershipFeeManager", {
+            // nonce: await getNonce(),
             from: deployer,
             args: membershipFeeManagerAgrs,
             log: true,
@@ -161,12 +173,14 @@ module.exports = async ({ getNamedAccounts, deployments }: HardhatRuntimeEnviron
 
 
         const PMMembershipManager = await deploy("PMMembershipManager", {
+            // nonce: await getNonce(),
             from: deployer,
             args: [MembershipFeeManager.address],
             log: true,
         })
 
         const PMTeamManager = await deploy("PMTeamManager", {
+            // nonce: await getNonce(),
             from: deployer,
             args: [MembershipFeeManager.address],
             log: true,
@@ -179,6 +193,7 @@ module.exports = async ({ getNamedAccounts, deployments }: HardhatRuntimeEnviron
             CreatorManager.address
         ]
         const StakingPoolFactory = await deploy("StakingPoolFactory", {
+            // nonce: await getNonce(),
             from: deployer,
             args: stakingPoolFactoryArgs,
             log: true,
@@ -186,46 +201,48 @@ module.exports = async ({ getNamedAccounts, deployments }: HardhatRuntimeEnviron
 
         const PMRewardDistributorArgs = [deployer]
         const PMRewardDistributor = await deploy("PMRewardDistributor", {
+            // nonce: await getNonce(),
             from: deployer,
             args: PMRewardDistributorArgs,
             log: true,
         })
 
-        // const accounts = await ethers.getSigners();
+
+        // const campaignFeeManager = new Contract(CampaignFeeManager.address, CampaignFeeManager.abi, master) as CampaignFeeManager;
+        // await campaignFeeManager.transferOwnership(ownerShipTo);
+
+        // const membershipFeeManager = new Contract(MembershipFeeManager.address, MembershipFeeManager.abi, master) as MembershipFeeManager;
+        // await membershipFeeManager.transferOwnership(ownerShipTo);
+
+        // const pmMembershipManager = new Contract(PMMembershipManager.address, PMMembershipManager.abi, master) as PMMembershipManager;
+        // await pmMembershipManager.transferOwnership(ownerShipTo);
+
+        // const pmTeamManager = new Contract(PMTeamManager.address, PMTeamManager.abi, master) as PMTeamManager;
+        // await pmTeamManager.transferOwnership(ownerShipTo);
+
+        // const stakingPoolFactory = new Contract(StakingPoolFactory.address, StakingPoolFactory.abi, master) as StakingPoolFactory;
+        // await stakingPoolFactory.transferOwnership(ownerShipTo);
+
+        // const pmRewardDistributor = new Contract(PMRewardDistributor.address, PMRewardDistributor.abi, master) as PMRewardDistributor;
+        // await pmRewardDistributor.transferOwnership(ownerShipTo);
         
-        // await accounts[0].sendTransaction({
-        //     to: PMRewardDistributor.address,
-        //     value: ethers.utils.parseEther("0.1"), // Sends exactly 1.0 ether
-        // });
 
-        // await varify(CreatorManager.address, []);
-        // await varify(StakingPoolFactory.address, stakingPoolFactoryArgs);
-        
-        // await varify(CampaignFeeManager.address, campaignFeeManagerArgs);
-        // await varify(MembershipFeeManager.address, membershipFeeManagerAgrs);
-        // await varify(PMMembershipManager.address, [MembershipFeeManager.address]);
+        await master.sendTransaction({
+            to: PMRewardDistributor.address,
+            value: ethers.utils.parseEther("0.1"), // Sends exactly 1.0 ether
+        });
 
-        // await varify(PMTeamManager.address, [MembershipFeeManager.address]);
-        // await varify(PMRewardDistributor.address, PMRewardDistributorArgs);
+        await varify(CreatorManager.address, []);
+        await varify(StakingPoolFactory.address, stakingPoolFactoryArgs);
 
-        const campaignFeeManager = new Contract(CampaignFeeManager.address, CampaignFeeManager.abi, master) as CampaignFeeManager;
-        await campaignFeeManager.transferOwnership(ownerShipTo);
+        await varify(CampaignFeeManager.address, campaignFeeManagerArgs);
+        await varify(MembershipFeeManager.address, membershipFeeManagerAgrs);
+        await varify(PMMembershipManager.address, [MembershipFeeManager.address]);
 
-        const membershipFeeManager = new Contract(MembershipFeeManager.address, MembershipFeeManager.abi, master) as MembershipFeeManager;
-        await membershipFeeManager.transferOwnership(ownerShipTo);
+        await varify(PMTeamManager.address, [MembershipFeeManager.address]);
+        await varify(PMRewardDistributor.address, PMRewardDistributorArgs);
 
-        const pmMembershipManager = new Contract(PMMembershipManager.address, PMMembershipManager.abi, master) as PMMembershipManager;
-        await pmMembershipManager.transferOwnership(ownerShipTo);
 
-        const pmTeamManager = new Contract(PMTeamManager.address, PMTeamManager.abi, master) as PMTeamManager;
-        await pmTeamManager.transferOwnership(ownerShipTo);
-
-        const stakingPoolFactory = new Contract(StakingPoolFactory.address, StakingPoolFactory.abi, master) as StakingPoolFactory;
-        await stakingPoolFactory.transferOwnership(ownerShipTo);
-
-        const pmRewardDistributor = new Contract(PMRewardDistributor.address, PMRewardDistributor.abi, master) as PMRewardDistributor;
-        await pmRewardDistributor.transferOwnership(ownerShipTo);
-        
     }
 
 

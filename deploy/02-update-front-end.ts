@@ -29,6 +29,7 @@ async function updateAbi() {
         const PMMembershipManager = await deployments.getArtifact("PMMembershipManager");
         const CampaignFeeManager = await deployments.getArtifact("CampaignFeeManager");
         const MembershipFeeManager = await deployments.getArtifact("MembershipFeeManager");
+        const PMRewardDistributor = await deployments.get("PMRewardDistributor");
 
         
         //helpers
@@ -46,7 +47,8 @@ async function updateAbi() {
             PMTeamManager: PMTeamManager.abi,
             CampaignFeeManager: CampaignFeeManager.abi,
             MembershipFeeManager: MembershipFeeManager.abi,
-
+            PMRewardDistributor: PMRewardDistributor.abi,
+            
             StakingToken: StakingToken.abi,
             ERC721Token: ERC721Token.abi,
             ERC20Token: ERC20Token.abi
@@ -99,7 +101,8 @@ async function updateContractAddresses() {
 
     }
 
-    else if(chainId === 5 || chainId === 56 ) {
+    // if(chainId === 5 || chainId === 56 )
+    else if (chainId){
 
         const CreatorManager = await deployments.get("CreatorManager");
         const StakingPoolFactory = await deployments.get("StakingPoolFactory");

@@ -12,46 +12,45 @@ async function main() {
   const router_goerli = "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D";
   const edge = "0x6Fb08a7d994570a16322c1eA2d8D9936719761B9";
 
-  const amount = 1_000_000_000; 
+  const amount = 1_000_000_000;
 
   console.log("Staring: ", ali)
 
 
-  // const Token1 = await deploy('Token', {
-  //   from: deployer.address,
-  //   args: ["Faux Finance Token", "FAUXT"],
-  //   log: true
-  // });
-  
+  const Token1 = await deploy('Token', {
+    from: deployer.address,
+    args: ["Faux Finance Token", "FAUXT"],
+    log: true
+  });
+
   // console.log("token deployed: ", Token1.address)
 
-  const Token1: Token__factory = await ethers.getContractFactory('Token');
-  let token1: Token = Token1.attach("0xfcA0CcEDAaC3850Be9b03E5833e015A90fffb6aa");
-  
-  // let token1 = new ethers.Contract(Token1.address, Token1.abi, deployer) as Token;
+  // const Token1: Token__factory = await ethers.getContractFactory('Token');
+  // let token1: Token = Token1.attach("0xfcA0CcEDAaC3850Be9b03E5833e015A90fffb6aa");
+
+  let token1 = new ethers.Contract(Token1.address, Token1.abi, deployer) as Token;
   await token1.mintToSomeone(edge, amount);
 
-  // const UniswapV2Router02: UniswapV2Router02__factory = await ethers.getContractFactory('UniswapV2Router02');
-  // let router = UniswapV2Router02.attach("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D") as UniswapV2Router02;
-  
-  // let latestBlock = await ethers.provider.getBlock("latest")
+  const UniswapV2Router02 = await ethers.getContractFactory('UniswapV2Router02') as UniswapV2Router02__factory;
+  let router = UniswapV2Router02.attach("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D") as UniswapV2Router02;
 
-  // await token1.approve(router.address, ethers.utils.parseEther("10000"))
-  // console.log("Token approved to", router.address);
+  let latestBlock = await ethers.provider.getBlock("latest")
 
-  
+  await token1.approve(router.address, ethers.utils.parseEther("10000"))
+  console.log("Token approved to", router.address);
 
-  // await router.addLiquidityETH(
-  //     token1.address,
-  //     ethers.utils.parseEther("10000"),
-  //     0,
-  //     0,
-  //     deployer.address,
-  //     1677704839 + 36000,
-  //     { value: ethers.utils.parseEther("0.01") }
-  // )
 
-  // console.log("Liquidity provided")
+  await router.addLiquidityETH(
+    token1.address,
+    ethers.utils.parseEther("10000"),
+    0,
+    0,
+    deployer.address,
+    1680907531 + 36000,
+    { value: ethers.utils.parseEther("0.01") }
+  )
+
+  console.log("Liquidity provided")
 
 
 }
