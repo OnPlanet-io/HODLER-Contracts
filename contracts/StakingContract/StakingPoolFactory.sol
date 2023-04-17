@@ -49,9 +49,9 @@ contract StakingPoolFactory is Ownable {
     }
 
     function createAStakingPool(
-        StakingLibrary.ProjectInfo memory projectInfo,
+        StakingLibrary.ProjectInfo memory projectInfo, 
         StakingLibrary.RewardPoolInfo memory rewardPoolInfo,
-        StakingLibrary.Images memory images
+        StakingLibrary.NFTData memory nftData 
         ) public payable {
         
         if(pause){
@@ -85,7 +85,7 @@ contract StakingPoolFactory is Ownable {
         projectsCount++;
         
         StakingPool stakingContract = new StakingPool(
-            projectsCount, projectInfo, rewardPoolInfo, images, creatorManager, campaignFeeManager, msg.sender
+            projectsCount, projectInfo, rewardPoolInfo, nftData, creatorManager, campaignFeeManager, msg.sender
         );
 
 
@@ -100,6 +100,7 @@ contract StakingPoolFactory is Ownable {
         bool transfered = IERC20(projectInfo.tokenAddress)
                             .transferFrom(msg.sender, address(stakingContract), rewardPoolInfo.poolAmount);
         
+
         if(!transfered){
             revert FAILED_TO_TRANSFER_TOKENS();
         }

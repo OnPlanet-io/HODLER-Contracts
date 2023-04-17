@@ -8,7 +8,7 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
 import { StakingPool__factory, PMTeamManager, PMTeamManager__factory, PMMembershipManager__factory, Token__factory, PMRewardDistributor__factory, PMRewardDistributor } from "../typechain-types";
 import { UniswapV2Factory__factory, UniswapV2Pair__factory, UniswapV2Router02__factory, WETH9__factory } from "../typechain-types";
-import {  PMMembershipManager } from "../typechain-types";
+import { PMMembershipManager } from "../typechain-types";
 import { StakingPoolFactory__factory, StakingPoolFactory } from "../typechain-types";
 import { CreatorManager__factory, CreatorManager } from "../typechain-types";
 import { StakingToken, StakingToken__factory } from "../typechain-types";
@@ -36,7 +36,7 @@ const enum Association { NONE, TEAM, USER };
 const enum MembershipCategory { REGULAR, UPGRADE, PREMIUM, TEAM };
 const enum UnstakingCategory { REWARD_0PC, REWARD_30PC, REWARD_50PC, REWARD_100PC };
 const enum FeesType { USD, BNB }
-const enum StakingType { THREE_MONTH, SIX_MONTH, TWELVE_MONTH };
+const enum StakingType { ONE_MONTH, THREE_MONTH, SIX_MONTH, NINE_MONTH, TWELVE_MONTH };
 
 const DEAD_ADDRESS = "0x000000000000000000000000000000000000dEaD"
 
@@ -74,9 +74,16 @@ describe("Planet Moon Test Stack", function () {
             },
             // images
             {
+                image_1_months: "image_1_months",
                 image_3_months: "image_3_months",
                 image_6_months: "image_6_months",
-                image_12_months: "image_12_months"
+                image_9_months: "image_9_months",
+                image_12_months: "image_12_months",
+                APY_1_months: 10,
+                APY_3_months: 30,
+                APY_6_months: 50,
+                APY_9_months: 60,
+                APY_12_months: 80,
             },
             {
                 value: campaignFee
@@ -89,7 +96,7 @@ describe("Planet Moon Test Stack", function () {
         let stakingPoolAddress = xxxx[0].args.poolAddress;
         let poolId = xxxx[0].args.poolId;
 
-        const StakingPool: StakingPool__factory = await ethers.getContractFactory("StakingPool");
+        const StakingPool = await ethers.getContractFactory("StakingPool") as StakingPool__factory;
         return {
             poolContract: StakingPool.attach(stakingPoolAddress),
             poolId: poolId as BigNumber
@@ -99,12 +106,11 @@ describe("Planet Moon Test Stack", function () {
 
     const launchOPAndProvideLiquidity = async () => {
 
-        const UniswapV2Factory: UniswapV2Factory__factory = await ethers.getContractFactory("UniswapV2Factory");
-        const UniswapV2Pair: UniswapV2Pair__factory = await ethers.getContractFactory('UniswapV2Pair');
-        const UniswapV2Router02: UniswapV2Router02__factory = await ethers.getContractFactory('UniswapV2Router02');
-        const WETH: WETH9__factory = await ethers.getContractFactory('WETH9');
-        const BuyBackToken: Token__factory = await ethers.getContractFactory("Token");
-
+        const UniswapV2Factory = await ethers.getContractFactory("UniswapV2Factory") as UniswapV2Factory__factory;
+        const UniswapV2Pair = await ethers.getContractFactory('UniswapV2Pair') as UniswapV2Pair__factory;
+        const UniswapV2Router02 = await ethers.getContractFactory('UniswapV2Router02') as UniswapV2Router02__factory;
+        const WETH = await ethers.getContractFactory('WETH9') as WETH9__factory;
+        const BuyBackToken = await ethers.getContractFactory("Token") as Token__factory;
 
         let myWETH = await WETH.deploy();
         let factory = await UniswapV2Factory.deploy(deployer.address);
@@ -141,10 +147,10 @@ describe("Planet Moon Test Stack", function () {
 
     const provideLiquidity = async () => {
 
-        const UniswapV2Factory: UniswapV2Factory__factory = await ethers.getContractFactory("UniswapV2Factory");
-        const UniswapV2Pair: UniswapV2Pair__factory = await ethers.getContractFactory('UniswapV2Pair');
-        const UniswapV2Router02: UniswapV2Router02__factory = await ethers.getContractFactory('UniswapV2Router02');
-        const WETH: WETH9__factory = await ethers.getContractFactory('WETH9');
+        const UniswapV2Factory = await ethers.getContractFactory("UniswapV2Factory") as UniswapV2Factory__factory;
+        const UniswapV2Pair = await ethers.getContractFactory('UniswapV2Pair') as UniswapV2Pair__factory;
+        const UniswapV2Router02 = await ethers.getContractFactory('UniswapV2Router02') as UniswapV2Router02__factory;
+        const WETH = await ethers.getContractFactory('WETH9') as WETH9__factory;
 
         let myWETH = await WETH.deploy();
         let factory = await UniswapV2Factory.deploy(deployer.address);
@@ -178,36 +184,36 @@ describe("Planet Moon Test Stack", function () {
 
     beforeEach(async () => {
 
-        [ deployer, user1, user2, user3, user4, user5, user6, rewardPool, corporate, rewardManger ] = await ethers.getSigners();
+        [deployer, user1, user2, user3, user4, user5, user6, rewardPool, corporate, rewardManger] = await ethers.getSigners();
 
-        const StakingToken: StakingToken__factory = await ethers.getContractFactory("StakingToken");
+        const StakingToken = await ethers.getContractFactory("StakingToken") as StakingToken__factory;
         stakingToken = await StakingToken.deploy();
 
-        const CreatorManager: CreatorManager__factory = await ethers.getContractFactory("CreatorManager");
+        const CreatorManager = await ethers.getContractFactory("CreatorManager") as CreatorManager__factory;
         creatorManager = await CreatorManager.deploy();
 
-        const CampaignFeeManager: CampaignFeeManager__factory = await ethers.getContractFactory("CampaignFeeManager");
+        const CampaignFeeManager = await ethers.getContractFactory("CampaignFeeManager") as CampaignFeeManager__factory;
         campaignFeeManager = await CampaignFeeManager.deploy(
             "100", "125", "400", // silver, gold, diamond
             "3", "2", "2", "0" // reward_0pc, reward_30pc, reward_50pc, reward_100pc   
         );
 
-        const MembershipFeeManager: MembershipFeeManager__factory = await ethers.getContractFactory("MembershipFeeManager");
+        const MembershipFeeManager = await ethers.getContractFactory("MembershipFeeManager") as MembershipFeeManager__factory;
         membershipFeeManager = await MembershipFeeManager.deploy(
             "3", "2", "5", "8"
         );
 
-        const PMMembershipManager: PMMembershipManager__factory = await ethers.getContractFactory("PMMembershipManager");
+        const PMMembershipManager = await ethers.getContractFactory("PMMembershipManager") as PMMembershipManager__factory;
         pmMembershipManager = await PMMembershipManager.deploy(membershipFeeManager.address);
 
-        const PMTeamManager: PMTeamManager__factory = await ethers.getContractFactory("PMTeamManager");
+        const PMTeamManager = await ethers.getContractFactory("PMTeamManager") as PMTeamManager__factory;
         pmTeamManager = await PMTeamManager.deploy(membershipFeeManager.address);
 
-        const StakingPoolFactory: StakingPoolFactory__factory = await ethers.getContractFactory("StakingPoolFactory");
+        const StakingPoolFactory = await ethers.getContractFactory("StakingPoolFactory") as StakingPoolFactory__factory;
         stakingPoolFactory = await StakingPoolFactory.deploy(campaignFeeManager.address, pmMembershipManager.address, pmTeamManager.address, creatorManager.address);
 
-        const PMRewardDistributor: PMRewardDistributor__factory = await ethers.getContractFactory("PMRewardDistributor");
-        pmRewardDistributor = await PMRewardDistributor.deploy(rewardManger.address);        
+        const PMRewardDistributor = await ethers.getContractFactory("PMRewardDistributor") as PMRewardDistributor__factory;
+        pmRewardDistributor = await PMRewardDistributor.deploy(rewardManger.address);
 
 
     })
@@ -674,7 +680,7 @@ describe("Planet Moon Test Stack", function () {
             it("No one can create a team if teamManager contract is paused", async () => {
 
                 const teamFee = await membershipFeeManager.getMembershipFee(MembershipCategory.TEAM);
-                
+
                 await pmTeamManager.changePauseStatus(true);
 
                 await expect(pmTeamManager.connect(user1).createATeam(user1.address, { value: teamFee }))
@@ -691,7 +697,7 @@ describe("Planet Moon Test Stack", function () {
             it("No one can become regular member if membershipManager contract is paused", async () => {
 
                 const regularFee = await membershipFeeManager.getMembershipFee(MembershipCategory.REGULAR);
-                
+
                 await pmMembershipManager.changePauseStatus(true);
 
                 await expect(pmMembershipManager.connect(user1).becomeMember(user1.address, { value: regularFee }))
@@ -708,7 +714,7 @@ describe("Planet Moon Test Stack", function () {
             it("No one can become premium member if membershipManager contract is paused", async () => {
 
                 const premiumFee = await membershipFeeManager.getMembershipFee(MembershipCategory.PREMIUM);
-                
+
                 await pmMembershipManager.changePauseStatus(true);
 
                 await expect(pmMembershipManager.connect(user1).becomePremiumMember(user1.address, { value: premiumFee }))
@@ -727,7 +733,6 @@ describe("Planet Moon Test Stack", function () {
     })
 
     describe("Campaigns Management", () => {
-
 
         describe("Staking pools Factory", () => {
 
@@ -868,9 +873,16 @@ describe("Planet Moon Test Stack", function () {
                         },
                         // images
                         {
+                            image_1_months: "image_1_months",
                             image_3_months: "image_3_months",
                             image_6_months: "image_6_months",
-                            image_12_months: "image_12_months"
+                            image_9_months: "image_9_months",
+                            image_12_months: "image_12_months",
+                            APY_1_months: 10,
+                            APY_3_months: 30,
+                            APY_6_months: 50,
+                            APY_9_months: 60,
+                            APY_12_months: 80,
                         },
                         {
                             value: campaignFee
@@ -917,17 +929,22 @@ describe("Planet Moon Test Stack", function () {
                         },
                         // images
                         {
+                            image_1_months: "image_1_months",
                             image_3_months: "image_3_months",
                             image_6_months: "image_6_months",
-                            image_12_months: "image_12_months"
+                            image_9_months: "image_9_months",
+                            image_12_months: "image_12_months",
+                            APY_1_months: 10,
+                            APY_3_months: 30,
+                            APY_6_months: 50,
+                            APY_9_months: 60,
+                            APY_12_months: 80,
                         },
                         {
                             value: campaignFee.sub(1)
                         }
                     )
                 ).to.rejectedWith("INSUFFICIENT_FUNDS");
-
-
 
             })
 
@@ -968,9 +985,16 @@ describe("Planet Moon Test Stack", function () {
                         },
                         // images
                         {
+                            image_1_months: "image_1_months",
                             image_3_months: "image_3_months",
                             image_6_months: "image_6_months",
-                            image_12_months: "image_12_months"
+                            image_9_months: "image_9_months",
+                            image_12_months: "image_12_months",
+                            APY_1_months: 10,
+                            APY_3_months: 30,
+                            APY_6_months: 50,
+                            APY_9_months: 60,
+                            APY_12_months: 80,
                         },
                         {
                             value: campaignFee
@@ -1017,9 +1041,16 @@ describe("Planet Moon Test Stack", function () {
                         },
                         // images
                         {
+                            image_1_months: "image_1_months",
                             image_3_months: "image_3_months",
                             image_6_months: "image_6_months",
-                            image_12_months: "image_12_months"
+                            image_9_months: "image_9_months",
+                            image_12_months: "image_12_months",
+                            APY_1_months: 10,
+                            APY_3_months: 30,
+                            APY_6_months: 50,
+                            APY_9_months: 60,
+                            APY_12_months: 80,
                         },
                         {
                             value: campaignFee
@@ -1027,9 +1058,10 @@ describe("Planet Moon Test Stack", function () {
                     )
                 ).to.rejectedWith("ERC20: insufficient allowance");
 
-
-
             })
+
+
+
 
         })
 
@@ -1116,6 +1148,7 @@ describe("Planet Moon Test Stack", function () {
 
                     await poolContract.connect(user2).stakeTokens(user2.address, tokens, StakingType.TWELVE_MONTH);
 
+                    // console.log("(await poolContract.getProjectInfo()).rewardPoolInfo.poolAmount: ", (await poolContract.getProjectInfo()).rewardPoolInfo.);
                     expect((await poolContract.getProjectInfo()).poolInfo.remainingPool).to.be.equal("0");
 
                     await stakingToken.connect(user2).mint(tokens);
@@ -1167,7 +1200,7 @@ describe("Planet Moon Test Stack", function () {
                     await stakingToken.connect(user2).mint(ethers.utils.parseEther("1000"));
                     await stakingToken.connect(user2).approve(poolContract.address, ethers.utils.parseEther("1000"));
                     await poolContract.connect(user2).stakeTokens(user2.address, ethers.utils.parseEther("1000"), StakingType.THREE_MONTH);
-                    
+
                     await network.provider.send("evm_increaseTime", [90 * 24 * 60 * 60]);
                     await network.provider.send("evm_mine");
 
@@ -1385,12 +1418,8 @@ describe("Planet Moon Test Stack", function () {
                     const allTokens = await poolContract.getUserTokens(user2.address);
                     const [_projectInfo, _tokens] = allTokens;
 
-                    // console.log("_projectInfo: ", _projectInfo);
-                    // console.log("_tokens: ", _tokens);
-
-                    expect(_projectInfo.tokenAddress).to.be.equal(stakingToken.address);
-                    expect(_tokens.length).to.be.equal(3);
-                    
+                    // expect(_projectInfo.tokenAddress).to.be.equal(stakingToken.address);
+                    expect(allTokens.length).to.be.equal(3);
 
                     // expect(tokenDataForUser2.poolAddress).to.be.equal(poolContract.address);
                     // expect(tokenDataForUser2.poolId).to.be.equal(poolId);
@@ -1403,7 +1432,7 @@ describe("Planet Moon Test Stack", function () {
                     // await stakingToken.connect(user3).mint(tokens);
                     // await stakingToken.connect(user3).approve(poolContract.address, tokens);
                     // await poolContract.connect(user3).stakeTokens(user3.address, tokens, StakingType.THREE_MONTH);
-                    
+
                     // const tokenDataForUser3 = await poolContract.getTokenData("2");
                     // expect(tokenDataForUser3.poolAddress).to.be.equal(poolContract.address);
                     // expect(tokenDataForUser3.poolId).to.be.equal(poolId);
@@ -1697,11 +1726,11 @@ describe("Planet Moon Test Stack", function () {
                 })
 
                 it("If someone's creator contract doesn't exists, then it can't be queried", async () => {
-                    
+
                     await expect(creatorManager.getCreatorAddress(user1.address)).to.rejectedWith("NOT_EXIST")
                     await expect(creatorManager.getCreatorAddress(user2.address)).to.rejectedWith("NOT_EXIST")
                     await expect(creatorManager.getCreatorAddress(user3.address)).to.rejectedWith("NOT_EXIST")
-                    
+
                     await creatorManager.createACreator(user1.address);
                     await creatorManager.createACreator(user2.address);
                     await creatorManager.createACreator(user3.address);
@@ -1843,7 +1872,7 @@ describe("Planet Moon Test Stack", function () {
                     expect(await stakingToken.balanceOf(user2.address)).to.equal(ethers.utils.parseEther("1300"));
                     expect(await stakingToken.balanceOf(creatorContract.address)).to.equal(ethers.utils.parseEther("1000"));
                     expect(await creatorManager.getPoolAddressesOfCreator(user2.address)).to.not.empty;
-    
+
                     await expect(() => poolContract.connect(user2).unstakeTokens(2))
                         .changeTokenBalances(stakingToken,
                             [user2, poolContract, creatorContract],
@@ -1883,18 +1912,18 @@ describe("Planet Moon Test Stack", function () {
                     await stakingToken.connect(user2).approve(poolContract1.address, ethers.utils.parseEther("200"));
                     await poolContract1.connect(user2).stakeTokens(user2.address, ethers.utils.parseEther("100"), StakingType.THREE_MONTH);
                     await poolContract1.connect(user2).stakeTokens(user2.address, ethers.utils.parseEther("100"), StakingType.THREE_MONTH);
-                    
+
                     await stakingToken.connect(user2).mint(ethers.utils.parseEther("200"));
                     await stakingToken.connect(user2).approve(poolContract2.address, ethers.utils.parseEther("200"));
                     await poolContract2.connect(user2).stakeTokens(user2.address, ethers.utils.parseEther("100"), StakingType.THREE_MONTH);
                     await poolContract2.connect(user2).stakeTokens(user2.address, ethers.utils.parseEther("100"), StakingType.THREE_MONTH);
-                    
+
                     await stakingToken.connect(user2).mint(ethers.utils.parseEther("200"));
                     await stakingToken.connect(user2).approve(poolContract3.address, ethers.utils.parseEther("200"));
                     await poolContract3.connect(user2).stakeTokens(user2.address, ethers.utils.parseEther("100"), StakingType.THREE_MONTH);
                     await poolContract3.connect(user2).stakeTokens(user2.address, ethers.utils.parseEther("100"), StakingType.THREE_MONTH);
 
-                    
+
                     expect(await creatorManager.getPoolAddressesOfCreator(user2.address)).to.include(poolContract1.address);
                     expect(await creatorManager.getPoolAddressesOfCreator(user2.address)).to.include(poolContract2.address);
                     expect(await creatorManager.getPoolAddressesOfCreator(user2.address)).to.include(poolContract3.address);
@@ -1904,7 +1933,7 @@ describe("Planet Moon Test Stack", function () {
                     expect(await stakingToken.balanceOf(user2.address)).to.equal(ethers.utils.parseEther("0"));
                     expect(await stakingToken.balanceOf(creatorContract.address)).to.equal(ethers.utils.parseEther("600"));
 
-                    await network.provider.send("evm_increaseTime", [ 90 * 24 * 60 * 60]);
+                    await network.provider.send("evm_increaseTime", [90 * 24 * 60 * 60]);
                     await network.provider.send("evm_mine");
 
                     await expect(() => poolContract1.connect(user2).unstakeTokens(1))
@@ -1919,13 +1948,13 @@ describe("Planet Moon Test Stack", function () {
 
                     expect(await stakingToken.balanceOf(user2.address)).to.equal(ethers.utils.parseEther("130"));
                     expect(await stakingToken.balanceOf(creatorContract.address)).to.equal(ethers.utils.parseEther("500"));
-    
+
                     expect(await creatorManager.getPoolAddressesOfCreator(user2.address)).to.include(poolContract1.address);
                     expect(await creatorManager.getPoolAddressesOfCreator(user2.address)).to.include(poolContract2.address);
                     expect(await creatorManager.getPoolAddressesOfCreator(user2.address)).to.include(poolContract3.address);
                     expect((await creatorManager.getPoolAddressesOfCreator(user2.address)).length).to.equal(3);
 
-                    
+
                     await expect(() => poolContract1.connect(user2).unstakeTokens(2))
                         .changeTokenBalances(stakingToken,
                             [user2, poolContract1, creatorContract],
@@ -1938,17 +1967,17 @@ describe("Planet Moon Test Stack", function () {
 
                     expect(await stakingToken.balanceOf(user2.address)).to.equal(ethers.utils.parseEther("260"));
                     expect(await stakingToken.balanceOf(creatorContract.address)).to.equal(ethers.utils.parseEther("400"));
-    
+
                     expect(await creatorManager.getPoolAddressesOfCreator(user2.address)).to.not.include(poolContract1.address);
                     expect(await creatorManager.getPoolAddressesOfCreator(user2.address)).to.include(poolContract2.address);
                     expect(await creatorManager.getPoolAddressesOfCreator(user2.address)).to.include(poolContract3.address);
                     expect((await creatorManager.getPoolAddressesOfCreator(user2.address)).length).to.equal(2);
 
-                    
+
 
                     await expect(poolContract1.connect(user2).unstakeTokens(1)).to.rejectedWith("ALREADY_UNSTAKED")
                     await expect(poolContract1.connect(user2).unstakeTokens(2)).to.rejectedWith("ALREADY_UNSTAKED")
-                    
+
                     await expect(() => poolContract2.connect(user2).unstakeTokens(1))
                         .changeTokenBalances(stakingToken,
                             [user2, poolContract2, creatorContract],
@@ -1961,7 +1990,7 @@ describe("Planet Moon Test Stack", function () {
 
                     expect(await stakingToken.balanceOf(user2.address)).to.equal(ethers.utils.parseEther("390"));
                     expect(await stakingToken.balanceOf(creatorContract.address)).to.equal(ethers.utils.parseEther("300"));
-    
+
                     expect(await creatorManager.getPoolAddressesOfCreator(user2.address)).to.not.include(poolContract1.address);
                     expect(await creatorManager.getPoolAddressesOfCreator(user2.address)).to.include(poolContract2.address);
                     expect(await creatorManager.getPoolAddressesOfCreator(user2.address)).to.include(poolContract3.address);
@@ -1972,7 +2001,7 @@ describe("Planet Moon Test Stack", function () {
                     await expect(poolContract1.connect(user2).unstakeTokens(1)).to.rejectedWith("ALREADY_UNSTAKED")
                     await expect(poolContract1.connect(user2).unstakeTokens(2)).to.rejectedWith("ALREADY_UNSTAKED")
                     await expect(poolContract2.connect(user2).unstakeTokens(1)).to.rejectedWith("ALREADY_UNSTAKED")
-                    
+
                     await expect(() => poolContract2.connect(user2).unstakeTokens(2))
                         .changeTokenBalances(stakingToken,
                             [user2, poolContract2, creatorContract],
@@ -1985,7 +2014,7 @@ describe("Planet Moon Test Stack", function () {
 
                     expect(await stakingToken.balanceOf(user2.address)).to.equal(ethers.utils.parseEther("520"));
                     expect(await stakingToken.balanceOf(creatorContract.address)).to.equal(ethers.utils.parseEther("200"));
-    
+
                     expect(await creatorManager.getPoolAddressesOfCreator(user2.address)).to.not.include(poolContract1.address);
                     expect(await creatorManager.getPoolAddressesOfCreator(user2.address)).to.not.include(poolContract2.address);
                     expect(await creatorManager.getPoolAddressesOfCreator(user2.address)).to.include(poolContract3.address);
@@ -1997,7 +2026,7 @@ describe("Planet Moon Test Stack", function () {
                     await expect(poolContract1.connect(user2).unstakeTokens(2)).to.rejectedWith("ALREADY_UNSTAKED")
                     await expect(poolContract2.connect(user2).unstakeTokens(1)).to.rejectedWith("ALREADY_UNSTAKED")
                     await expect(poolContract2.connect(user2).unstakeTokens(2)).to.rejectedWith("ALREADY_UNSTAKED")
-                    
+
                     await expect(() => poolContract3.connect(user2).unstakeTokens(1))
                         .changeTokenBalances(stakingToken,
                             [user2, poolContract3, creatorContract],
@@ -2010,7 +2039,7 @@ describe("Planet Moon Test Stack", function () {
 
                     expect(await stakingToken.balanceOf(user2.address)).to.equal(ethers.utils.parseEther("650"));
                     expect(await stakingToken.balanceOf(creatorContract.address)).to.equal(ethers.utils.parseEther("100"));
-    
+
                     expect(await creatorManager.getPoolAddressesOfCreator(user2.address)).to.not.include(poolContract1.address);
                     expect(await creatorManager.getPoolAddressesOfCreator(user2.address)).to.not.include(poolContract2.address);
                     expect(await creatorManager.getPoolAddressesOfCreator(user2.address)).to.include(poolContract3.address);
@@ -2022,7 +2051,7 @@ describe("Planet Moon Test Stack", function () {
                     await expect(poolContract2.connect(user2).unstakeTokens(1)).to.rejectedWith("ALREADY_UNSTAKED")
                     await expect(poolContract2.connect(user2).unstakeTokens(2)).to.rejectedWith("ALREADY_UNSTAKED")
                     await expect(poolContract3.connect(user2).unstakeTokens(1)).to.rejectedWith("ALREADY_UNSTAKED")
-                    
+
 
                     await expect(() => poolContract3.connect(user2).unstakeTokens(2))
                         .changeTokenBalances(stakingToken,
@@ -2052,6 +2081,279 @@ describe("Planet Moon Test Stack", function () {
                 })
 
             })
+
+        })
+
+        describe("Adjustable APY ", () => {
+
+            it("Can create a campaing with only single staking scheme", async () => {
+
+                const premiumFee = await membershipFeeManager.getMembershipFee(MembershipCategory.PREMIUM);
+                const campaignFee = await campaignFeeManager.getCampaignFee(CampaignCategory.SILVER);
+
+                await expect(() => pmMembershipManager.connect(user3).becomePremiumMember(user3.address, { value: premiumFee }))
+                    .to.changeEtherBalances([user3, membershipFeeManager], [premiumFee.mul(-1), premiumFee]);
+
+                const tokens = ethers.utils.parseEther("1000");
+                const decimals = stakingToken.decimals();
+                const symbol = stakingToken.symbol();
+
+                await stakingToken.connect(user3).mint(tokens);
+                await stakingToken.connect(user3).approve(stakingPoolFactory.address, tokens);
+
+                let latestBlock = await ethers.provider.getBlock("latest");
+
+                const tx = await stakingPoolFactory.connect(user3).createAStakingPool(
+                    // projectInfo 
+                    {
+                        category: CampaignCategory.SILVER,
+                        projectName: "Awesome Staking Pool",
+                        projectSymbol: "ASP",
+                        tokenAddress: stakingToken.address,
+                        tokenDecimals: decimals,
+                        tokenSymbol: symbol,
+                        profileType: Association.NONE,
+                        profileId: 0
+                    },
+                    // rewardPoolInfo
+                    {
+                        startedAt: latestBlock.timestamp + 1,
+                        poolAmount: tokens
+                    },
+                    // images
+                    {
+                        image_1_months: "image_1_months",
+                        image_3_months: "image_3_months",
+                        image_6_months: "image_6_months",
+                        image_9_months: "image_9_months",
+                        image_12_months: "image_12_months",
+                        APY_1_months: 10,
+                        APY_3_months: 0,
+                        APY_6_months: 0,
+                        APY_9_months: 0,
+                        APY_12_months: 0,
+                    },
+                    {
+                        value: campaignFee
+                    }
+                );
+
+                let receipt: ContractReceipt = await tx.wait();
+                const xxxx: any = receipt.events?.filter((x) => { return x.event == "Poolcreated" })
+                let stakingPoolAddress = xxxx[0].args.poolAddress;
+                let poolId = xxxx[0].args.poolId;
+                const StakingPool = await ethers.getContractFactory("StakingPool") as StakingPool__factory;
+                const poolContract = StakingPool.attach(stakingPoolAddress);
+                
+
+                await network.provider.send("evm_increaseTime", [15 * 60 * 1000]);
+                await network.provider.send("evm_mine");
+
+                const tokensToStake = ethers.utils.parseEther("10000");
+                await stakingToken.connect(user2).mint(tokensToStake);
+                await stakingToken.connect(user2).approve(poolContract.address, tokensToStake);
+
+                await poolContract.connect(user2).stakeTokens(user2.address, tokensToStake, StakingType.ONE_MONTH);
+
+                const tokenDataForUser2 = await poolContract.getTokenData("1");
+
+                expect(tokenDataForUser2.stakingType).to.be.equal(StakingType.ONE_MONTH);
+                expect(tokenDataForUser2.tokenStaked).to.be.equal(tokensToStake);
+                expect(tokenDataForUser2.owner).to.be.equal(user2.address);
+                expect(tokenDataForUser2.isUnskated).to.be.equal(false);
+                
+
+                await expect(
+                    poolContract.connect(user2).stakeTokens(user2.address, tokens, StakingType.THREE_MONTH)
+                ).to.rejectedWith("NOT_A_VALID_STAKING_TYPE")
+                await expect(
+                    poolContract.connect(user2).stakeTokens(user2.address, tokens, StakingType.SIX_MONTH)
+                ).to.rejectedWith("NOT_A_VALID_STAKING_TYPE")
+                await expect(
+                    poolContract.connect(user2).stakeTokens(user2.address, tokens, StakingType.NINE_MONTH)
+                ).to.rejectedWith("NOT_A_VALID_STAKING_TYPE")
+                await expect(
+                    poolContract.connect(user2).stakeTokens(user2.address, tokens, StakingType.TWELVE_MONTH)
+                ).to.rejectedWith("NOT_A_VALID_STAKING_TYPE")
+
+                await network.provider.send("evm_increaseTime", [30 * 24 * 60 * 60]);
+                await network.provider.send("evm_mine");
+
+                expect(await stakingToken.balanceOf(poolContract.address)).to.be.equal(ethers.utils.parseEther("1000"))
+                expect(await stakingToken.balanceOf(user2.address)).to.be.equal(ethers.utils.parseEther("0"))
+
+                await poolContract.connect(user2).unstakeTokens(tokenDataForUser2.tokenId, { value: "0" });
+
+                expect(await stakingToken.balanceOf(poolContract.address)).to.be.equal(ethers.utils.parseEther("0"))
+                expect(await stakingToken.balanceOf(user2.address)).to.be.equal(ethers.utils.parseEther("11000"))
+
+
+                await stakingToken.connect(user2).mint(tokensToStake);
+                await stakingToken.connect(user2).approve(poolContract.address, tokensToStake);
+
+                await expect(
+                    poolContract.connect(user2).stakeTokens(user2.address, tokensToStake, StakingType.ONE_MONTH)
+                ).to.rejectedWith("NOT_ENOUGH_REWARD()");
+
+
+            })
+
+            it("Can create a campaing with selected staking scheme", async () => {
+
+                const premiumFee = await membershipFeeManager.getMembershipFee(MembershipCategory.PREMIUM);
+                const campaignFee = await campaignFeeManager.getCampaignFee(CampaignCategory.SILVER);
+
+                await expect(() => pmMembershipManager.connect(user3).becomePremiumMember(user3.address, { value: premiumFee }))
+                    .to.changeEtherBalances([user3, membershipFeeManager], [premiumFee.mul(-1), premiumFee]);
+
+                const tokens = ethers.utils.parseEther("1000");
+                const decimals = stakingToken.decimals();
+                const symbol = stakingToken.symbol();
+
+                await stakingToken.connect(user3).mint(tokens);
+                await stakingToken.connect(user3).approve(stakingPoolFactory.address, tokens);
+
+                let latestBlock = await ethers.provider.getBlock("latest");
+
+                const tx = await stakingPoolFactory.connect(user3).createAStakingPool(
+                    // projectInfo 
+                    {
+                        category: CampaignCategory.SILVER,
+                        projectName: "Awesome Staking Pool",
+                        projectSymbol: "ASP",
+                        tokenAddress: stakingToken.address,
+                        tokenDecimals: decimals,
+                        tokenSymbol: symbol,
+                        profileType: Association.NONE,
+                        profileId: 0
+                    },
+                    // rewardPoolInfo
+                    {
+                        startedAt: latestBlock.timestamp + 1,
+                        poolAmount: tokens
+                    },
+                    // images
+                    {
+                        image_1_months: "image_1_months",
+                        image_3_months: "image_3_months",
+                        image_6_months: "image_6_months",
+                        image_9_months: "image_9_months",
+                        image_12_months: "image_12_months",
+                        APY_1_months: 10,
+                        APY_3_months: 0,
+                        APY_6_months: 60,
+                        APY_9_months: 0,
+                        APY_12_months: 100,
+                    },
+                    {
+                        value: campaignFee
+                    }
+                );
+
+                let receipt: ContractReceipt = await tx.wait();
+                const xxxx: any = receipt.events?.filter((x) => { return x.event == "Poolcreated" })
+                let stakingPoolAddress = xxxx[0].args.poolAddress;
+                let poolId = xxxx[0].args.poolId;
+                const StakingPool = await ethers.getContractFactory("StakingPool") as StakingPool__factory;
+                const poolContract = StakingPool.attach(stakingPoolAddress);
+
+
+                await network.provider.send("evm_increaseTime", [15 * 60 * 1000]);
+                await network.provider.send("evm_mine");
+
+                const tokensToStake = ethers.utils.parseEther("100");
+                await stakingToken.connect(user2).mint(tokensToStake.mul("3"));
+                await stakingToken.connect(user2).approve(poolContract.address, tokensToStake.mul("3"));
+
+                await poolContract.connect(user2).stakeTokens(user2.address, tokensToStake, StakingType.ONE_MONTH);
+                await poolContract.connect(user2).stakeTokens(user2.address, tokensToStake, StakingType.SIX_MONTH);
+                await poolContract.connect(user2).stakeTokens(user2.address, tokensToStake, StakingType.TWELVE_MONTH);
+
+                await expect(
+                    poolContract.connect(user2).stakeTokens(user2.address, tokens, StakingType.THREE_MONTH)
+                ).to.rejectedWith("NOT_A_VALID_STAKING_TYPE");
+
+                await expect(
+                    poolContract.connect(user2).stakeTokens(user2.address, tokens, StakingType.NINE_MONTH)
+                ).to.rejectedWith("NOT_A_VALID_STAKING_TYPE");
+
+            });
+
+            it("Can create a campaing with all staking scheme", async () => {
+
+                const premiumFee = await membershipFeeManager.getMembershipFee(MembershipCategory.PREMIUM);
+                const campaignFee = await campaignFeeManager.getCampaignFee(CampaignCategory.SILVER);
+
+                await expect(() => pmMembershipManager.connect(user3).becomePremiumMember(user3.address, { value: premiumFee }))
+                    .to.changeEtherBalances([user3, membershipFeeManager], [premiumFee.mul(-1), premiumFee]);
+
+                const tokens = ethers.utils.parseEther("1000");
+                const decimals = stakingToken.decimals();
+                const symbol = stakingToken.symbol();
+
+                await stakingToken.connect(user3).mint(tokens);
+                await stakingToken.connect(user3).approve(stakingPoolFactory.address, tokens);
+
+                let latestBlock = await ethers.provider.getBlock("latest");
+
+                const tx = await stakingPoolFactory.connect(user3).createAStakingPool(
+                    // projectInfo 
+                    {
+                        category: CampaignCategory.SILVER,
+                        projectName: "Awesome Staking Pool",
+                        projectSymbol: "ASP",
+                        tokenAddress: stakingToken.address,
+                        tokenDecimals: decimals,
+                        tokenSymbol: symbol,
+                        profileType: Association.NONE,
+                        profileId: 0
+                    },
+                    // rewardPoolInfo
+                    {
+                        startedAt: latestBlock.timestamp + 1,
+                        poolAmount: tokens
+                    },
+                    // images
+                    {
+                        image_1_months: "image_1_months",
+                        image_3_months: "image_3_months",
+                        image_6_months: "image_6_months",
+                        image_9_months: "image_9_months",
+                        image_12_months: "image_12_months",
+                        APY_1_months: 10,
+                        APY_3_months: 30,
+                        APY_6_months: 60,
+                        APY_9_months: 90,
+                        APY_12_months: 100,
+                    },
+                    {
+                        value: campaignFee
+                    }
+                );
+
+                let receipt: ContractReceipt = await tx.wait();
+                const xxxx: any = receipt.events?.filter((x) => { return x.event == "Poolcreated" })
+                let stakingPoolAddress = xxxx[0].args.poolAddress;
+                let poolId = xxxx[0].args.poolId;
+                const StakingPool = await ethers.getContractFactory("StakingPool") as StakingPool__factory;
+                const poolContract = StakingPool.attach(stakingPoolAddress);
+
+
+                await network.provider.send("evm_increaseTime", [15 * 60 * 1000]);
+                await network.provider.send("evm_mine");
+
+                const tokensToStake = ethers.utils.parseEther("100");
+                await stakingToken.connect(user2).mint(tokensToStake.mul("5"));
+                await stakingToken.connect(user2).approve(poolContract.address, tokensToStake.mul("5"));
+
+                await poolContract.connect(user2).stakeTokens(user2.address, tokensToStake, StakingType.ONE_MONTH);
+                await poolContract.connect(user2).stakeTokens(user2.address, tokensToStake, StakingType.THREE_MONTH);
+                await poolContract.connect(user2).stakeTokens(user2.address, tokensToStake, StakingType.SIX_MONTH);
+                await poolContract.connect(user2).stakeTokens(user2.address, tokensToStake, StakingType.NINE_MONTH);
+                await poolContract.connect(user2).stakeTokens(user2.address, tokensToStake, StakingType.TWELVE_MONTH);
+
+            })
+
 
         })
 

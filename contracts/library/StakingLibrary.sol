@@ -35,7 +35,7 @@ library StakingLibrary {
 
     enum ProfileType {NONE, TEAM, USER}
     
-    enum StakingType {THREE_MONTH, SIX_MONTH, TWELVE_MONTH}
+    enum StakingType { ONE_MONTH, THREE_MONTH, SIX_MONTH, NINE_MONTH, TWELVE_MONTH }
 
     struct ProjectInfo {
         CampaignCategories category;
@@ -53,11 +53,19 @@ library StakingLibrary {
         uint256 poolAmount;
     }
 
-    struct Images {
+    struct NFTData {
+        string image_1_months;
         string image_3_months;
         string image_6_months;
+        string image_9_months;
         string image_12_months;
+        uint8 APY_1_months;
+        uint8 APY_3_months;
+        uint8 APY_6_months;
+        uint8 APY_9_months;
+        uint8 APY_12_months;
     }
+
        
     struct TokenData {
         address poolAddress;
@@ -81,7 +89,7 @@ library StakingLibrary {
         PoolInfo poolInfo;
         ProjectInfo projectInfo; 
         RewardPoolInfo rewardPoolInfo; 
-        Images images;
+        NFTData nftData;
     }
 
     struct UserDetail {
@@ -89,9 +97,6 @@ library StakingLibrary {
         uint256 memberId;
         bool isPremium;
     }
-
-
-
 
 }
 

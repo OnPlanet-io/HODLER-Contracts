@@ -6,7 +6,6 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "../library/StakingLibrary.sol";
 import "../interfaces/ICreatorManager.sol";
 import "../interfaces/ICreatorContract.sol";
-
 import "../interfaces/ICampaignFeeManager.sol";
 
 // import "hardhat/console.sol";
@@ -24,6 +23,7 @@ error FAILED_TO_TRANSFER_TOEKNS();
 error FAILED_TO_TRANSFER_ORIGNAL_TOEKNS();
 error FAILED_TO_TRANSFER_REWARD_TOEKNS();
 error NO_CREATOR_CONTRACT_FOUND();
+error NOT_A_VALID_STAKING_TYPE();
 
 contract StakingPool is ERC721Enumerable {
    
@@ -33,21 +33,17 @@ contract StakingPool is ERC721Enumerable {
 
     StakingLibrary.PoolInfo private poolInfo;
     StakingLibrary.ProjectInfo private projectInfo;
+    StakingLibrary.NFTData private nftData;
     StakingLibrary.RewardPoolInfo private rewardPoolInfo;
-    StakingLibrary.Images private images;
+
 
     struct StakingCategeroy {
-        StakingLibrary.StakingType stakingType;
         uint256 duration;
         uint256 rewardPC;
         string image;
     }
 
-    /// @notice - reward structure (3months -> 30%, 6months -> 50%, 12months -> 80%);
-    StakingCategeroy public THREE_MONTH = StakingCategeroy(StakingLibrary.StakingType.THREE_MONTH, 90*ONE_DAY, 30, "");
-    StakingCategeroy public SIX_MONTH = StakingCategeroy(StakingLibrary.StakingType.SIX_MONTH, 180*ONE_DAY, 50, "");
-    StakingCategeroy public TWELVE_MONTH = StakingCategeroy(StakingLibrary.StakingType.TWELVE_MONTH, 365*ONE_DAY, 80, "");
-    
+
     mapping (StakingLibrary.StakingType => StakingCategeroy) private stakingInfo;
     mapping (uint256 => StakingLibrary.TokenData) private tokenData;
 
@@ -55,24 +51,31 @@ contract StakingPool is ERC721Enumerable {
         uint256 _poolId,
         StakingLibrary.ProjectInfo memory _projectInfo,
         StakingLibrary.RewardPoolInfo memory _rewardPoolInfo,
-        StakingLibrary.Images memory _images,
+        StakingLibrary.NFTData memory _nftData,
         address _creatorManager,
         address payable _campaignFeeManager,
         address _ownerOfProject
         ) 
-        ERC721(_projectInfo.projectName, _projectInfo.projectName) {
+        ERC721(_projectInfo.projectName, _projectInfo.projectSymbol) {
 
-        THREE_MONTH.image = _images.image_3_months;
-        SIX_MONTH.image = _images.image_6_months;
-        TWELVE_MONTH.image = _images.image_12_months;
+        stakingInfo[StakingLibrary.StakingType.ONE_MONTH] = 
+            StakingCategeroy(30*ONE_DAY, _nftData.APY_1_months, _nftData.image_1_months);
+    
+        stakingInfo[StakingLibrary.StakingType.THREE_MONTH] = 
+            StakingCategeroy(90*ONE_DAY, _nftData.APY_3_months, _nftData.image_3_months);
 
-        stakingInfo[StakingLibrary.StakingType.THREE_MONTH] = THREE_MONTH;
-        stakingInfo[StakingLibrary.StakingType.SIX_MONTH] = SIX_MONTH;
-        stakingInfo[StakingLibrary.StakingType.TWELVE_MONTH] = TWELVE_MONTH;
+        stakingInfo[StakingLibrary.StakingType.SIX_MONTH] = 
+            StakingCategeroy(180*ONE_DAY, _nftData.APY_6_months, _nftData.image_6_months);
+
+        stakingInfo[StakingLibrary.StakingType.NINE_MONTH] = 
+            StakingCategeroy(270*ONE_DAY, _nftData.APY_9_months, _nftData.image_9_months);
+
+        stakingInfo[StakingLibrary.StakingType.TWELVE_MONTH] = 
+            StakingCategeroy(365*ONE_DAY, _nftData.APY_12_months, _nftData.image_12_months);
 
         projectInfo = _projectInfo;
         rewardPoolInfo = _rewardPoolInfo;
-        images = _images;
+        nftData = _nftData;
 
         poolInfo.poolId = _poolId;
         poolInfo.poolAddress = address(this);
@@ -94,6 +97,11 @@ contract StakingPool is ERC721Enumerable {
 
         // Get Staking type info
         StakingCategeroy memory category = stakingInfo[_type];
+
+        // Check if category is valid 
+        if(category.rewardPC == 0){
+            revert NOT_A_VALID_STAKING_TYPE();
+        }
 
         // Calculate reward of this person
         uint256 reward = amount * category.rewardPC / 100;
@@ -223,9 +231,7 @@ contract StakingPool is ERC721Enumerable {
     /// @notice - penalties (50% completion -> 30% reward, 80% completion -> 50% reward, 100% completion -> 100% reward)
     /// @notice an internal function to compute redeemable reward after pelanties.
     function findRedeemableReward(
-        uint256 _expectedReward, 
-        uint256 _stakingTime, 
-        uint256 _unlockTime
+        uint256 _expectedReward, uint256 _stakingTime, uint256 _unlockTime
         ) public view returns(uint256 redeemableReward, uint8 pcReceived, uint256 fee) {
         
         // Either 90 days, 180 days or 365 days. 
@@ -238,7 +244,6 @@ contract StakingPool is ERC721Enumerable {
             pcReceived = 0;
             redeemableReward = 0;
             fee = ICampaignFeeManager(campaignFeeManager).getUnstakingFee(StakingLibrary.UnstakingCategories.REWARD_0pc);
-
         }
         else if(pcCompleted >= 50 && pcCompleted < 80 ){
             pcReceived = 30;
@@ -273,7 +278,7 @@ contract StakingPool is ERC721Enumerable {
     function getProjectInfo() public view returns (
         StakingLibrary.PoolFullInfo memory
     ){
-        return StakingLibrary.PoolFullInfo(poolInfo, projectInfo, rewardPoolInfo, images);
+        return StakingLibrary.PoolFullInfo(poolInfo, projectInfo, rewardPoolInfo, nftData);
     }
 
     function getTokenData(uint256 _tokenId) public view returns(StakingLibrary.TokenData memory){
@@ -281,9 +286,8 @@ contract StakingPool is ERC721Enumerable {
     }
 
     function getUserTokens(address _user) public view returns (
-        StakingLibrary.ProjectInfo memory,
-        StakingLibrary.TokenData[] memory
-        ) {
+        // StakingLibrary.ProjectInfo memory, StakingLibrary.TokenData[] memory ) {
+        StakingLibrary.TokenData[] memory ) {
         
         address creator = ICreatorManager(creatorManager).creatorAddress(_user);
         if(creator == address(0)){
@@ -297,7 +301,10 @@ contract StakingPool is ERC721Enumerable {
             StakingLibrary.TokenData memory data = tokenData[tokenId];
             tokensData[i] = data;
         }
-        return (projectInfo, tokensData);
+
+        // return (projectInfo, tokensData);
+        return (tokensData);
+    
     }
     
     event JoinedPool(uint poolId, uint tokenId, address user, uint contribution, uint8 category);
