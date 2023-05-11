@@ -10,8 +10,9 @@ require("dotenv").config();
 const GOERLI_RPC_URL = process.env.GOERLI_RPC_URL || "";
 const SEPOLIA_RPC_URL = process.env.SEPOLIA_RPC_URL || "";
 const PRIVATE_KEY = process.env.PRIVATE_KEY || "";
-const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || "";
+const DEPLOYER_PRIVATE_KEY = process.env.DEPLOYER_PRIVATE_KEY || "";
 
+const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || "";
 const BSCSCAN_API_KEY = process.env.BSCSCAN_API_KEY || "";
 
 /** @type import('hardhat/config').HardhatUserConfig */
@@ -60,7 +61,7 @@ module.exports = {
       url: "https://rpc.ankr.com/bsc",
       chainId: 56,
       gasPrice: 20000000000,
-      accounts: [PRIVATE_KEY],
+      accounts: [DEPLOYER_PRIVATE_KEY],
     },
     goerli: {
       url: GOERLI_RPC_URL,
@@ -76,7 +77,8 @@ module.exports = {
     },
   },
   etherscan: {
-    apiKey: ETHERSCAN_API_KEY,
+    // apiKey: ETHERSCAN_API_KEY,
+    apiKey: BSCSCAN_API_KEY,
   },
   paths: {
     sources: "./contracts",

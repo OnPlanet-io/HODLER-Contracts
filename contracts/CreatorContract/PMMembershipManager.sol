@@ -28,7 +28,7 @@ contract PMMembershipManager is ERC721, Ownable {
     string public regularURI = "https://bafkreifrj2c6ds4j4onfxmoelibfyhwf6xrccroh2tf7ej55lrplbggi6a.ipfs.nftstorage.link";
     string public premiumURI = "https://bafkreifihh4pd5r7kq6zig7oy6dzm7avtkhphetq6qsjzmdufzv5mumhjy.ipfs.nftstorage.link";
     
-    bool public pause = false;
+    bool public pause = true;
 
     mapping (address => StakingLibrary.UserDetail) private userDetail;
     mapping (uint256 => bool) private isPremium;

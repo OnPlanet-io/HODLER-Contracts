@@ -2239,11 +2239,11 @@ describe("Planet Moon Test Stack", function () {
                         image_6_months: "image_6_months",
                         image_9_months: "image_9_months",
                         image_12_months: "image_12_months",
-                        APY_1_months: 10,
-                        APY_3_months: 0,
-                        APY_6_months: 60,
-                        APY_9_months: 0,
-                        APY_12_months: 100,
+                        APY_1_months: "10",
+                        APY_3_months: "0",
+                        APY_6_months: "60",
+                        APY_9_months: "0",
+                        APY_12_months: "100",
                     },
                     {
                         value: campaignFee

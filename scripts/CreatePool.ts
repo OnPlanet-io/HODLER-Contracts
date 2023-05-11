@@ -17,12 +17,12 @@ async function main() {
         deployer
     ) as StakingPoolFactory;
 
-    const ERC20Token = await deployments.get("ERC20Token");
-    const erc20Token = new ethers.Contract(
-      ERC20Token.address,
-      ERC20Token.abi,
-      deployer
-    ) as ERC20Token;
+    // const ERC20Token = await deployments.get("ERC20Token");
+    // const erc20Token = new ethers.Contract(
+    //     ERC20Token.address,
+    //     ERC20Token.abi,
+    //     deployer
+    // ) as ERC20Token;
 
     // const StakingPoolFactory = await deployments.get("StakingPoolFactory");
     // const StakingPoolFactory = await ethers.getContractFactory("StakingPoolFactory");
@@ -33,64 +33,61 @@ async function main() {
 
     // console.log("erc20Token: ", await erc20Token.name())
 
-
-    console.log("deployer: ", deployer.address);
-    console.log("deployer: ", (await deployer.getBalance()).toString());
-
-    const symbol = await erc20Token.symbol();
-    const decimals = await erc20Token.decimals();
-    const decimalsFactor = String(10 ** decimals);
-    const tokens = ethers.BigNumber.from("1000000").mul(decimalsFactor);
-
-    console.log("Tokens: ", tokens.toString())
-    await erc20Token.mint(tokens);
-    console.log("Tokens minted")
-    await erc20Token.approve(stakingPoolFactory.address, tokens);
-    console.log("Tokens Approved")
-
-    let latestBlock = await ethers.provider.getBlock("latest");
     
+    console.log("StakingPoolFactory address: ", StakingPoolFactory.address);
+    console.log("deployer address: ", deployer.address);
+    console.log("deployer balance: ", (await deployer.getBalance()).toString());
+
+    // const symbol = await erc20Token.symbol();
+    // const decimals = await erc20Token.decimals();
+    // const decimalsFactor = String(10 ** decimals);
+    // const tokens = ethers.BigNumber.from("1000000").mul(decimalsFactor);
+
+    // console.log("Tokens: ", tokens.toString())
+    // await erc20Token.mint(tokens);
+    // console.log("Tokens minted")
+    // await erc20Token.approve(stakingPoolFactory.address, tokens);
+    // console.log("Tokens Approved")
+
+    // let latestBlock = await ethers.provider.getBlock("latest");
+
     console.log("Started");
 
     const tx = await stakingPoolFactory.createAStakingPool(
-        // projectInfo
         {
-            projectName: "Staking Pool 3",
-            projectSymbol: "SP3",
-            tokenAddress: erc20Token.address,
-            tokenDecimals: decimals,
-            tokenSymbol: symbol,
-            teamDescription:
-                "The best project ever, Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages.",
-            projectDescription:
-                "The best project ever, It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web.",
-            projectCover:
-                "https://visionarymarketing.com/wp-content/uploads/2022/02/art-nfts-auction-2021-esther-barend.jpg",
-            projectAvatar:
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOLAJ_oytgRk4ur0V8zL5bAeBZV2oBVt2QFuZKF18Y13oEHAIQAonjUwvZ4U2bp8_shmA&usqp=CAU",
-            socialHandles: {
-                website: "www.google.com",
-                twitter: "ImranKhanPTI",
-                facebook: "",
-                telegram: "",
-                discord: "",
-            },
+            category: 0,
+            projectName: "Awesome Staking Pool",
+            projectSymbol: "ASP",
+            tokenAddress: "0x22F839804aD1534886B3950B55a036D8912d393B",
+            tokenDecimals: "18",
+            tokenSymbol: "FAUXT",
+            profileType: "0",
+            profileId: "0"
         },
-        // rewardPoolInfo
         {
-            startedAt: latestBlock.timestamp + 1000,
-            poolAmount: tokens,
+            startedAt: 1682967007,
+            poolAmount: 10
         },
         // images
         {
-            image_3_months:
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5FIufU99N5SDS2X8IVrPVICzPNgFxsecn_ZmmoJYsknvrQF9wOKxZxc4uWZAyqA55Ujk&usqp=CAU",
-            image_6_months:
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9lrh8oM20JW_89pg1Y4avBs2Ilq2D4HXGEySarDJ9lXIUoK3UdyDxkisz36V6Ase1UEU&usqp=CAU",
-            image_12_months:
-                "https://images.saatchiart.com/saatchi/14817/art/8722672/7786191-FLFQKBZP-7.jpg",
-        }
+            image_1_months: "image_1_months",
+            image_3_months: "image_3_months",
+            image_6_months: "image_6_months",
+            image_9_months: "image_9_months",
+            image_12_months: "image_12_months",
+            APY_1_months: 10,
+            APY_3_months: 0,
+            APY_6_months: 60,
+            APY_9_months: 0,
+            APY_12_months: 100,
+        },
     );
+
+    console.log("Submitted")
+
+    await tx.wait(1);
+
+    console.log("Done")
 }
 
 // We recommend this pattern to be able to use async/await everywhere

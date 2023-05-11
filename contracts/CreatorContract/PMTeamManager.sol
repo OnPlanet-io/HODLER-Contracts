@@ -26,7 +26,7 @@ contract PMTeamManager is ERC721Enumerable, Ownable {
 
     string public teamTokenURI = "https://bafkreiaftkut5zfxzfffa7elss6tu3bluwjp2kli4zaqwm2qlpp7u7jbr4.ipfs.nftstorage.link";
     
-    bool public pause = false;
+    bool public pause = true;
 
     mapping (uint256 => Team) private team;
     struct Team {

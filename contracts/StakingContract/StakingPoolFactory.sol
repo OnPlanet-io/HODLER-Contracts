@@ -28,7 +28,7 @@ contract StakingPoolFactory is Ownable {
     address public creatorManager;
     
     uint256 public projectsCount;
-    bool public pause = false;
+    bool public pause = true;
 
     mapping(address => uint256[]) private poolsOfAUser;
     mapping(uint256 => uint256[]) private poolsOfATeam;

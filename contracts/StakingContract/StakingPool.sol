@@ -25,6 +25,7 @@ error FAILED_TO_TRANSFER_REWARD_TOEKNS();
 error NO_CREATOR_CONTRACT_FOUND();
 error NOT_A_VALID_STAKING_TYPE();
 
+
 contract StakingPool is ERC721Enumerable {
    
     uint256 internal constant ONE_DAY = 24*60*60;
@@ -36,13 +37,11 @@ contract StakingPool is ERC721Enumerable {
     StakingLibrary.NFTData private nftData;
     StakingLibrary.RewardPoolInfo private rewardPoolInfo;
 
-
     struct StakingCategeroy {
         uint256 duration;
         uint256 rewardPC;
         string image;
     }
-
 
     mapping (StakingLibrary.StakingType => StakingCategeroy) private stakingInfo;
     mapping (uint256 => StakingLibrary.TokenData) private tokenData;

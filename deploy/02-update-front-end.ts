@@ -17,52 +17,48 @@ module.exports = async () => {
 
 async function updateAbi() {
 
-    const chainId = network.config.chainId;
+    const CreatorContract = await deployments.get("CreatorContract");
+    const CreatorManager = await deployments.get("CreatorManager");
+    const StakingPoolFactory = await deployments.get("StakingPoolFactory");
+    const StakingPool = await deployments.getArtifact("StakingPool");
+    const PMTeamManager = await deployments.getArtifact("PMTeamManager");
+    const PMMembershipManager = await deployments.getArtifact("PMMembershipManager");
+    const CampaignFeeManager = await deployments.getArtifact("CampaignFeeManager");
+    const MembershipFeeManager = await deployments.getArtifact("MembershipFeeManager");
+    const PMRewardDistributor = await deployments.get("PMRewardDistributor");
 
-    if (chainId === 31337) {
 
-        const CreatorContract = await deployments.get("CreatorContract");
-        const CreatorManager = await deployments.get("CreatorManager");
-        const StakingPoolFactory = await deployments.get("StakingPoolFactory");
-        const StakingPool = await deployments.getArtifact("StakingPool");
-        const PMTeamManager = await deployments.getArtifact("PMTeamManager");
-        const PMMembershipManager = await deployments.getArtifact("PMMembershipManager");
-        const CampaignFeeManager = await deployments.getArtifact("CampaignFeeManager");
-        const MembershipFeeManager = await deployments.getArtifact("MembershipFeeManager");
-        const PMRewardDistributor = await deployments.get("PMRewardDistributor");
+    //helpers
+    const StakingToken = await deployments.get("StakingToken");
+    const ERC20Token = await deployments.get("ERC20Token");
+    const ERC721Token = await deployments.get("ERC721Token");
 
-        
-        //helpers
-        const StakingToken = await deployments.get("StakingToken");
-        const ERC20Token = await deployments.get("ERC20Token");
-        const ERC721Token = await deployments.get("ERC721Token");
+    fs.writeFileSync(frontEndAbiFile, JSON.stringify({
 
-        fs.writeFileSync(frontEndAbiFile, JSON.stringify({
+        CreatorManager: CreatorManager.abi,
+        CreatorContract: CreatorContract.abi,
+        StakingPoolFactory: StakingPoolFactory.abi,
+        StakingPool: StakingPool.abi,
+        PMMembershipManager: PMMembershipManager.abi,
+        PMTeamManager: PMTeamManager.abi,
+        CampaignFeeManager: CampaignFeeManager.abi,
+        MembershipFeeManager: MembershipFeeManager.abi,
+        PMRewardDistributor: PMRewardDistributor.abi,
 
-            CreatorManager: CreatorManager.abi,
-            CreatorContract: CreatorContract.abi,
-            StakingPoolFactory: StakingPoolFactory.abi,
-            StakingPool: StakingPool.abi,
-            PMMembershipManager: PMMembershipManager.abi,
-            PMTeamManager: PMTeamManager.abi,
-            CampaignFeeManager: CampaignFeeManager.abi,
-            MembershipFeeManager: MembershipFeeManager.abi,
-            PMRewardDistributor: PMRewardDistributor.abi,
-            
-            StakingToken: StakingToken.abi,
-            ERC721Token: ERC721Token.abi,
-            ERC20Token: ERC20Token.abi
+        StakingToken: StakingToken.abi,
+        ERC721Token: ERC721Token.abi,
+        ERC20Token: ERC20Token.abi
 
-        }))
+    }))
 
-    }
+
 }
 
 async function updateContractAddresses() {
 
     const chainId = network.config.chainId;
 
-    if (chainId === 31337) {
+    if (chainId === 31337 ) {
         
         const CreatorManager = await deployments.get("CreatorManager");
         const StakingPoolFactory = await deployments.get("StakingPoolFactory");
@@ -101,7 +97,6 @@ async function updateContractAddresses() {
 
     }
 
-    // if(chainId === 5 || chainId === 56 )
     else if (chainId){
 
         const CreatorManager = await deployments.get("CreatorManager");
@@ -129,11 +124,6 @@ async function updateContractAddresses() {
         fs.writeFileSync(frontEndContractsFile, JSON.stringify(contractAddresses))
 
     }
-
-
-
-
-
 
 }
 

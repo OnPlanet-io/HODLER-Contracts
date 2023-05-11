@@ -28,8 +28,8 @@ error CONTRACT_IS_PAUSED();
 
 contract PMRewardDistributor is Ownable {
 
-    AggregatorV3Interface internal priceFeed = AggregatorV3Interface(0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE);
-    // AggregatorV3Interface internal priceFeed = AggregatorV3Interface(0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e);
+    AggregatorV3Interface internal priceFeed = AggregatorV3Interface(0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE); // BNB Chain Mainnet BNB/USD
+    // AggregatorV3Interface internal priceFeed = AggregatorV3Interface(0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e);  // Goerli ETH/USD
 
     IUniswapV2Router02 public uniswapV2Router = IUniswapV2Router02(0x10ED43C718714eb63d5aA57B78B54704E256024E); //Pancakeswap router mainnet - BSC
     // IUniswapV2Router02 public uniswapV2Router = IUniswapV2Router02(0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D); //Uniswap router goerli testnet - ETH
@@ -38,7 +38,7 @@ contract PMRewardDistributor is Ownable {
     event RewardApplied(address, address, uint256, uint8);
 
     address public giveAwayManager;
-    bool public pause = false;
+    bool public pause = true;
     uint256 public totalRewardDistributed;
 
     constructor( address _giveAwayManager ){
@@ -128,16 +128,16 @@ contract PMRewardDistributor is Ownable {
         return boughtTokens;
     }
 
-    function getLatestPriceOfOneUSD() public pure returns (int price) {
+    function getLatestPriceOfOneUSD() public view returns (int price) {
 
         // this is the price of 1 Eth in USDs  => 1 ETh = price USDs
         // Find price of 1 USD => 1 USD = 1/price ETH
 
-        // (, int price,,,) = priceFeed.latestRoundData();
-        // int ONE_ETH = 1 ether;
-        // price = (ONE_ETH * 10**8)/price;
-        price = int(756881949122395); 
+        (, price,,,) = priceFeed.latestRoundData();
+        int ONE_ETH = 1 ether;
+        price = (ONE_ETH * 10**8)/price;
 
+        // price = int(756881949122395); 
     }
 
     /* Admin Functions */
