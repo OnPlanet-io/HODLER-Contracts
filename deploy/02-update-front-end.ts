@@ -10,12 +10,17 @@ module.exports = async () => {
         console.log("")
         console.log("Writing to front end...")
         await updateContractAddresses()
+
         await updateAbi()
         console.log("Front end written!")
     }
 }
 
 async function updateAbi() {
+    
+    const chainId = network.config.chainId;
+    
+    if(chainId !== 31337) return;
 
     const CreatorContract = await deployments.get("CreatorContract");
     const CreatorManager = await deployments.get("CreatorManager");
@@ -34,6 +39,7 @@ async function updateAbi() {
     const ERC721Token = await deployments.get("ERC721Token");
 
     fs.writeFileSync(frontEndAbiFile, JSON.stringify({
+
 
         CreatorManager: CreatorManager.abi,
         CreatorContract: CreatorContract.abi,

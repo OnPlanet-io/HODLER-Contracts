@@ -22,7 +22,7 @@ module.exports = async ({ getNamedAccounts, deployments }: HardhatRuntimeEnviron
     const admin = "0xabAe3685B9eac51852466110305CDA62e8822efA";
     const giveAwayManager = "0x49EB9ac3e28a22A90D73e3F7B27Bc76628b2442B";
 
-    
+
     if (chainId == 31337) {
         const StakingToken = await deploy("StakingToken", {
             from: deployer,
@@ -143,67 +143,67 @@ module.exports = async ({ getNamedAccounts, deployments }: HardhatRuntimeEnviron
         // const nounce = await getNonce();
         // console.log("nounce: ",  nounce)
         
-        // const CreatorManager = await deploy("CreatorManager", {
-        //     from: deployer,
-        //     args: [],
-        //     log: true,
-        // })
+        const CreatorManager = await deploy("CreatorManager", {
+            from: deployer,
+            args: [],
+            log: true,
+        })
 
         
-        // const campaignFeeManagerArgs = [
-        //     "100", "200", "400", // silver, gold, diamond
-        //     "3", "2", "2", "0" // reward_0pc, reward_30pc, reward_50pc, reward_100pc   
+        const campaignFeeManagerArgs = [
+            "100", "200", "400", // silver, gold, diamond
+            "3", "2", "2", "0" // reward_0pc, reward_30pc, reward_50pc, reward_100pc   
 
-        //     // "100", "125", "400", // silver, gold, diamond
-        //     // "3", "2", "2", "0" // reward_0pc, reward_30pc, reward_50pc, reward_100pc   
-        // ]
-        // const CampaignFeeManager = await deploy("CampaignFeeManager", {
-        //     from: deployer,
-        //     args: campaignFeeManagerArgs,
-        //     log: true,
-        // })
+            // "100", "125", "400", // silver, gold, diamond
+            // "3", "2", "2", "0" // reward_0pc, reward_30pc, reward_50pc, reward_100pc   
+        ]
+        const CampaignFeeManager = await deploy("CampaignFeeManager", {
+            from: deployer,
+            args: campaignFeeManagerArgs,
+            log: true,
+        })
 
-        // const membershipFeeManagerAgrs = [
-        //     "3","2","5","8" //"3", "2", "5", "8"
-        // ]
-        // const MembershipFeeManager = await deploy("MembershipFeeManager", {
-        //     // nonce: await getNonce(),
-        //     from: deployer,
-        //     args: membershipFeeManagerAgrs,
-        //     log: true,
-        // })
+        const membershipFeeManagerAgrs = [
+            "3","2","5","8" //"3", "2", "5", "8"
+        ]
+        const MembershipFeeManager = await deploy("MembershipFeeManager", {
+            // nonce: await getNonce(),
+            from: deployer,
+            args: membershipFeeManagerAgrs,
+            log: true,
+        })
 
 
-        // const PMMembershipManager = await deploy("PMMembershipManager", {
-        //     from: deployer,
-        //     args: [MembershipFeeManager.address],
-        //     log: true,
-        // })
+        const PMMembershipManager = await deploy("PMMembershipManager", {
+            from: deployer,
+            args: [MembershipFeeManager.address],
+            log: true,
+        })
 
-        // const PMTeamManager = await deploy("PMTeamManager", {
-        //     from: deployer,
-        //     args: [MembershipFeeManager.address],
-        //     log: true,
-        // })
+        const PMTeamManager = await deploy("PMTeamManager", {
+            from: deployer,
+            args: [MembershipFeeManager.address],
+            log: true,
+        })
 
-        // const stakingPoolFactoryArgs = [
-        //     CampaignFeeManager.address,
-        //     PMMembershipManager.address,
-        //     PMTeamManager.address,
-        //     CreatorManager.address
-        // ]
-        // const StakingPoolFactory = await deploy("StakingPoolFactory", {
-        //     from: deployer,
-        //     args: stakingPoolFactoryArgs,
-        //     log: true,
-        // })
+        const stakingPoolFactoryArgs = [
+            CampaignFeeManager.address,
+            PMMembershipManager.address,
+            PMTeamManager.address,
+            CreatorManager.address
+        ]
+        const StakingPoolFactory = await deploy("StakingPoolFactory", {
+            from: deployer,
+            args: stakingPoolFactoryArgs,
+            log: true,
+        })
 
-        // const PMRewardDistributorArgs = [giveAwayManager]
-        // const PMRewardDistributor = await deploy("PMRewardDistributor", {
-        //     from: deployer,
-        //     args: PMRewardDistributorArgs,
-        //     log: true,
-        // })
+        const PMRewardDistributorArgs = [giveAwayManager]
+        const PMRewardDistributor = await deploy("PMRewardDistributor", {
+            from: deployer,
+            args: PMRewardDistributorArgs,
+            log: true,
+        })
 
 
         // const campaignFeeManager = new Contract(CampaignFeeManager.address, CampaignFeeManager.abi, master) as CampaignFeeManager;
@@ -211,6 +211,7 @@ module.exports = async ({ getNamedAccounts, deployments }: HardhatRuntimeEnviron
 
         // const membershipFeeManager = new Contract(MembershipFeeManager.address, MembershipFeeManager.abi, master) as MembershipFeeManager;
         // await membershipFeeManager.transferOwnership(admin);
+
 
         // const pmMembershipManager = new Contract(PMMembershipManager.address, PMMembershipManager.abi, master) as PMMembershipManager;
         // await pmMembershipManager.transferOwnership(admin);
@@ -221,8 +222,10 @@ module.exports = async ({ getNamedAccounts, deployments }: HardhatRuntimeEnviron
         // const stakingPoolFactory = new Contract(StakingPoolFactory.address, StakingPoolFactory.abi, master) as StakingPoolFactory;
         // await stakingPoolFactory.transferOwnership(admin);
 
-        // const pmRewardDistributor = new Contract(PMRewardDistributor.address, PMRewardDistributor.abi, master) as PMRewardDistributor;
-        // await pmRewardDistributor.transferOwnership(admin);
+        console.log("Transfering ownership");
+
+        const pmRewardDistributor = new Contract(PMRewardDistributor.address, PMRewardDistributor.abi, master) as PMRewardDistributor;
+        await pmRewardDistributor.transferOwnership(admin);
         
 
         // await master.sendTransaction({
