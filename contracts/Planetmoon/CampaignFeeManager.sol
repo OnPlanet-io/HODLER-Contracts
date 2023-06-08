@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.9;
+pragma solidity ^0.8.14;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
@@ -35,8 +35,8 @@ contract CampaignFeeManager is Ownable {
     event Received(address, uint);
     enum FeesType {USD, BNB}
     
-    FeeDistributionScheme public feeDistributionScheme;
-    struct FeeDistributionScheme {
+    FeeDistributionShares public feeDistributionShares;
+    struct FeeDistributionShares {
         uint8 buyBackAndburn;
         uint8 rewardPool;
         uint8 corporate;
@@ -44,9 +44,9 @@ contract CampaignFeeManager is Ownable {
 
     FeeDistributionWallets public feeDistributionWallets;
     struct FeeDistributionWallets {
-        address payable buyBackAndburn;
         address payable rewardPool;
         address payable corporate;
+        address buyBackAndburnToken;
         address buyBackReceiver;
     }
 
@@ -134,43 +134,70 @@ contract CampaignFeeManager is Ownable {
         unStakingFee[StakingLibrary.UnstakingCategories.REWARD_100pc] = reward_100pc;
     }
 
-    function setDistributionScheme(uint8 buyBackAndburn, uint8 rewardPool, uint8 corporate ) public onlyOwner {
-        feeDistributionScheme.buyBackAndburn = buyBackAndburn;
-        feeDistributionScheme.rewardPool = rewardPool;
-        feeDistributionScheme.corporate = corporate;
+    function setFeeDistributionShares(uint8 buyBackAndburn, uint8 rewardPool, uint8 corporate ) public onlyOwner {
+        require(
+            corporate > 0 && 
+            rewardPool > 0 &&
+            buyBackAndburn + rewardPool + corporate == 100,
+            "Distribution fees are not adding up to 100pc" 
+        );
+
+        feeDistributionShares.buyBackAndburn = buyBackAndburn;
+        feeDistributionShares.rewardPool = rewardPool;
+        feeDistributionShares.corporate = corporate;
     }
 
-    function setFeeDistributionWallets(address buyBackAndburn, address rewardPool, address corporate, address buyBackReceiver) public onlyOwner {
-        feeDistributionWallets.buyBackAndburn = payable(buyBackAndburn);
+    function setFeeDistributionWallets(address rewardPool, address corporate, address buyBackAndburnToken, address buyBackReceiver) public onlyOwner {
+        
+        require(
+            rewardPool != address(0) && 
+            corporate != address(0) &&
+            buyBackAndburnToken != address(0) && 
+            buyBackReceiver != address(0),
+            "Distribution wallets are not being set properly" 
+        );
+
         feeDistributionWallets.rewardPool = payable(rewardPool);
         feeDistributionWallets.corporate = payable(corporate);
-        feeDistributionWallets.buyBackReceiver = buyBackReceiver;        
+        feeDistributionWallets.buyBackAndburnToken = buyBackAndburnToken;
+        feeDistributionWallets.buyBackReceiver = buyBackReceiver;
+        
     }
 
     function SplitFunds() public onlyOwner {
 
+        FeeDistributionWallets memory wallets = feeDistributionWallets;
+        FeeDistributionShares memory fees = feeDistributionShares;
+
         require(
-            feeDistributionWallets.buyBackAndburn != address(0) && 
-            feeDistributionWallets.rewardPool != address(0) && 
-            feeDistributionWallets.corporate != address(0) &&
-            feeDistributionWallets.buyBackReceiver != address(0),
-            "Distribution wallets are not being set" 
+            wallets.rewardPool != address(0) && 
+            wallets.corporate != address(0) &&
+            wallets.buyBackAndburnToken != address(0) && 
+            wallets.buyBackReceiver != address(0),
+            "Distribution wallets are not being set properly" 
+        );
+
+        require(
+            fees.corporate > 0 && 
+            fees.rewardPool > 0 &&
+            fees.buyBackAndburn + fees.rewardPool + fees.corporate == 100,
+            "Distribution fees are not being set properly" 
         );
 
         uint256 totalBalance = address(this).balance;
         require(totalBalance > 0, "No balance avaialble for split");
 
-        uint256 corporateShare =  (totalBalance * feeDistributionScheme.corporate) / 100;
-        uint256 rewardPoolShare =  (totalBalance * feeDistributionScheme.rewardPool) / 100;
+        uint256 corporateShare =  (totalBalance * fees.corporate) / 100;
+        uint256 rewardPoolShare =  (totalBalance * fees.rewardPool) / 100;
         uint256 buyBackAndBurnShare =  totalBalance - corporateShare - rewardPoolShare;
 
-
-        feeDistributionWallets.corporate.transfer(corporateShare);
-        feeDistributionWallets.rewardPool.transfer(rewardPoolShare);
-        swapETHForTokensNoFee(feeDistributionWallets.buyBackAndburn, feeDistributionWallets.buyBackReceiver, buyBackAndBurnShare);
+        wallets.corporate.transfer(corporateShare);
+        wallets.rewardPool.transfer(rewardPoolShare);
+        if(buyBackAndBurnShare > 0){
+            swapETHForTokensNoFee(wallets.buyBackAndburnToken, wallets.buyBackReceiver, buyBackAndBurnShare);
+        }
         
     }
-
     function emergencyWithdraw() public onlyOwner {
         uint256 totalBalance = address(this).balance;
         require(totalBalance > 0, "No balance avaialble for withdraw");
@@ -214,6 +241,5 @@ contract CampaignFeeManager is Ownable {
     receive() external payable {
         emit Received(msg.sender, msg.value);
     }
-
 
 }

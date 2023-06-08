@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.9;
+pragma solidity ^0.8.14;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
@@ -12,8 +12,6 @@ import "../interfaces/ICampaignFeeManager.sol";
 
 error POOL_NOT_STARTED();
 error NOT_ENOUGH_REWARD();
-error OWNER_ONLY();
-error NOT_ALLOWED();
 error NOT_AUTHERIZED();
 error NOTHING_TO_UNSTAKE();
 error ALREADY_UNSTAKED();

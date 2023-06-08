@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.9;
+pragma solidity ^0.8.14;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -10,16 +10,11 @@ import "../interfaces/IStakingPool.sol";
 
 // import "hardhat/console.sol";
 
-error INVALID_POOLID();
-error INVALID_TOKEN_ID();
-error ALLREADY_UNSTAKED();
 error NOT_AUTHERIZED();
 
 contract CreatorContract is ERC721Holder, Ownable {
     
     EnumerableSet.AddressSet private myPoolAddresses;
-
-    uint256 public counter;
 
     constructor(address _owner){
         transferOwnership(_owner);

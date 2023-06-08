@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.9;
+pragma solidity ^0.8.14;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -15,8 +15,6 @@ import "../interfaces/ICampaignFeeManager.sol";
 error NOT_PREMIUM_OR_TEAM();
 error NOT_OWNER_OF_TEAM();
 error START_TIME_SHOULD_BE_FUTURE();
-error PROFILE_IS_ALREADY_SET();
-error NOT_THE_CAMPAIGN_OWNER();
 error FAILED_TO_TRANSFER_TOKENS();
 error CONTRACT_IS_PAUSED();
 
@@ -61,6 +59,7 @@ contract StakingPoolFactory is Ownable {
         bool hasTeam = IPMTeamManager(pmTeamManager).balanceOf(msg.sender) > 0;
         bool isPremiumMember = IPMMembership(pmMembership).getUserTokenData(msg.sender).isPremium;
 
+        // To start a campaign, user should be a premium member or he should have a team membership. 
         if(!hasTeam && !isPremiumMember){
             revert NOT_PREMIUM_OR_TEAM();
         }
