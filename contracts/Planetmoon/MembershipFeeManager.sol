@@ -2,32 +2,14 @@
 pragma solidity ^0.8.14;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import "../library/StakingLibrary.sol";
 import "../interfaces/IUniswapV2Router02.sol";
+import "./PriceFeed.sol";
+import "./SwapETHForTokens.sol";
 
-import "hardhat/console.sol";
+// import "hardhat/console.sol";
 
-    /**
-    * Network: Goerli
-    * Aggregator: ETH/USD
-    * Address: 0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e
-    */
-
-    /**
-    * Network: BNB Chain Mainnet
-    * Aggregator: BNB/USD
-    * Address: 0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE
-    */
-
-contract MembershipFeeManager is Ownable {
-
-    AggregatorV3Interface internal priceFeed = AggregatorV3Interface(0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE); // BNB Chain Mainnet BNB/USD
-    // AggregatorV3Interface internal priceFeed = AggregatorV3Interface(0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e);  // Goerli ETH/USD
-
-    IUniswapV2Router02 public uniswapV2Router = IUniswapV2Router02(0x10ED43C718714eb63d5aA57B78B54704E256024E); //Pancakeswap router mainnet - BSC
-    // IUniswapV2Router02 public uniswapV2Router = IUniswapV2Router02(0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D); //Uniswap router goerli testnet - ETH
-
+contract MembershipFeeManager is Ownable, PriceFeed, SwapETHForTokens {
 
     mapping (StakingLibrary.MembershipCategories => uint256) public membershipFee;
     
@@ -154,7 +136,7 @@ contract MembershipFeeManager is Ownable {
         wallets.corporate.transfer(corporateShare);
         wallets.rewardPool.transfer(rewardPoolShare);
         if(buyBackAndBurnShare > 0){
-            swapETHForTokensNoFee(wallets.buyBackAndburnToken, wallets.buyBackReceiver, buyBackAndBurnShare);
+            swapETHForTokens(wallets.buyBackAndburnToken, wallets.buyBackReceiver, buyBackAndBurnShare);
         }
         
     }
@@ -163,43 +145,6 @@ contract MembershipFeeManager is Ownable {
         uint256 totalBalance = address(this).balance;
         require(totalBalance > 0, "No balance avaialble for withdraw");
         payable(owner()).transfer(totalBalance);
-    }
-
-    function setRouter(IUniswapV2Router02 _uniswapV2Router) public onlyOwner {
-        uniswapV2Router = _uniswapV2Router;
-    }
-
-    function swapETHForTokensNoFee(
-        address tokenAddress,
-        address toAddress,
-        uint256 amount
-    ) private {
-        // generate the uniswap pair path of token -> weth
-        address[] memory path = new address[](2);
-        path[0] = uniswapV2Router.WETH();
-        path[1] = tokenAddress;
-
-        uniswapV2Router.swapExactETHForTokens{
-            value: amount
-        }(
-            0, // accept any amount of Tokens
-            path,
-            toAddress, // The contract
-            block.timestamp + 500
-        );      
-
-    }
-
-    function getLatestPriceOfOneUSD() public view returns (int price) {
-
-        // this is the price of 1 Eth in USDs  => 1 ETh = price USDs
-        // Find price of 1 USD => 1 USD = 1/price ETH
-
-        // (, price,,,) = priceFeed.latestRoundData();
-        // int ONE_ETH = 1 ether;
-        // price = (ONE_ETH * 10**8)/price;
-
-        price = int(756881949122395); 
     }
 
     receive() external payable {

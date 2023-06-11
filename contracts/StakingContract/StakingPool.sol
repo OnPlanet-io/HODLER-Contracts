@@ -8,7 +8,7 @@ import "../interfaces/ICreatorManager.sol";
 import "../interfaces/ICreatorContract.sol";
 import "../interfaces/ICampaignFeeManager.sol";
 
-import "hardhat/console.sol";
+// import "hardhat/console.sol";
 
 error POOL_NOT_STARTED();
 error NOT_ENOUGH_REWARD();

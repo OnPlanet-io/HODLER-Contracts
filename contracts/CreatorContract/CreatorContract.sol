@@ -52,11 +52,6 @@ contract CreatorContract is ERC721Holder, Ownable {
 
     }
 
-    // function removePoolAddress(address _poolAddress) public {
-    //     require( tx.origin == owner(), "Not Authorized" );
-    //     EnumerableSet.remove(myPoolAddresses, _poolAddress);
-    // }
-
     function getPoolAddresses() public view returns(address[] memory) {
         return EnumerableSet.values(myPoolAddresses);
     }
