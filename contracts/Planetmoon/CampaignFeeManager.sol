@@ -230,11 +230,11 @@ contract CampaignFeeManager is Ownable {
         // this is the price of 1 Eth in USDs  => 1 ETh = price USDs
         // Find price of 1 USD => 1 USD = 1/price ETH
 
-        (, price,,,) = priceFeed.latestRoundData();
-        int ONE_ETH = 1 ether;
-        price = (ONE_ETH * 10**8)/price;
+        // (, price,,,) = priceFeed.latestRoundData();
+        // int ONE_ETH = 1 ether;
+        // price = (ONE_ETH * 10**8)/price;
 
-        // price = int(756881949122395); 
+        price = int(756881949122395); 
 
     }
 

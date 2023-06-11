@@ -8,7 +8,7 @@ import "../interfaces/ICreatorManager.sol";
 import "../interfaces/ICreatorContract.sol";
 import "../interfaces/ICampaignFeeManager.sol";
 
-// import "hardhat/console.sol";
+import "hardhat/console.sol";
 
 error POOL_NOT_STARTED();
 error NOT_ENOUGH_REWARD();
@@ -193,7 +193,6 @@ contract StakingPool is ERC721Enumerable {
         // Update the remianing reward pool
         poolInfo.remainingPool += leftoverReward;
 
-
         if(msg.value < fee){
             revert INSUFFICIENT_FUNDS();
         }
@@ -204,6 +203,8 @@ contract StakingPool is ERC721Enumerable {
             revert FAILED_TO_TRANSFER_BNBS();
         }
 
+        _burn(_tokenData.tokenId);
+        
         // Move tokens back to the user
         address creator = ICreatorManager(creatorManager).creatorAddress(msg.sender);        
         bool transfered = ICreatorContract(creator).sendTokensBackToOwner(address(this), _tokenId);
@@ -214,11 +215,6 @@ contract StakingPool is ERC721Enumerable {
         transfered = IERC20(projectInfo.tokenAddress).transfer(_tokenData.owner, redeemableReward);
         if(!transfered){
             revert FAILED_TO_TRANSFER_REWARD_TOEKNS();
-        }
-
-        _burn(_tokenData.tokenId);
-        if(balanceOf(creator) == 0) {
-            ICreatorContract(creator).removePoolAddress(address(this));
         }
 
         emit ExitedPool(poolInfo.poolId, msg.sender, _tokenData.tokenStaked, uint8(_tokenData.stakingType), redeemableReward);

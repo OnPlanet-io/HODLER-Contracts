@@ -46,6 +46,7 @@ describe("Planet Moon Test Stack", function () {
 
         const campaignFee = await campaignFeeManager.getCampaignFee(type);
 
+        
         const tokens = "1000";
         const decimals = stakingToken.decimals();
         const symbol = stakingToken.symbol();
@@ -265,6 +266,8 @@ describe("Planet Moon Test Stack", function () {
 
             it("Token URIs works fine", async () => {
 
+                await pmMembershipManager.changePauseStatus(false);
+
                 const regularFee = await membershipFeeManager.getMembershipFee(MembershipCategory.REGULAR);
                 const premiumFee = await membershipFeeManager.getMembershipFee(MembershipCategory.PREMIUM);
 
@@ -322,7 +325,8 @@ describe("Planet Moon Test Stack", function () {
             })
 
             it("Anyone can read Team Data by token id", async () => {
-
+                
+                await pmTeamManager.changePauseStatus(false);
                 const teamFee = await membershipFeeManager.getMembershipFee(MembershipCategory.TEAM);
 
                 await expect(pmTeamManager.connect(user1).createATeam(user1.address)).to.be.rejectedWith("INSUFFICIENT_FUNDS");
@@ -347,6 +351,8 @@ describe("Planet Moon Test Stack", function () {
 
             it("Onwer team admin can update the team members with right token Id", async () => {
 
+                await pmTeamManager.changePauseStatus(false);
+
                 const teamFee = await membershipFeeManager.getMembershipFee(MembershipCategory.TEAM);
                 await expect(() => pmTeamManager.connect(user1).createATeam(user1.address, { value: teamFee }))
                     .to.changeEtherBalances([user1, membershipFeeManager], [teamFee.mul(-1), teamFee]);
@@ -367,6 +373,8 @@ describe("Planet Moon Test Stack", function () {
             })
 
             it("Token URIs works fine", async () => {
+
+                await pmTeamManager.changePauseStatus(false);
 
                 const teamFee = await membershipFeeManager.getMembershipFee(MembershipCategory.TEAM);
                 await expect(() => pmTeamManager.connect(user1).createATeam(user1.address, { value: teamFee }))
@@ -449,21 +457,21 @@ describe("Planet Moon Test Stack", function () {
 
                 const { buyBackToken } = await launchOPAndProvideLiquidity();
 
-                await expect(membershipFeeManager.connect(user1).setDistributionScheme(20, 20, 60))
+                await expect(membershipFeeManager.connect(user1).setFeeDistributionShares(20, 20, 60))
                     .to.be.rejectedWith("Ownable: caller is not the owner");
 
                 await expect(membershipFeeManager.connect(user1).setFeeDistributionWallets(
-                    buyBackToken.address,
                     rewardPool.address,
                     corporate.address,
+                    buyBackToken.address,
                     DEAD_ADDRESS
                 )).to.be.rejectedWith("Ownable: caller is not the owner");
 
-                await membershipFeeManager.setDistributionScheme(20, 20, 60);
+                await membershipFeeManager.setFeeDistributionShares(20, 20, 60);
                 await membershipFeeManager.setFeeDistributionWallets(
-                    buyBackToken.address,
                     rewardPool.address,
                     corporate.address,
+                    buyBackToken.address,
                     DEAD_ADDRESS
                 );
 
@@ -473,21 +481,21 @@ describe("Planet Moon Test Stack", function () {
 
                 const { buyBackToken } = await launchOPAndProvideLiquidity();
 
-                await membershipFeeManager.setDistributionScheme(20, 20, 60);
+                await membershipFeeManager.setFeeDistributionShares(20, 20, 60);
                 await membershipFeeManager.setFeeDistributionWallets(
-                    buyBackToken.address,
                     rewardPool.address,
                     corporate.address,
+                    buyBackToken.address,
                     DEAD_ADDRESS
                 );
 
-                const feeDistributionScheme = await membershipFeeManager.feeDistributionScheme();
+                const feeDistributionScheme = await membershipFeeManager.feeDistributionShares();
                 expect(feeDistributionScheme.buyBackAndburn).be.equal(20);
                 expect(feeDistributionScheme.rewardPool).be.equal(20);
                 expect(feeDistributionScheme.corporate).be.equal(60);
 
                 const feeDistributionWallets = await membershipFeeManager.feeDistributionWallets();
-                expect(feeDistributionWallets.buyBackAndburn).be.equal(buyBackToken.address);
+                expect(feeDistributionWallets.buyBackAndburnToken).be.equal(buyBackToken.address);
                 expect(feeDistributionWallets.rewardPool).be.equal(rewardPool.address);
                 expect(feeDistributionWallets.corporate).be.equal(corporate.address);
                 expect(feeDistributionWallets.buyBackReceiver).be.equal(DEAD_ADDRESS);
@@ -513,11 +521,11 @@ describe("Planet Moon Test Stack", function () {
                     value: ethers.utils.parseEther("5")
                 });
 
-                await membershipFeeManager.setDistributionScheme(20, 20, 60);
+                await membershipFeeManager.setFeeDistributionShares(20, 20, 60);
                 await membershipFeeManager.setFeeDistributionWallets(
-                    buyBackToken.address,
                     rewardPool.address,
                     corporate.address,
+                    buyBackToken.address,
                     DEAD_ADDRESS
                 );
 
@@ -543,11 +551,11 @@ describe("Planet Moon Test Stack", function () {
 
                 const balanceOfMembershipFeeManager = await ethers.provider.getBalance(membershipFeeManager.address);
 
-                await membershipFeeManager.setDistributionScheme(20, 20, 60);
+                await membershipFeeManager.setFeeDistributionShares(20, 20, 60);
                 await membershipFeeManager.setFeeDistributionWallets(
-                    buyBackToken.address,
                     rewardPool.address,
                     corporate.address,
+                    buyBackToken.address,
                     DEAD_ADDRESS
                 );
 
@@ -599,7 +607,7 @@ describe("Planet Moon Test Stack", function () {
         describe("Memberships/Teams and Membership Fee Manager combined", () => {
 
             it("Anyone can become a regular member by paying fee", async () => {
-
+                await pmMembershipManager.changePauseStatus(false);
                 const regularFee = await membershipFeeManager.getMembershipFee(MembershipCategory.REGULAR);
                 await expect(() => pmMembershipManager.connect(user1).becomeMember(user1.address, { value: regularFee }))
                     .to.changeEtherBalances([user1, membershipFeeManager], [regularFee.mul(-1), regularFee]);
@@ -607,6 +615,7 @@ describe("Planet Moon Test Stack", function () {
             })
 
             it("Can't transfer membership token because they are soulbound", async () => {
+                await pmMembershipManager.changePauseStatus(false);
 
                 const regularFee = await membershipFeeManager.getMembershipFee(MembershipCategory.REGULAR);
                 const premiumFee = await membershipFeeManager.getMembershipFee(MembershipCategory.PREMIUM);
@@ -623,6 +632,7 @@ describe("Planet Moon Test Stack", function () {
             })
 
             it("Can't become a member without paying fee", async () => {
+                await pmMembershipManager.changePauseStatus(false);
 
                 const regularFee = await membershipFeeManager.getMembershipFee(MembershipCategory.REGULAR);
                 const upgradeFee = await membershipFeeManager.getMembershipFee(MembershipCategory.UPGRADE);
@@ -651,6 +661,7 @@ describe("Planet Moon Test Stack", function () {
             })
 
             it("Can only upgrade to premium from regular membership", async () => {
+                await pmMembershipManager.changePauseStatus(false);
 
                 const regularFee = await membershipFeeManager.getMembershipFee(MembershipCategory.REGULAR);
                 const upgradeFee = await membershipFeeManager.getMembershipFee(MembershipCategory.UPGRADE);
@@ -667,6 +678,7 @@ describe("Planet Moon Test Stack", function () {
             })
 
             it("Can't create a team without paying fee", async () => {
+                await pmTeamManager.changePauseStatus(false);
 
                 const teamFee = await membershipFeeManager.getMembershipFee(MembershipCategory.TEAM);
 
@@ -753,6 +765,8 @@ describe("Planet Moon Test Stack", function () {
 
                 const regularFee = await membershipFeeManager.getMembershipFee(MembershipCategory.REGULAR);
                 const upgradeFee = await membershipFeeManager.getMembershipFee(MembershipCategory.UPGRADE);
+                await stakingPoolFactory.changePauseStatus(false);
+                await pmMembershipManager.changePauseStatus(false);
 
                 // Create a campaign with a regular + upgraded member
                 await expect(startAStakingPool(CampaignCategory.SILVER, user2)).to.be.rejectedWith("NOT_PREMIUM_OR_TEAM");
@@ -769,7 +783,6 @@ describe("Planet Moon Test Stack", function () {
                 expect(poolId).not.be.equal(0);
 
 
-
                 await stakingPoolFactory.connect(deployer).changePauseStatus(true);
                 await expect(startAStakingPool(CampaignCategory.SILVER, user2)).to.be.rejectedWith("CONTRACT_IS_PAUSED");
                 await stakingPoolFactory.connect(deployer).changePauseStatus(false);
@@ -784,6 +797,8 @@ describe("Planet Moon Test Stack", function () {
 
                 const regularFee = await membershipFeeManager.getMembershipFee(MembershipCategory.REGULAR);
                 const upgradeFee = await membershipFeeManager.getMembershipFee(MembershipCategory.UPGRADE);
+                await stakingPoolFactory.changePauseStatus(false);
+                await pmMembershipManager.changePauseStatus(false);
 
                 // Create a campaign with a regular + upgraded member
                 await expect(startAStakingPool(CampaignCategory.SILVER, user2)).to.be.rejectedWith("NOT_PREMIUM_OR_TEAM");
@@ -804,6 +819,8 @@ describe("Planet Moon Test Stack", function () {
             it("Premium members can create campaigns", async () => {
 
                 const premiumFee = await membershipFeeManager.getMembershipFee(MembershipCategory.PREMIUM);
+                await stakingPoolFactory.changePauseStatus(false);
+                await pmMembershipManager.changePauseStatus(false);
 
                 // Create a campaign with a premium member
                 await expect(startAStakingPool(CampaignCategory.SILVER, user3)).to.be.rejectedWith("NOT_PREMIUM_OR_TEAM");
@@ -820,6 +837,8 @@ describe("Planet Moon Test Stack", function () {
             it("Teams can create campaigns", async () => {
 
                 const teamFee = await membershipFeeManager.getMembershipFee(MembershipCategory.TEAM);
+                await stakingPoolFactory.changePauseStatus(false);
+                await pmTeamManager.changePauseStatus(false);
 
                 // Create a campaign with a team
                 await expect(startAStakingPool(CampaignCategory.SILVER)).to.be.rejectedWith("NOT_PREMIUM_OR_TEAM");
@@ -836,6 +855,9 @@ describe("Planet Moon Test Stack", function () {
 
                 const premiumFee = await membershipFeeManager.getMembershipFee(MembershipCategory.PREMIUM);
                 const teamFee = await membershipFeeManager.getMembershipFee(MembershipCategory.TEAM);
+                await stakingPoolFactory.changePauseStatus(false);
+                await pmTeamManager.changePauseStatus(false);
+                await pmMembershipManager.changePauseStatus(false);
 
                 await expect(() => pmTeamManager.connect(user2).createATeam(user2.address, { value: teamFee }))
                     .to.changeEtherBalances([user2, membershipFeeManager], [teamFee.mul(-1), teamFee]);
@@ -895,6 +917,8 @@ describe("Planet Moon Test Stack", function () {
             it("Can't create a campaign without paying fee", async () => {
 
                 const premiumFee = await membershipFeeManager.getMembershipFee(MembershipCategory.PREMIUM);
+                await stakingPoolFactory.changePauseStatus(false);
+                await pmMembershipManager.changePauseStatus(false);
 
                 await expect(() => pmMembershipManager.connect(user3).becomePremiumMember(user3.address, { value: premiumFee }))
                     .to.changeEtherBalances([user3, membershipFeeManager], [premiumFee.mul(-1), premiumFee]);
@@ -951,6 +975,8 @@ describe("Planet Moon Test Stack", function () {
             it("Can't create a campaign with past date", async () => {
 
                 const premiumFee = await membershipFeeManager.getMembershipFee(MembershipCategory.PREMIUM);
+                await stakingPoolFactory.changePauseStatus(false);
+                await pmMembershipManager.changePauseStatus(false);
 
                 await expect(() => pmMembershipManager.connect(user3).becomePremiumMember(user3.address, { value: premiumFee }))
                     .to.changeEtherBalances([user3, membershipFeeManager], [premiumFee.mul(-1), premiumFee]);
@@ -1002,13 +1028,13 @@ describe("Planet Moon Test Stack", function () {
                     )
                 ).to.rejectedWith("START_TIME_SHOULD_BE_FUTURE");
 
-
-
             })
 
             it("Can't create a campaign with past date", async () => {
 
                 const premiumFee = await membershipFeeManager.getMembershipFee(MembershipCategory.PREMIUM);
+                await stakingPoolFactory.changePauseStatus(false);
+                await pmMembershipManager.changePauseStatus(false);
 
                 await expect(() => pmMembershipManager.connect(user3).becomePremiumMember(user3.address, { value: premiumFee }))
                     .to.changeEtherBalances([user3, membershipFeeManager], [premiumFee.mul(-1), premiumFee]);
@@ -1060,9 +1086,6 @@ describe("Planet Moon Test Stack", function () {
 
             })
 
-
-
-
         })
 
         describe("Staking pools", () => {
@@ -1070,6 +1093,9 @@ describe("Planet Moon Test Stack", function () {
             describe("Token Staking", () => {
 
                 it("No one can stake tokens if campaign is not started yet", async () => {
+
+                    await pmMembershipManager.changePauseStatus(false);
+                    await stakingPoolFactory.changePauseStatus(false);
 
                     const premiumFee = await membershipFeeManager.getMembershipFee(MembershipCategory.PREMIUM);
                     await pmMembershipManager.becomePremiumMember(user1.address, { value: premiumFee });
@@ -1096,6 +1122,9 @@ describe("Planet Moon Test Stack", function () {
 
                 it("Anyone with tokens can stake their tokens", async () => {
 
+                    await pmMembershipManager.changePauseStatus(false);
+                    await stakingPoolFactory.changePauseStatus(false);
+                    
                     const premiumFee = await membershipFeeManager.getMembershipFee(MembershipCategory.PREMIUM);
                     await pmMembershipManager.becomePremiumMember(user1.address, { value: premiumFee });
 
@@ -1135,6 +1164,9 @@ describe("Planet Moon Test Stack", function () {
 
                 it("No one can stake tokens if pool is empty", async () => {
 
+                    await pmMembershipManager.changePauseStatus(false);
+                    await stakingPoolFactory.changePauseStatus(false);
+                    
                     const premiumFee = await membershipFeeManager.getMembershipFee(MembershipCategory.PREMIUM);
                     await pmMembershipManager.becomePremiumMember(user1.address, { value: premiumFee });
 
@@ -1166,6 +1198,9 @@ describe("Planet Moon Test Stack", function () {
 
                 it("Only owner of the token can unstake his tokens + reward", async () => {
 
+                    await pmMembershipManager.changePauseStatus(false);
+                    await stakingPoolFactory.changePauseStatus(false);
+                    
                     const premiumFee = await membershipFeeManager.getMembershipFee(MembershipCategory.PREMIUM);
                     await pmMembershipManager.becomePremiumMember(user1.address, { value: premiumFee });
 
@@ -1184,6 +1219,9 @@ describe("Planet Moon Test Stack", function () {
                 });
 
                 it("Owner of the token can unstake his tokens only once", async () => {
+
+                    await pmMembershipManager.changePauseStatus(false);
+                    await stakingPoolFactory.changePauseStatus(false);
 
                     const premiumFee = await membershipFeeManager.getMembershipFee(MembershipCategory.PREMIUM);
                     await pmMembershipManager.becomePremiumMember(user1.address, { value: premiumFee });
@@ -1214,6 +1252,9 @@ describe("Planet Moon Test Stack", function () {
 
                 it("No one can unstake anything with wrong token id", async () => {
 
+                    await pmMembershipManager.changePauseStatus(false);
+                    await stakingPoolFactory.changePauseStatus(false);
+
                     const premiumFee = await membershipFeeManager.getMembershipFee(MembershipCategory.PREMIUM);
                     await pmMembershipManager.becomePremiumMember(user1.address, { value: premiumFee });
 
@@ -1234,6 +1275,9 @@ describe("Planet Moon Test Stack", function () {
                 it("Early withdrawls with less than 30% time", async () => {
 
                     // console.log("Unstaking Fees: ", await campaignFeeManager.getAllUnstakingFees(FeesType.BNB));
+                    await pmMembershipManager.changePauseStatus(false);
+                    await stakingPoolFactory.changePauseStatus(false);
+
                     const premiumFee = await membershipFeeManager.getMembershipFee(MembershipCategory.PREMIUM);
                     await pmMembershipManager.becomePremiumMember(user1.address, { value: premiumFee });
 
@@ -1303,6 +1347,9 @@ describe("Planet Moon Test Stack", function () {
 
                 it("Early withdrawls with less than 100% time", async () => {
 
+                    await pmMembershipManager.changePauseStatus(false);
+                    await stakingPoolFactory.changePauseStatus(false);
+
                     const premiumFee = await membershipFeeManager.getMembershipFee(MembershipCategory.PREMIUM);
                     await pmMembershipManager.becomePremiumMember(user1.address, { value: premiumFee });
 
@@ -1369,6 +1416,9 @@ describe("Planet Moon Test Stack", function () {
 
                 it("No fee for completed time", async () => {
 
+                    await pmMembershipManager.changePauseStatus(false);
+                    await stakingPoolFactory.changePauseStatus(false);
+
                     const premiumFee = await membershipFeeManager.getMembershipFee(MembershipCategory.PREMIUM);
                     await pmMembershipManager.becomePremiumMember(user1.address, { value: premiumFee });
 
@@ -1399,6 +1449,9 @@ describe("Planet Moon Test Stack", function () {
             describe("Tokens information", () => {
 
                 it("Anyone can read all tokens information of any user", async () => {
+
+                    await pmMembershipManager.changePauseStatus(false);
+                    await stakingPoolFactory.changePauseStatus(false);
 
                     const premiumFee = await membershipFeeManager.getMembershipFee(MembershipCategory.PREMIUM);
                     await pmMembershipManager.becomePremiumMember(user1.address, { value: premiumFee });
@@ -1554,21 +1607,21 @@ describe("Planet Moon Test Stack", function () {
 
                 const { buyBackToken } = await launchOPAndProvideLiquidity();
 
-                await expect(campaignFeeManager.connect(user1).setDistributionScheme(20, 20, 60))
+                await expect(campaignFeeManager.connect(user1).setFeeDistributionShares(20, 20, 60))
                     .to.be.rejectedWith("Ownable: caller is not the owner");
 
                 await expect(campaignFeeManager.connect(user1).setFeeDistributionWallets(
-                    buyBackToken.address,
                     rewardPool.address,
                     corporate.address,
+                    buyBackToken.address,
                     DEAD_ADDRESS
                 )).to.be.rejectedWith("Ownable: caller is not the owner");
 
-                await campaignFeeManager.setDistributionScheme(20, 20, 60);
+                await campaignFeeManager.setFeeDistributionShares(20, 20, 60);
                 await campaignFeeManager.setFeeDistributionWallets(
-                    buyBackToken.address,
                     rewardPool.address,
                     corporate.address,
+                    buyBackToken.address,
                     DEAD_ADDRESS
                 );
 
@@ -1578,23 +1631,23 @@ describe("Planet Moon Test Stack", function () {
 
                 const { buyBackToken } = await launchOPAndProvideLiquidity();
 
-                await campaignFeeManager.setDistributionScheme(20, 20, 60);
+                await campaignFeeManager.setFeeDistributionShares(20, 20, 60);
                 await campaignFeeManager.setFeeDistributionWallets(
-                    buyBackToken.address,
                     rewardPool.address,
                     corporate.address,
-                    DEAD_ADDRESS
+                    buyBackToken.address,
+                    DEAD_ADDRESS           
                 );
 
-                const feeDistributionScheme = await campaignFeeManager.feeDistributionScheme();
+                const feeDistributionScheme = await campaignFeeManager.feeDistributionShares();
                 expect(feeDistributionScheme.buyBackAndburn).be.equal(20);
                 expect(feeDistributionScheme.rewardPool).be.equal(20);
                 expect(feeDistributionScheme.corporate).be.equal(60);
 
                 const feeDistributionWallets = await campaignFeeManager.feeDistributionWallets();
-                expect(feeDistributionWallets.buyBackAndburn).be.equal(buyBackToken.address);
                 expect(feeDistributionWallets.rewardPool).be.equal(rewardPool.address);
                 expect(feeDistributionWallets.corporate).be.equal(corporate.address);
+                expect(feeDistributionWallets.buyBackAndburnToken).be.equal(buyBackToken.address);
                 expect(feeDistributionWallets.buyBackReceiver).be.equal(DEAD_ADDRESS);
 
             })
@@ -1618,11 +1671,11 @@ describe("Planet Moon Test Stack", function () {
                     value: ethers.utils.parseEther("5")
                 });
 
-                await campaignFeeManager.setDistributionScheme(20, 20, 60);
+                await campaignFeeManager.setFeeDistributionShares(20, 20, 60);
                 await campaignFeeManager.setFeeDistributionWallets(
-                    buyBackToken.address,
                     rewardPool.address,
                     corporate.address,
+                    buyBackToken.address,
                     DEAD_ADDRESS
                 );
 
@@ -1649,11 +1702,11 @@ describe("Planet Moon Test Stack", function () {
 
                 const balanceOfCampaignFeeManager = await ethers.provider.getBalance(campaignFeeManager.address);
 
-                await campaignFeeManager.setDistributionScheme(20, 20, 60);
+                await campaignFeeManager.setFeeDistributionShares(20, 20, 60);
                 await campaignFeeManager.setFeeDistributionWallets(
-                    buyBackToken.address,
                     rewardPool.address,
                     corporate.address,
+                    buyBackToken.address,
                     DEAD_ADDRESS
                 );
 
@@ -1751,10 +1804,12 @@ describe("Planet Moon Test Stack", function () {
 
                 it("Staking tokens will automatically deploy a creator contract on user's behalf", async () => {
 
+                    await pmMembershipManager.changePauseStatus(false);
+                    await stakingPoolFactory.changePauseStatus(false);
+
                     await expect(creatorManager.getCreatorAddress(user1.address)).to.rejectedWith("NOT_EXIST")
                     await expect(creatorManager.getCreatorAddress(user2.address)).to.rejectedWith("NOT_EXIST")
                     await expect(creatorManager.getCreatorAddress(user3.address)).to.rejectedWith("NOT_EXIST")
-
 
                     const premiumFee = await membershipFeeManager.getMembershipFee(MembershipCategory.PREMIUM);
                     await pmMembershipManager.becomePremiumMember(user1.address, { value: premiumFee });
@@ -1782,6 +1837,9 @@ describe("Planet Moon Test Stack", function () {
 
                 it("Staking tokens will automatically tranfer all tokens to creator contract", async () => {
 
+                    await pmMembershipManager.changePauseStatus(false);
+                    await stakingPoolFactory.changePauseStatus(false);
+
                     await expect(creatorManager.getCreatorAddress(user2.address)).to.rejectedWith("NOT_EXIST")
 
                     const premiumFee = await membershipFeeManager.getMembershipFee(MembershipCategory.PREMIUM);
@@ -1805,6 +1863,9 @@ describe("Planet Moon Test Stack", function () {
                 })
 
                 it("Staking tokens will automatically add the pool address in the creator contract", async () => {
+
+                    await pmMembershipManager.changePauseStatus(false);
+                    await stakingPoolFactory.changePauseStatus(false);
 
                     await expect(creatorManager.getCreatorAddress(user2.address)).to.rejectedWith("NOT_EXIST")
 
@@ -1831,11 +1892,15 @@ describe("Planet Moon Test Stack", function () {
 
                 it("Unstaking tokens will automatically remove the pool address in the creator contract", async () => {
 
+                    await pmMembershipManager.changePauseStatus(false);
+                    await stakingPoolFactory.changePauseStatus(false);
+
                     await expect(creatorManager.getCreatorAddress(user2.address)).to.rejectedWith("NOT_EXIST")
 
                     const premiumFee = await membershipFeeManager.getMembershipFee(MembershipCategory.PREMIUM);
                     await pmMembershipManager.becomePremiumMember(user1.address, { value: premiumFee });
                     const { poolContract } = await startAStakingPool(CampaignCategory.DIAMOND, user1);
+
                     await network.provider.send("evm_increaseTime", [15 * 60 * 1000]);
                     await network.provider.send("evm_mine");
 
@@ -1856,6 +1921,7 @@ describe("Planet Moon Test Stack", function () {
                     const creatorContract = CreatorContract.attach(creator);
 
                     expect(await stakingToken.balanceOf(user2.address)).to.equal(ethers.utils.parseEther("0"));
+                    expect(await poolContract.balanceOf(creator)).to.equal(2);
                     expect(await stakingToken.balanceOf(creatorContract.address)).to.equal(ethers.utils.parseEther("2000"));
                     expect(await creatorManager.getPoolAddressesOfCreator(user2.address)).to.not.empty;
 
@@ -1870,6 +1936,7 @@ describe("Planet Moon Test Stack", function () {
                         )
 
                     expect(await stakingToken.balanceOf(user2.address)).to.equal(ethers.utils.parseEther("1300"));
+                    expect(await poolContract.balanceOf(creator)).to.equal(1);
                     expect(await stakingToken.balanceOf(creatorContract.address)).to.equal(ethers.utils.parseEther("1000"));
                     expect(await creatorManager.getPoolAddressesOfCreator(user2.address)).to.not.empty;
 
@@ -1884,6 +1951,7 @@ describe("Planet Moon Test Stack", function () {
                         )
 
                     expect(await stakingToken.balanceOf(user2.address)).to.equal(ethers.utils.parseEther("2600"));
+                    expect(await poolContract.balanceOf(creator)).to.equal(0);
                     expect(await stakingToken.balanceOf(creatorContract.address)).to.equal(ethers.utils.parseEther("0"));
                     expect(await creatorManager.getPoolAddressesOfCreator(user2.address)).to.empty;
 
@@ -1891,6 +1959,9 @@ describe("Planet Moon Test Stack", function () {
                 })
 
                 it("Multiple token staking simulation", async () => {
+
+                    await pmMembershipManager.changePauseStatus(false);
+                    await stakingPoolFactory.changePauseStatus(false);
 
                     await expect(creatorManager.getCreatorAddress(user2.address)).to.rejectedWith("NOT_EXIST");
 
@@ -2088,6 +2159,9 @@ describe("Planet Moon Test Stack", function () {
 
             it("Can create a campaing with only single staking scheme", async () => {
 
+                await pmMembershipManager.changePauseStatus(false);
+                await stakingPoolFactory.changePauseStatus(false);
+
                 const premiumFee = await membershipFeeManager.getMembershipFee(MembershipCategory.PREMIUM);
                 const campaignFee = await campaignFeeManager.getCampaignFee(CampaignCategory.SILVER);
 
@@ -2199,6 +2273,8 @@ describe("Planet Moon Test Stack", function () {
             })
 
             it("Can create a campaing with selected staking scheme", async () => {
+                await pmMembershipManager.changePauseStatus(false);
+                await stakingPoolFactory.changePauseStatus(false);
 
                 const premiumFee = await membershipFeeManager.getMembershipFee(MembershipCategory.PREMIUM);
                 const campaignFee = await campaignFeeManager.getCampaignFee(CampaignCategory.SILVER);
@@ -2280,6 +2356,8 @@ describe("Planet Moon Test Stack", function () {
             });
 
             it("Can create a campaing with all staking scheme", async () => {
+                await pmMembershipManager.changePauseStatus(false);
+                await stakingPoolFactory.changePauseStatus(false);
 
                 const premiumFee = await membershipFeeManager.getMembershipFee(MembershipCategory.PREMIUM);
                 const campaignFee = await campaignFeeManager.getCampaignFee(CampaignCategory.SILVER);
@@ -2398,6 +2476,8 @@ describe("Planet Moon Test Stack", function () {
 
         it("Giveaway manager cannot distributeReward reward if contract is paused", async () => {
 
+            await pmRewardDistributor.changePauseStatus(false);
+
             await user1.sendTransaction({
                 to: pmRewardDistributor.address,
                 value: ethers.utils.parseEther("5")
@@ -2423,6 +2503,8 @@ describe("Planet Moon Test Stack", function () {
 
         it("Only giveaway manager can distributeReward to giveaway winners", async () => {
 
+            await pmRewardDistributor.changePauseStatus(false);
+
             await user1.sendTransaction({
                 to: pmRewardDistributor.address,
                 value: ethers.utils.parseEther("5")
@@ -2444,11 +2526,15 @@ describe("Planet Moon Test Stack", function () {
         })
 
         it("if balance is not enought then should throw an error on distributeReward", async () => {
+            await pmRewardDistributor.changePauseStatus(false);
+
             await expect(pmRewardDistributor.connect(rewardManger).distributeReward(user1.address, 1))
                 .to.be.rejectedWith("NOT_ENOUGH_BALANCE");
         })
 
         it("Giveaway winner will receive his reward as expected", async () => {
+
+            await pmRewardDistributor.changePauseStatus(false);
 
             await user1.sendTransaction({
                 to: pmRewardDistributor.address,
@@ -2466,6 +2552,10 @@ describe("Planet Moon Test Stack", function () {
         })
 
         it("Only giveaway manager can apply reward to a campaign", async () => {
+
+            await pmRewardDistributor.changePauseStatus(false);
+            await stakingPoolFactory.changePauseStatus(false);
+            await pmMembershipManager.changePauseStatus(false);
 
             await user1.sendTransaction({
                 to: pmRewardDistributor.address,
@@ -2485,6 +2575,11 @@ describe("Planet Moon Test Stack", function () {
         })
 
         it("if balance is not enought then should throw an error on applyRewardToACampaing", async () => {
+            
+            await pmRewardDistributor.changePauseStatus(false);
+            await stakingPoolFactory.changePauseStatus(false);
+            await pmMembershipManager.changePauseStatus(false);
+
             const premiumFee = await membershipFeeManager.getMembershipFee(MembershipCategory.PREMIUM);
             await pmMembershipManager.becomePremiumMember(user1.address, { value: premiumFee });
 
@@ -2496,6 +2591,10 @@ describe("Planet Moon Test Stack", function () {
         })
 
         it("if contract is paused then should throw an error on applyRewardToACampaing", async () => {
+
+            await pmRewardDistributor.changePauseStatus(false);
+            await stakingPoolFactory.changePauseStatus(false);
+            await pmMembershipManager.changePauseStatus(false);
 
             await user1.sendTransaction({
                 to: pmRewardDistributor.address,
@@ -2531,6 +2630,10 @@ describe("Planet Moon Test Stack", function () {
 
         it("Users can apply Reward To A Campaing", async () => {
 
+            await pmRewardDistributor.changePauseStatus(false);
+            await stakingPoolFactory.changePauseStatus(false);
+            await pmMembershipManager.changePauseStatus(false);
+
             await user1.sendTransaction({
                 to: pmRewardDistributor.address,
                 value: ethers.utils.parseEther("5")
@@ -2559,6 +2662,10 @@ describe("Planet Moon Test Stack", function () {
         })
 
         it("total Reward Distributed is working fine", async () => {
+
+            await pmRewardDistributor.changePauseStatus(false);
+            await stakingPoolFactory.changePauseStatus(false);
+            await pmMembershipManager.changePauseStatus(false);
 
             await user1.sendTransaction({
                 to: pmRewardDistributor.address,

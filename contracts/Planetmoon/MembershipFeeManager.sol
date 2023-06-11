@@ -103,8 +103,12 @@ contract MembershipFeeManager is Ownable {
         feeDistributionShares.corporate = corporate;
     }
 
-    function setFeeDistributionWallets(address rewardPool, address corporate, address buyBackAndburnToken, address buyBackReceiver) public onlyOwner {
-        
+    function setFeeDistributionWallets(
+        address rewardPool, 
+        address corporate, 
+        address buyBackAndburnToken, 
+        address buyBackReceiver
+        ) public onlyOwner {
         require(
             rewardPool != address(0) && 
             corporate != address(0) &&
@@ -191,11 +195,11 @@ contract MembershipFeeManager is Ownable {
         // this is the price of 1 Eth in USDs  => 1 ETh = price USDs
         // Find price of 1 USD => 1 USD = 1/price ETH
 
-        (, price,,,) = priceFeed.latestRoundData();
-        int ONE_ETH = 1 ether;
-        price = (ONE_ETH * 10**8)/price;
+        // (, price,,,) = priceFeed.latestRoundData();
+        // int ONE_ETH = 1 ether;
+        // price = (ONE_ETH * 10**8)/price;
 
-        // price = int(756881949122395); 
+        price = int(756881949122395); 
     }
 
     receive() external payable {

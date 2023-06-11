@@ -2,6 +2,7 @@
 pragma solidity ^0.8.14;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
@@ -45,12 +46,16 @@ contract CreatorContract is ERC721Holder, Ownable {
 
         transfered = IERC20(token.tokenAddress).transfer(owner(), token.tokenStaked);
 
+        if(IERC721(stakingPool).balanceOf(address(this)) == 0) {
+            EnumerableSet.remove(myPoolAddresses, stakingPool);
+        }
+
     }
 
-    function removePoolAddress(address _poolAddress) public {
-        require( tx.origin == owner(), "Not Authorized" );
-        EnumerableSet.remove(myPoolAddresses, _poolAddress);
-    }
+    // function removePoolAddress(address _poolAddress) public {
+    //     require( tx.origin == owner(), "Not Authorized" );
+    //     EnumerableSet.remove(myPoolAddresses, _poolAddress);
+    // }
 
     function getPoolAddresses() public view returns(address[] memory) {
         return EnumerableSet.values(myPoolAddresses);
