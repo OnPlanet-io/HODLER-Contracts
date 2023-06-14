@@ -59,7 +59,6 @@ contract PMRewardDistributor is Ownable, PriceFeed, SwapETHForTokens {
             revert CONTRACT_IS_PAUSED();
         }
 
-
         uint256 priceOfOneUSD = uint256(getLatestPriceOfOneUSD());
 
         uint256 amount = priceOfOneUSD * amountUSD;

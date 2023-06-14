@@ -170,12 +170,11 @@ contract StakingPool is ERC721Enumerable {
         if(msg.sender != _tokenData.owner){
             revert NOT_AUTHERIZED();
         }
-        // require(_tokenData.expectedReward > 0, "Nothing to unstaked");
+
         if(_tokenData.expectedReward == 0){
             revert NOTHING_TO_UNSTAKE();
         }
 
-        // require(!_tokenData.isUnskated, "Already unstaked");
         if(_tokenData.isUnskated){
             revert ALREADY_UNSTAKED();
         }
@@ -278,24 +277,21 @@ contract StakingPool is ERC721Enumerable {
         return tokenData[_tokenId];
     }
 
-    function getUserTokens(address _user) public view returns (
-        // StakingLibrary.ProjectInfo memory, StakingLibrary.TokenData[] memory ) {
-        StakingLibrary.TokenData[] memory ) {
-        
+    function getUserTokens(address _user) public view returns ( StakingLibrary.TokenData[] memory ) {
+       
         address creator = ICreatorManager(creatorManager).creatorAddress(_user);
         if(creator == address(0)){
             revert NO_CREATOR_CONTRACT_FOUND();
         }
 
-        uint256 myBalance = balanceOf(creator);
-        StakingLibrary.TokenData[] memory tokensData = new StakingLibrary.TokenData[](myBalance);
-        for(uint256 i = 0; i < myBalance; i++){
+        uint256 userBalance = balanceOf(creator);
+        StakingLibrary.TokenData[] memory tokensData = new StakingLibrary.TokenData[](userBalance);
+        for(uint256 i = 0; i < userBalance; i++){
             uint256 tokenId = tokenOfOwnerByIndex(creator, i);
             StakingLibrary.TokenData memory data = tokenData[tokenId];
             tokensData[i] = data;
         }
 
-        // return (projectInfo, tokensData);
         return (tokensData);
     
     }
