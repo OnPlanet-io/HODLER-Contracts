@@ -1,12 +1,12 @@
 {
     "56": {
-        "CreatorManager": "0x4eB18aaF5F14BAFAEB8F0019adB55c63338843EE",
-        "StakingPoolFactory": "0x0d2c74fB634EE973611Dea86B94044Cd8F535D64",
-        "PMMembershipManager": "0x782bB7435Ff34156cF0Fd451010e04d8E299CC86",
-        "PMTeamManager": "0x7809ab1295f3aCF2dA080b274454aA1Dc029C299",
-        "CampaignFeeManager": "0x0405B4fcabae0014B9ecab3809098E2e471F353d",
-        "MembershipFeeManager": "0x6eAD16e44912cEDa569603704ba6785e25B9e3eB",
-        "PMRewardDistributor": "0xcf3D4fb13BD309079A35A5cC5fdE44099A4820C5",
+        "CreatorManager": "0x88A28e8520886C52954461F6c4fb12d067168854",
+        "StakingPoolFactory": "0x3F1A4E35dCe82CE0Dd35719793b6698478750806",
+        "PMMembershipManager": "0x32Cf412c8df3753a46d293bD5D3e2bD450C4a0A5",
+        "PMTeamManager": "0x04648215e862C50561FB26F7ad1C73F6bB8329Ba",
+        "CampaignFeeManager": "0x3B056385972EF5Ae38D4A7598cA0A1bD3cBb218F",
+        "MembershipFeeManager": "0xA04E685821cE632F22c94D83a594568B9801a5e7",
+        "PMRewardDistributor": "0x3a6178A4af77eD79fa11Ab071E43f5CC78C589E9",
         "chainId": 56
     },
     "31337": {
@@ -23,13 +23,13 @@
         "chainId": 31337
     },
     "11155111": {
-        "CreatorManager": "0xBf4D33AcFf53BeBc0540ec76a0d7D424c753287f",
-        "StakingPoolFactory": "0xC04A3F83019Ba290Af4dEb2B1952556eF0c00335",
-        "PMMembershipManager": "0x98EAbBB9F0054cAd0AC6F96A0eB6a74Df03af69a",
-        "PMTeamManager": "0x7712b73EE68382F0130814e92dD28A78DE8EFcAC",
-        "CampaignFeeManager": "0xbC3CDf5eabFc1e77cD0d03A57aC9E404df2c1ab4",
-        "MembershipFeeManager": "0x20f872753f6B4Ba9e1D6b8372DD6928742F7EfD0",
-        "PMRewardDistributor": "0xc123942c316c3A715d5A412bdB0914f39343c40e",
+        "CreatorManager": "0x0A4A974b507c4cc8D19028982E3dD4a585C9BC83",
+        "StakingPoolFactory": "0xe4e0F9D80eE0bFE911d9F947790341b87630B807",
+        "PMMembershipManager": "0x9dBC5076FBF0Fd4A7Bc79799018F0cAa93cb7400",
+        "PMTeamManager": "0x7981371AeCFC93f9E432Cf90Eb85C562bf6e5008",
+        "CampaignFeeManager": "0x45616Fb7d299c068E3131EBB7C11AE15EF66D1C1",
+        "MembershipFeeManager": "0xe2ce88117e8CF66a7b96d3525AF3d8382634e07E",
+        "PMRewardDistributor": "0xd9aEf3c432642b34734A95803dBFA3242816c482",
         "chainId": 11155111
     }
 }
