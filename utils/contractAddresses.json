@@ -23,13 +23,13 @@
         "chainId": 31337
     },
     "11155111": {
-        "CreatorManager": "0x0A4A974b507c4cc8D19028982E3dD4a585C9BC83",
-        "StakingPoolFactory": "0xe4e0F9D80eE0bFE911d9F947790341b87630B807",
-        "PMMembershipManager": "0x9dBC5076FBF0Fd4A7Bc79799018F0cAa93cb7400",
-        "PMTeamManager": "0x7981371AeCFC93f9E432Cf90Eb85C562bf6e5008",
-        "CampaignFeeManager": "0x45616Fb7d299c068E3131EBB7C11AE15EF66D1C1",
-        "MembershipFeeManager": "0xe2ce88117e8CF66a7b96d3525AF3d8382634e07E",
-        "PMRewardDistributor": "0xd9aEf3c432642b34734A95803dBFA3242816c482",
+        "CreatorManager": "0xC1Bf42686562F7b03270d07BbC87A589fe55EC03",
+        "StakingPoolFactory": "0x08f17F34c1d7243DB05e07dB3B9cec8b2006FC2b",
+        "PMMembershipManager": "0x1b002ef75A1E5FF04bce3D67808B30fAcdDC26eB",
+        "PMTeamManager": "0x04DFE53A785c0654e85571bBF3Cc813b07B228Cc",
+        "CampaignFeeManager": "0x0b2c1A7D3b5B82f9E0e513E118A8d48DBF0b017E",
+        "MembershipFeeManager": "0x2D2f424B2B3FD9F5E9178b48c359FD776F488890",
+        "PMRewardDistributor": "0x28EEf79ac4f1a81dFE32226C44b461101fDDf989",
         "chainId": 11155111
     }
 }
