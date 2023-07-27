@@ -4,6 +4,7 @@ import "hardhat-deploy";
 import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-ethers";
 import "@nomicfoundation/hardhat-toolbox";
+import "solidity-coverage";
 
 require("dotenv").config();
 

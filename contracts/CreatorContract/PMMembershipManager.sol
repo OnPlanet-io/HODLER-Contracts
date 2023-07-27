@@ -5,7 +5,7 @@ import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Counters} from "@openzeppelin/contracts/utils/Counters.sol";
 
-import {StakingLibrary} from "../library/StakingLibrary.sol";
+import {PMLibrary} from "../library/PMLibrary.sol";
 import {IMembershipFeeManager} from "../interfaces/IMembershipFeeManager.sol";
 
 import "hardhat/console.sol";
@@ -49,7 +49,7 @@ contract PMMembershipManager is
         }
 
         uint256 fee = IMembershipFeeManager(s_membershipFeeManager)
-            .getMembershipFee(StakingLibrary.MembershipCategories.MEMBER);
+            .getMembershipFee(PMLibrary.MembershipCategories.MEMBER);
 
         if (msg.value < fee) {
             revert PMMembershipManager__INSUFFICIENT_FUNDS();

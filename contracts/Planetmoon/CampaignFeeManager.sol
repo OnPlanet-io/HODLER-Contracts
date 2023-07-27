@@ -2,7 +2,7 @@
 pragma solidity ^0.8.18;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {StakingLibrary} from "../library/StakingLibrary.sol";
+import {PMLibrary} from "../library/PMLibrary.sol";
 import {IUniswapV2Router02} from "../interfaces/IUniswapV2Router02.sol";
 import {PriceFeed} from "./PriceFeed.sol";
 import {SwapETHForTokens} from "./SwapETHForTokens.sol";
@@ -12,9 +12,9 @@ import {IUniswapV2Router02} from "../interfaces/IUniswapV2Router02.sol";
 // import "hardhat/console.sol";
 
 contract CampaignFeeManager is Ownable, PriceFeed, SwapETHForTokens {
-    mapping(StakingLibrary.CampaignCategories category => uint256 fee)
+    mapping(PMLibrary.CampaignCategories category => uint256 fee)
         private s_campaingFee;
-    mapping(StakingLibrary.UnstakingCategories category => uint256 fee)
+    mapping(PMLibrary.UnstakingCategories category => uint256 fee)
         private s_unStakingFee;
 
     FeeDistributionShares private s_feeDistributionShares;
@@ -44,39 +44,39 @@ contract CampaignFeeManager is Ownable, PriceFeed, SwapETHForTokens {
         uint256 reward_50pc,
         uint256 reward_100pc
     ) {
-        s_campaingFee[StakingLibrary.CampaignCategories.SILVER] = silver;
-        s_campaingFee[StakingLibrary.CampaignCategories.GOLD] = gold;
-        s_campaingFee[StakingLibrary.CampaignCategories.DIAMOND] = diamond;
+        s_campaingFee[PMLibrary.CampaignCategories.SILVER] = silver;
+        s_campaingFee[PMLibrary.CampaignCategories.GOLD] = gold;
+        s_campaingFee[PMLibrary.CampaignCategories.DIAMOND] = diamond;
 
         s_unStakingFee[
-            StakingLibrary.UnstakingCategories.REWARD_0pc
+            PMLibrary.UnstakingCategories.REWARD_0pc
         ] = reward_0pc;
         s_unStakingFee[
-            StakingLibrary.UnstakingCategories.REWARD_30pc
+            PMLibrary.UnstakingCategories.REWARD_30pc
         ] = reward_30pc;
         s_unStakingFee[
-            StakingLibrary.UnstakingCategories.REWARD_50pc
+            PMLibrary.UnstakingCategories.REWARD_50pc
         ] = reward_50pc;
         s_unStakingFee[
-            StakingLibrary.UnstakingCategories.REWARD_100pc
+            PMLibrary.UnstakingCategories.REWARD_100pc
         ] = reward_100pc;
     }
 
     function getCampaignFee(
-        StakingLibrary.CampaignCategories category
+        PMLibrary.CampaignCategories category
     ) public view returns (uint256) {
         uint256 priceOfOneUSD = uint256(getLatestPriceOfOneUSD());
         return s_campaingFee[category] * priceOfOneUSD;
     }
 
     function getAllCampaignFees(
-        StakingLibrary.FeesType feeType
+        PMLibrary.FeesType feeType
     ) public view returns (uint256 silver, uint256 gold, uint256 diamond) {
-        silver = s_campaingFee[StakingLibrary.CampaignCategories.SILVER];
-        gold = s_campaingFee[StakingLibrary.CampaignCategories.GOLD];
-        diamond = s_campaingFee[StakingLibrary.CampaignCategories.DIAMOND];
+        silver = s_campaingFee[PMLibrary.CampaignCategories.SILVER];
+        gold = s_campaingFee[PMLibrary.CampaignCategories.GOLD];
+        diamond = s_campaingFee[PMLibrary.CampaignCategories.DIAMOND];
 
-        if (feeType == StakingLibrary.FeesType.BNB) {
+        if (feeType == PMLibrary.FeesType.BNB) {
             uint256 priceOfOneUSD = uint256(getLatestPriceOfOneUSD());
             silver = silver * priceOfOneUSD;
             gold = gold * priceOfOneUSD;
@@ -115,20 +115,20 @@ contract CampaignFeeManager is Ownable, PriceFeed, SwapETHForTokens {
         uint256 gold,
         uint256 diamond
     ) public onlyOwner {
-        s_campaingFee[StakingLibrary.CampaignCategories.SILVER] = silver;
-        s_campaingFee[StakingLibrary.CampaignCategories.GOLD] = gold;
-        s_campaingFee[StakingLibrary.CampaignCategories.DIAMOND] = diamond;
+        s_campaingFee[PMLibrary.CampaignCategories.SILVER] = silver;
+        s_campaingFee[PMLibrary.CampaignCategories.GOLD] = gold;
+        s_campaingFee[PMLibrary.CampaignCategories.DIAMOND] = diamond;
     }
 
     function getUnstakingFee(
-        StakingLibrary.UnstakingCategories category
+        PMLibrary.UnstakingCategories category
     ) public view returns (uint256) {
         uint256 priceOfOneUSD = uint256(getLatestPriceOfOneUSD());
         return s_unStakingFee[category] * priceOfOneUSD;
     }
 
     function getAllUnstakingFees(
-        StakingLibrary.FeesType feeType
+        PMLibrary.FeesType feeType
     )
         public
         view
@@ -140,19 +140,19 @@ contract CampaignFeeManager is Ownable, PriceFeed, SwapETHForTokens {
         )
     {
         reward_0pc = s_unStakingFee[
-            StakingLibrary.UnstakingCategories.REWARD_0pc
+            PMLibrary.UnstakingCategories.REWARD_0pc
         ];
         reward_30pc = s_unStakingFee[
-            StakingLibrary.UnstakingCategories.REWARD_30pc
+            PMLibrary.UnstakingCategories.REWARD_30pc
         ];
         reward_50pc = s_unStakingFee[
-            StakingLibrary.UnstakingCategories.REWARD_50pc
+            PMLibrary.UnstakingCategories.REWARD_50pc
         ];
         reward_100pc = s_unStakingFee[
-            StakingLibrary.UnstakingCategories.REWARD_100pc
+            PMLibrary.UnstakingCategories.REWARD_100pc
         ];
 
-        if (feeType == StakingLibrary.FeesType.BNB) {
+        if (feeType == PMLibrary.FeesType.BNB) {
             uint256 priceOfOneUSD = uint256(getLatestPriceOfOneUSD());
             reward_0pc = reward_0pc * priceOfOneUSD;
             reward_30pc = reward_30pc * priceOfOneUSD;
@@ -168,16 +168,16 @@ contract CampaignFeeManager is Ownable, PriceFeed, SwapETHForTokens {
         uint256 reward_100pc
     ) public onlyOwner {
         s_unStakingFee[
-            StakingLibrary.UnstakingCategories.REWARD_0pc
+            PMLibrary.UnstakingCategories.REWARD_0pc
         ] = reward_0pc;
         s_unStakingFee[
-            StakingLibrary.UnstakingCategories.REWARD_30pc
+            PMLibrary.UnstakingCategories.REWARD_30pc
         ] = reward_30pc;
         s_unStakingFee[
-            StakingLibrary.UnstakingCategories.REWARD_50pc
+            PMLibrary.UnstakingCategories.REWARD_50pc
         ] = reward_50pc;
         s_unStakingFee[
-            StakingLibrary.UnstakingCategories.REWARD_100pc
+            PMLibrary.UnstakingCategories.REWARD_100pc
         ] = reward_100pc;
     }
 

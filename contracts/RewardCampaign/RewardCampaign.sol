@@ -3,7 +3,7 @@ pragma solidity ^0.8.18;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {StakingLibrary} from "../library/StakingLibrary.sol";
+import {PMLibrary} from "../library/PMLibrary.sol";
 
 import {ICreatorContract} from "../interfaces/ICreatorContract.sol";
 import {ICreatorManager} from "../interfaces/ICreatorManager.sol";
@@ -11,38 +11,38 @@ import {ICampaignFeeManager} from "../interfaces/ICampaignFeeManager.sol";
 
 // import "hardhat/console.sol";
 
-contract StakingPool is ERC721Enumerable {
+contract RewardCampaign is ERC721Enumerable {
 
-    error StakingPool__POOL_NOT_STARTED();
-    error StakingPool__NOT_ENOUGH_REWARD_IN_POOL();
-    error StakingPool__NOT_AUTHERIZED();
-    error StakingPool__NOTHING_TO_UNSTAKE();
-    error StakingPool__ALREADY_UNSTAKED();
-    error StakingPool__INSUFFICIENT_FUNDS();
-    error StakingPool__FAILED_TO_TRANSFER_BNBS();
-    error StakingPool__FAILED_TO_TRANSFER_TOEKNS();
-    error StakingPool__FAILED_TO_TRANSFER_ORIGNAL_TOEKNS();
-    error StakingPool__FAILED_TO_TRANSFER_REWARD_TOEKNS();
-    error StakingPool__NO_CREATOR_CONTRACT_FOUND();
-    error StakingPool__NOT_A_VALID_STAKING_TYPE();
+    error RewardCampaign__POOL_NOT_STARTED();
+    error RewardCampaign__NOT_ENOUGH_REWARD_IN_POOL();
+    error RewardCampaign__NOT_AUTHERIZED();
+    error RewardCampaign__NOTHING_TO_UNSTAKE();
+    error RewardCampaign__ALREADY_UNSTAKED();
+    error RewardCampaign__INSUFFICIENT_FUNDS();
+    error RewardCampaign__FAILED_TO_TRANSFER_BNBS();
+    error RewardCampaign__FAILED_TO_TRANSFER_TOEKNS();
+    error RewardCampaign__FAILED_TO_TRANSFER_ORIGNAL_TOEKNS();
+    error RewardCampaign__FAILED_TO_TRANSFER_REWARD_TOEKNS();
+    error RewardCampaign__NO_CREATOR_CONTRACT_FOUND();
+    error RewardCampaign__NOT_A_VALID_STAKING_TYPE();
 
     uint256 internal constant ONE_DAY = 24 * 60 * 60;
-    StakingLibrary.PoolInfo private s_poolInfo;
-    StakingLibrary.ProjectInfo private s_projectInfo;
-    StakingLibrary.RewardPoolInfo private s_rewardPoolInfo;
+    PMLibrary.PoolInfo private s_poolInfo;
+    PMLibrary.ProjectInfo private s_projectInfo;
+    PMLibrary.RewardPoolInfo private s_rewardPoolInfo;
 
     ICreatorManager private immutable s_creatorManager;
     address private immutable s_campaignFeeManager;
-    StakingLibrary.NFTData private s_nftData;
+    PMLibrary.NFTData private s_nftData;
 
-    struct StakingCategeroy {
+    struct InvestmentCategeroy {
         uint256 duration;
         uint256 rewardPC;
         string image;
     }
 
-    mapping(StakingLibrary.StakingType => StakingCategeroy) private s_stakingInfo;
-    mapping(uint256 => StakingLibrary.TokenData) private s_tokenData;
+    mapping(PMLibrary.InvestmentType => InvestmentCategeroy) private s_investmentInfo;
+    mapping(uint256 => PMLibrary.TokenData) private s_tokenData;
 
     event JoinedPool(
         uint256 poolId,
@@ -63,33 +63,33 @@ contract StakingPool is ERC721Enumerable {
 
     constructor(
         uint256 _poolId,
-        StakingLibrary.ProjectInfo memory _projectInfo,
-        StakingLibrary.RewardPoolInfo memory _rewardPoolInfo,
-        StakingLibrary.NFTData memory _nftData,
+        PMLibrary.ProjectInfo memory _projectInfo,
+        PMLibrary.RewardPoolInfo memory _rewardPoolInfo,
+        PMLibrary.NFTData memory _nftData,
         address _creatorManager,
         address _campaignFeeManager,
         address _ownerOfProject
     ) ERC721(_projectInfo.projectName, _projectInfo.projectSymbol) {
 
-        s_stakingInfo[StakingLibrary.StakingType.ONE_MONTH].duration = 30 * ONE_DAY;
-        s_stakingInfo[StakingLibrary.StakingType.ONE_MONTH].rewardPC = _nftData.APY_1_months;
-        s_stakingInfo[StakingLibrary.StakingType.ONE_MONTH].image = _nftData.image_1_months;
+        s_investmentInfo[PMLibrary.InvestmentType.ONE_MONTH].duration = 30 * ONE_DAY;
+        s_investmentInfo[PMLibrary.InvestmentType.ONE_MONTH].rewardPC = _nftData.APY_1_months;
+        s_investmentInfo[PMLibrary.InvestmentType.ONE_MONTH].image = _nftData.image_1_months;
 
-        s_stakingInfo[StakingLibrary.StakingType.THREE_MONTH].duration = 90 * ONE_DAY;
-        s_stakingInfo[StakingLibrary.StakingType.THREE_MONTH].rewardPC = _nftData.APY_3_months;
-        s_stakingInfo[StakingLibrary.StakingType.THREE_MONTH].image = _nftData.image_3_months;
+        s_investmentInfo[PMLibrary.InvestmentType.THREE_MONTH].duration = 90 * ONE_DAY;
+        s_investmentInfo[PMLibrary.InvestmentType.THREE_MONTH].rewardPC = _nftData.APY_3_months;
+        s_investmentInfo[PMLibrary.InvestmentType.THREE_MONTH].image = _nftData.image_3_months;
 
-        s_stakingInfo[StakingLibrary.StakingType.SIX_MONTH].duration = 180 * ONE_DAY;
-        s_stakingInfo[StakingLibrary.StakingType.SIX_MONTH].rewardPC = _nftData.APY_6_months;
-        s_stakingInfo[StakingLibrary.StakingType.SIX_MONTH].image = _nftData.image_6_months;
+        s_investmentInfo[PMLibrary.InvestmentType.SIX_MONTH].duration = 180 * ONE_DAY;
+        s_investmentInfo[PMLibrary.InvestmentType.SIX_MONTH].rewardPC = _nftData.APY_6_months;
+        s_investmentInfo[PMLibrary.InvestmentType.SIX_MONTH].image = _nftData.image_6_months;
 
-        s_stakingInfo[StakingLibrary.StakingType.NINE_MONTH].duration = 270 * ONE_DAY;
-        s_stakingInfo[StakingLibrary.StakingType.NINE_MONTH].rewardPC = _nftData.APY_9_months;
-        s_stakingInfo[StakingLibrary.StakingType.NINE_MONTH].image = _nftData.image_9_months;
+        s_investmentInfo[PMLibrary.InvestmentType.NINE_MONTH].duration = 270 * ONE_DAY;
+        s_investmentInfo[PMLibrary.InvestmentType.NINE_MONTH].rewardPC = _nftData.APY_9_months;
+        s_investmentInfo[PMLibrary.InvestmentType.NINE_MONTH].image = _nftData.image_9_months;
 
-        s_stakingInfo[StakingLibrary.StakingType.TWELVE_MONTH].duration = 365 * ONE_DAY;
-        s_stakingInfo[StakingLibrary.StakingType.TWELVE_MONTH].rewardPC = _nftData.APY_12_months;
-        s_stakingInfo[StakingLibrary.StakingType.TWELVE_MONTH].image = _nftData.image_12_months;
+        s_investmentInfo[PMLibrary.InvestmentType.TWELVE_MONTH].duration = 365 * ONE_DAY;
+        s_investmentInfo[PMLibrary.InvestmentType.TWELVE_MONTH].rewardPC = _nftData.APY_12_months;
+        s_investmentInfo[PMLibrary.InvestmentType.TWELVE_MONTH].image = _nftData.image_12_months;
 
         s_projectInfo = _projectInfo;
         s_rewardPoolInfo = _rewardPoolInfo;
@@ -105,24 +105,24 @@ contract StakingPool is ERC721Enumerable {
     }
 
     /// @notice The main function to stake tokens
-    function stakeTokens(
+    function investTokens(
         address onBehalf,
         uint256 amount,
-        StakingLibrary.StakingType stakingType
+        PMLibrary.InvestmentType investmentType
     ) public {
-        StakingLibrary.PoolInfo memory poolInfo = s_poolInfo;
-        StakingLibrary.RewardPoolInfo memory rewardPoolInfo = s_rewardPoolInfo;
-        StakingLibrary.ProjectInfo memory projectInfo = s_projectInfo;
-        StakingCategeroy memory category = s_stakingInfo[stakingType];
+        PMLibrary.PoolInfo memory poolInfo = s_poolInfo;
+        PMLibrary.RewardPoolInfo memory rewardPoolInfo = s_rewardPoolInfo;
+        PMLibrary.ProjectInfo memory projectInfo = s_projectInfo;
+        InvestmentCategeroy memory category = s_investmentInfo[investmentType];
 
         // Check if pool has been started
         if (block.timestamp < rewardPoolInfo.startedAt) {
-            revert StakingPool__POOL_NOT_STARTED();
+            revert RewardCampaign__POOL_NOT_STARTED();
         }
 
         // Check if category is valid
         if (category.rewardPC == 0) {
-            revert StakingPool__NOT_A_VALID_STAKING_TYPE();
+            revert RewardCampaign__NOT_A_VALID_STAKING_TYPE();
         }
 
         // Calculate reward of this person
@@ -130,7 +130,7 @@ contract StakingPool is ERC721Enumerable {
 
         // Check if pool has enough space to give this reward
         if (poolInfo.remainingPool < reward) {
-            revert StakingPool__NOT_ENOUGH_REWARD_IN_POOL();
+            revert RewardCampaign__NOT_ENOUGH_REWARD_IN_POOL();
         }
 
         // Update the remianing reward pool
@@ -151,16 +151,16 @@ contract StakingPool is ERC721Enumerable {
         }
 
         // Record the staking entry
-        s_tokenData[tokenId] = StakingLibrary.TokenData({
+        s_tokenData[tokenId] = PMLibrary.TokenData({
             poolAddress: address(this),
             poolId: poolInfo.poolId,
-            tokenStaked: amount,
+            tokenInvested: amount,
             tokenAddress: projectInfo.tokenAddress,
             owner: address(onBehalf),
             creator: address(creator),
             tokenId: tokenId,
             tokenUri: category.image,
-            stakingType: stakingType,
+            investmentType: investmentType,
             stakingTime: block.timestamp,
             unlockTime: block.timestamp + category.duration,
             expectedReward: reward,
@@ -175,7 +175,7 @@ contract StakingPool is ERC721Enumerable {
             amount
         );
         if (!transfered) {
-            revert StakingPool__FAILED_TO_TRANSFER_TOEKNS();
+            revert RewardCampaign__FAILED_TO_TRANSFER_TOEKNS();
         }
 
         // Mint An NFT to the creator contract with token detials
@@ -190,16 +190,16 @@ contract StakingPool is ERC721Enumerable {
             tokenId,
             onBehalf,
             amount,
-            uint8(stakingType)
+            uint8(investmentType)
         );
     }
 
     /// @notice unstakeTokens can only be called by creator contract of the token holder.
     function unstakeTokens(uint256 tokenId) public payable {
-        StakingLibrary.TokenData memory tokenData = s_tokenData[tokenId];
+        PMLibrary.TokenData memory tokenData = s_tokenData[tokenId];
 
         if (msg.sender != tokenData.owner) {
-            revert StakingPool__NOT_AUTHERIZED();
+            revert RewardCampaign__NOT_AUTHERIZED();
         }
 
         /// @notice Calculating the reward after pelanty;
@@ -214,15 +214,15 @@ contract StakingPool is ERC721Enumerable {
             );
 
         if (msg.value < fee) {
-            revert StakingPool__INSUFFICIENT_FUNDS();
+            revert RewardCampaign__INSUFFICIENT_FUNDS();
         }
 
         if (tokenData.expectedReward == 0) {
-            revert StakingPool__NOTHING_TO_UNSTAKE();
+            revert RewardCampaign__NOTHING_TO_UNSTAKE();
         }
 
         if (tokenData.isUnskated) {
-            revert StakingPool__ALREADY_UNSTAKED();
+            revert RewardCampaign__ALREADY_UNSTAKED();
         }
 
         s_tokenData[tokenId].isUnskated = true;
@@ -239,7 +239,7 @@ contract StakingPool is ERC721Enumerable {
             ""
         );
         if (!sent) {
-            revert StakingPool__FAILED_TO_TRANSFER_BNBS();
+            revert RewardCampaign__FAILED_TO_TRANSFER_BNBS();
         }
 
         _burn(tokenId);
@@ -251,7 +251,7 @@ contract StakingPool is ERC721Enumerable {
             tokenId
         );
         if (!transfered) {
-            revert StakingPool__FAILED_TO_TRANSFER_ORIGNAL_TOEKNS();
+            revert RewardCampaign__FAILED_TO_TRANSFER_ORIGNAL_TOEKNS();
         }
 
         transfered = IERC20(tokenData.tokenAddress).transfer(
@@ -259,14 +259,14 @@ contract StakingPool is ERC721Enumerable {
             redeemableReward
         );
         if (!transfered) {
-            revert StakingPool__FAILED_TO_TRANSFER_REWARD_TOEKNS();
+            revert RewardCampaign__FAILED_TO_TRANSFER_REWARD_TOEKNS();
         }
 
         emit ExitedPool(
             tokenData.poolId,
             msg.sender,
-            tokenData.tokenStaked,
-            uint8(tokenData.stakingType),
+            tokenData.tokenInvested,
+            uint8(tokenData.investmentType),
             redeemableReward
         );
     }
@@ -295,25 +295,25 @@ contract StakingPool is ERC721Enumerable {
             pcReceived = 0;
             redeemableReward = 0;
             fee = campaignFeeManager.getUnstakingFee(
-                StakingLibrary.UnstakingCategories.REWARD_0pc
+                PMLibrary.UnstakingCategories.REWARD_0pc
             );
         } else if (pcCompleted >= 50 && pcCompleted < 80) {
             pcReceived = 30;
             redeemableReward = (_expectedReward * pcReceived) / 100;
             fee = campaignFeeManager.getUnstakingFee(
-                StakingLibrary.UnstakingCategories.REWARD_30pc
+                PMLibrary.UnstakingCategories.REWARD_30pc
             );
         } else if (pcCompleted >= 80 && pcCompleted < 100) {
             pcReceived = 50;
             redeemableReward = (_expectedReward * 50) / 100;
             fee = campaignFeeManager.getUnstakingFee(
-                StakingLibrary.UnstakingCategories.REWARD_50pc
+                PMLibrary.UnstakingCategories.REWARD_50pc
             );
         } else {
             pcReceived = 100;
             redeemableReward = _expectedReward;
             fee = campaignFeeManager.getUnstakingFee(
-                StakingLibrary.UnstakingCategories.REWARD_100pc
+                PMLibrary.UnstakingCategories.REWARD_100pc
             );
         }
     }
@@ -330,7 +330,7 @@ contract StakingPool is ERC721Enumerable {
             uint256 fee
         )
     {
-        StakingLibrary.TokenData memory tokenData = s_tokenData[tokenId];
+        PMLibrary.TokenData memory tokenData = s_tokenData[tokenId];
         expectedReward = tokenData.expectedReward;
         (redeemableReward, pcReceived, fee) = findRedeemableReward(
             tokenData.expectedReward,
@@ -343,10 +343,10 @@ contract StakingPool is ERC721Enumerable {
     function getProjectInfo()
         external
         view
-        returns (StakingLibrary.PoolFullInfo memory)
+        returns (PMLibrary.PoolFullInfo memory)
     {
         return
-            StakingLibrary.PoolFullInfo(
+            PMLibrary.PoolFullInfo(
                 s_poolInfo,
                 s_projectInfo,
                 s_rewardPoolInfo,
@@ -356,27 +356,27 @@ contract StakingPool is ERC721Enumerable {
 
     function getTokenData(
         uint256 tokenId
-    ) external view returns (StakingLibrary.TokenData memory) {
+    ) external view returns (PMLibrary.TokenData memory) {
         return s_tokenData[tokenId];
     }
 
     function getUserTokens(
         address user
     ) external view returns (
-        StakingLibrary.TokenData[] memory
+        PMLibrary.TokenData[] memory
         ) {
 
         address creator = s_creatorManager.getCreatorAddressOfUser(user);
         if (creator == address(0)) {
-            revert StakingPool__NO_CREATOR_CONTRACT_FOUND();
+            revert RewardCampaign__NO_CREATOR_CONTRACT_FOUND();
         }
 
         uint256 userBalance = balanceOf(creator);
-        StakingLibrary.TokenData[]
-            memory tokensData = new StakingLibrary.TokenData[](userBalance);
+        PMLibrary.TokenData[]
+            memory tokensData = new PMLibrary.TokenData[](userBalance);
             for (uint256 i = 0; i < userBalance; i++) {
                 uint256 tokenId = tokenOfOwnerByIndex(creator, i);
-                StakingLibrary.TokenData memory data = s_tokenData[tokenId];
+                PMLibrary.TokenData memory data = s_tokenData[tokenId];
                 tokensData[i] = data;
             }
 

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-library StakingLibrary {
+library PMLibrary {
     
     enum ProfileType {
         NONE,
@@ -9,7 +9,7 @@ library StakingLibrary {
         USER
     }
 
-    enum StakingType {
+    enum InvestmentType {
         ONE_MONTH,
         THREE_MONTH,
         SIX_MONTH,
@@ -83,13 +83,13 @@ library StakingLibrary {
     struct TokenData {
         address poolAddress;
         uint256 poolId;
-        uint256 tokenStaked;
+        uint256 tokenInvested;
         address tokenAddress;
         address owner;
         address creator;
         uint256 tokenId;
         string tokenUri;
-        StakingType stakingType;
+        InvestmentType investmentType;
         uint256 stakingTime;
         uint256 unlockTime;
         uint256 expectedReward;

@@ -7,7 +7,7 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Counters} from "@openzeppelin/contracts/utils/Counters.sol";
 
 import {IMembershipFeeManager} from "../interfaces/IMembershipFeeManager.sol";
-import {StakingLibrary} from "../library/StakingLibrary.sol";
+import {PMLibrary} from "../library/PMLibrary.sol";
 
 // import "hardhat/console.sol";
 
@@ -48,7 +48,7 @@ contract PMTeamManager is ERC721Enumerable, Ownable {
         }
 
         uint256 fee = IMembershipFeeManager(s_membershipFeeManager)
-            .getMembershipFee(StakingLibrary.MembershipCategories.TEAM);
+            .getMembershipFee(PMLibrary.MembershipCategories.TEAM);
 
         if (msg.value < fee) {
             revert PMTeamManager__INSUFFICIENT_FUNDS();

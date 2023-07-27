@@ -5,8 +5,8 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import {ERC721Holder} from "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
-import {StakingLibrary} from "../library/StakingLibrary.sol";
-import {IStakingPool} from "../interfaces/IStakingPool.sol";
+import {PMLibrary} from "../library/PMLibrary.sol";
+import {IRewardCampaign} from "../interfaces/IRewardCampaign.sol";
 
 // import "hardhat/console.sol";
 
@@ -36,11 +36,11 @@ contract CreatorContract is ERC721Holder {
     }
 
     function sendTokensBackToOwner(
-        address stakingPool,
-        uint256 _tokenId
+        address rewardPool,
+        uint256 tokenId
     ) public returns (bool transfered) {
-        StakingLibrary.TokenData memory token = IStakingPool(stakingPool)
-            .getTokenData(_tokenId);
+        PMLibrary.TokenData memory token = IRewardCampaign(rewardPool)
+            .getTokenData(tokenId);
 
         if (msg.sender != token.poolAddress) {
             revert CreatorContract__NOT_AUTHERIZED();
@@ -48,11 +48,11 @@ contract CreatorContract is ERC721Holder {
 
         transfered = IERC20(token.tokenAddress).transfer(
             token.owner,
-            token.tokenStaked
+            token.tokenInvested
         );
 
-        if (IERC721(stakingPool).balanceOf(address(this)) == 0) {
-            EnumerableSet.remove(s_myPoolAddresses, stakingPool);
+        if (IERC721(rewardPool).balanceOf(address(this)) == 0) {
+            EnumerableSet.remove(s_myPoolAddresses, rewardPool);
         }
     }
 

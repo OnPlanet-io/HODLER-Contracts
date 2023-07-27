@@ -4,8 +4,8 @@ pragma solidity ^0.8.18;
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Counters} from "@openzeppelin/contracts/utils/Counters.sol";
-import {StakingPool} from "./StakingPool.sol";
-import {StakingLibrary} from "../library/StakingLibrary.sol";
+import {RewardCampaign} from "./RewardCampaign.sol";
+import {PMLibrary} from "../library/PMLibrary.sol";
 
 import {IPMMembershipManager} from "../interfaces/IPMMembershipManager.sol";
 import {IPMTeamManager} from "../interfaces/IPMTeamManager.sol";
@@ -13,15 +13,15 @@ import {ICampaignFeeManager} from "../interfaces/ICampaignFeeManager.sol";
 
 // import "hardhat/console.sol";
 
-contract StakingPoolFactory is Ownable {
+contract RewardCampaignFactory is Ownable {
 
-    error StakingPoolFactory__NOT_MEMBER_OR_TEAM();
-    error StakingPoolFactory__NOT_OWNER_OF_TEAM();
-    error StakingPoolFactory__START_TIME_SHOULD_BE_FUTURE();
-    error StakingPoolFactory__FAILED_TO_TRANSFER_TOKENS();
-    error StakingPoolFactory__CONTRACT_IS_PAUSED();
-    error StakingPoolFactory__FAILED_TO_TRANSFER_BNBS();
-    error StakingPoolFactory__INSUFFICIENT_FUNDS();
+    error RewardCampaignFactory__NOT_MEMBER_OR_TEAM();
+    error RewardCampaignFactory__NOT_OWNER_OF_TEAM();
+    error RewardCampaignFactory__START_TIME_SHOULD_BE_FUTURE();
+    error RewardCampaignFactory__FAILED_TO_TRANSFER_TOKENS();
+    error RewardCampaignFactory__CONTRACT_IS_PAUSED();
+    error RewardCampaignFactory__FAILED_TO_TRANSFER_BNBS();
+    error RewardCampaignFactory__INSUFFICIENT_FUNDS();
 
     using Counters for Counters.Counter;
     Counters.Counter private s_projectsCount;
@@ -35,8 +35,8 @@ contract StakingPoolFactory is Ownable {
     mapping(address userAddress => uint256[] pools) private s_poolsOfAUser;
     mapping(uint256 teamId => uint256[] pools) private s_poolsOfATeam;
 
-    mapping(address tokenAddress => address[] pools) private s_stakingPoolsByToken;
-    mapping(uint256 id => address pool) private s_stakingPoolByID;
+    mapping(address tokenAddress => address[] pools) private s_poolsByToken;
+    mapping(uint256 id => address pool) private s_poolByID;
 
     event Poolcreated(
         uint256 poolId,
@@ -56,13 +56,13 @@ contract StakingPoolFactory is Ownable {
         s_creatorManager = creatorManager;
     }
 
-    function createAStakingPool(
-        StakingLibrary.ProjectInfo memory projectInfo,
-        StakingLibrary.RewardPoolInfo memory rewardPoolInfo,
-        StakingLibrary.NFTData memory nftData
+    function createARewardCampaign(
+        PMLibrary.ProjectInfo memory projectInfo,
+        PMLibrary.RewardPoolInfo memory rewardPoolInfo,
+        PMLibrary.NFTData memory nftData
     ) public payable {
         if (s_isPaused) {
-            revert StakingPoolFactory__CONTRACT_IS_PAUSED();
+            revert RewardCampaignFactory__CONTRACT_IS_PAUSED();
         }
 
         bool hasTeam = IPMTeamManager(s_pmTeamManager).balanceOf(
@@ -73,31 +73,31 @@ contract StakingPoolFactory is Ownable {
 
         // To start a campaign, user should be a premium member or he should have a team membership.
         if (!hasTeam && !isMember) {
-            revert StakingPoolFactory__NOT_MEMBER_OR_TEAM();
+            revert RewardCampaignFactory__NOT_MEMBER_OR_TEAM();
         }
 
-        if (projectInfo.profileType == StakingLibrary.ProfileType.TEAM) {
+        if (projectInfo.profileType == PMLibrary.ProfileType.TEAM) {
             address ownerOfTeam = IPMTeamManager(s_pmTeamManager).ownerOf(projectInfo.profileId);
             if (ownerOfTeam != msg.sender) {
-                revert StakingPoolFactory__NOT_OWNER_OF_TEAM();
+                revert RewardCampaignFactory__NOT_OWNER_OF_TEAM();
             }
         }
 
         uint256 requiredFee = ICampaignFeeManager(s_campaignFeeManager).getCampaignFee(projectInfo.category);
 
         if (msg.value < requiredFee) {
-            revert StakingPoolFactory__INSUFFICIENT_FUNDS();
+            revert RewardCampaignFactory__INSUFFICIENT_FUNDS();
         }
 
         if (rewardPoolInfo.startedAt < block.timestamp) {
-            revert StakingPoolFactory__START_TIME_SHOULD_BE_FUTURE();
+            revert RewardCampaignFactory__START_TIME_SHOULD_BE_FUTURE();
         }
 
         s_projectsCount.increment();
         uint256 newId = s_projectsCount.current();
 
 
-        StakingPool stakingContract = new StakingPool(
+        RewardCampaign rewardCampaign = new RewardCampaign(
             newId,
             projectInfo,
             rewardPoolInfo,
@@ -107,36 +107,36 @@ contract StakingPoolFactory is Ownable {
             msg.sender
         );
 
-        if (projectInfo.profileType == StakingLibrary.ProfileType.TEAM) {
+        if (projectInfo.profileType == PMLibrary.ProfileType.TEAM) {
             s_poolsOfATeam[projectInfo.profileId].push(newId);
         }
 
-        s_stakingPoolsByToken[projectInfo.tokenAddress].push(
-            address(stakingContract)
+        s_poolsByToken[projectInfo.tokenAddress].push(
+            address(rewardCampaign)
         );
-        s_stakingPoolByID[newId] = address(stakingContract);
+        s_poolByID[newId] = address(rewardCampaign);
         s_poolsOfAUser[msg.sender].push(newId);
 
         bool transfered = IERC20(projectInfo.tokenAddress).transferFrom(
             msg.sender,
-            address(stakingContract),
+            address(rewardCampaign),
             rewardPoolInfo.poolAmount
         );
 
         if (!transfered) {
-            revert StakingPoolFactory__FAILED_TO_TRANSFER_TOKENS();
+            revert RewardCampaignFactory__FAILED_TO_TRANSFER_TOKENS();
         }
 
         (bool sent, ) = payable(s_campaignFeeManager).call{
             value: msg.value
         }("");
         if (!sent) {
-            revert StakingPoolFactory__FAILED_TO_TRANSFER_BNBS();
+            revert RewardCampaignFactory__FAILED_TO_TRANSFER_BNBS();
         }
 
         emit Poolcreated(
             newId,
-            address(stakingContract),
+            address(rewardCampaign),
             projectInfo.tokenAddress
         );
     }
@@ -146,11 +146,11 @@ contract StakingPoolFactory is Ownable {
     function getPoolsByToken(
         address token
     ) external view returns (address[] memory) {
-        return s_stakingPoolsByToken[token];
+        return s_poolsByToken[token];
     }
 
     function getPoolByID(uint256 id) external view returns (address) {
-        return s_stakingPoolByID[id];
+        return s_poolByID[id];
     }
 
     function getPoolIdsOfAUser(

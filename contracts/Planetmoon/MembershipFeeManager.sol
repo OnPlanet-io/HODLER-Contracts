@@ -2,7 +2,7 @@
 pragma solidity ^0.8.18;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {StakingLibrary} from "../library/StakingLibrary.sol";
+import {PMLibrary} from "../library/PMLibrary.sol";
 import {IUniswapV2Router02} from "../interfaces/IUniswapV2Router02.sol";
 import {PriceFeed} from "./PriceFeed.sol";
 import {SwapETHForTokens} from "./SwapETHForTokens.sol";
@@ -12,7 +12,7 @@ import {IUniswapV2Router02} from "../interfaces/IUniswapV2Router02.sol";
 // import "hardhat/console.sol";
 
 contract MembershipFeeManager is Ownable, PriceFeed, SwapETHForTokens {
-    mapping(StakingLibrary.MembershipCategories category => uint256 fee) private s_membershipFee;
+    mapping(PMLibrary.MembershipCategories category => uint256 fee) private s_membershipFee;
     FeeDistributionShares private s_feeDistributionShares;
     FeeDistributionWallets private s_feeDistributionWallets;
 
@@ -32,24 +32,24 @@ contract MembershipFeeManager is Ownable, PriceFeed, SwapETHForTokens {
     }
 
     constructor(uint256 member, uint256 team) {
-        s_membershipFee[StakingLibrary.MembershipCategories.MEMBER] = member;
-        s_membershipFee[StakingLibrary.MembershipCategories.TEAM] = team;
+        s_membershipFee[PMLibrary.MembershipCategories.MEMBER] = member;
+        s_membershipFee[PMLibrary.MembershipCategories.TEAM] = team;
     }
 
     function getMembershipFee(
-        StakingLibrary.MembershipCategories category
+        PMLibrary.MembershipCategories category
     ) public view returns (uint256) {
         uint256 priceOfOneUSD = uint256(getLatestPriceOfOneUSD());
         return s_membershipFee[category] * priceOfOneUSD;
     }
 
     function getAllFees(
-        StakingLibrary.FeesType feeType
+        PMLibrary.FeesType feeType
     ) public view returns (uint256 member, uint256 team) {
-        member = s_membershipFee[StakingLibrary.MembershipCategories.MEMBER];
-        team = s_membershipFee[StakingLibrary.MembershipCategories.TEAM];
+        member = s_membershipFee[PMLibrary.MembershipCategories.MEMBER];
+        team = s_membershipFee[PMLibrary.MembershipCategories.TEAM];
 
-        if (feeType == StakingLibrary.FeesType.BNB) {
+        if (feeType == PMLibrary.FeesType.BNB) {
             uint256 priceOfOneUSD = uint256(getLatestPriceOfOneUSD());
             member = member * priceOfOneUSD;
             team = team * priceOfOneUSD;
@@ -83,8 +83,8 @@ contract MembershipFeeManager is Ownable, PriceFeed, SwapETHForTokens {
     }
 
     function setMembershipFee(uint256 member, uint256 team) public onlyOwner {
-        s_membershipFee[StakingLibrary.MembershipCategories.MEMBER] = member;
-        s_membershipFee[StakingLibrary.MembershipCategories.TEAM] = team;
+        s_membershipFee[PMLibrary.MembershipCategories.MEMBER] = member;
+        s_membershipFee[PMLibrary.MembershipCategories.TEAM] = team;
     }
 
     function setFeeDistributionShares(
