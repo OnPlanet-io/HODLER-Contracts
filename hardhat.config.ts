@@ -34,7 +34,7 @@ module.exports = {
         }
       },
       {
-        version: "0.8.15",
+        version: "0.8.18",
         settings: {
           optimizer: {
             enabled: true,
@@ -51,7 +51,14 @@ module.exports = {
           }
         }
       },
-    ]
+    ],
+    contractSizer: {
+      alphaSort: true,
+      disambiguatePaths: false,
+      runOnCompile: true,
+      // strict: true,
+      // only: [':ERC20$'],
+    },  
   },
   networks: {
     hardhat: {

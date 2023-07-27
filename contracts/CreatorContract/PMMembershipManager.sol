@@ -1,180 +1,164 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.14;
+pragma solidity ^0.8.18;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
+import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {Counters} from "@openzeppelin/contracts/utils/Counters.sol";
 
-import "../library/StakingLibrary.sol";
-import "../interfaces/IMembershipFeeManager.sol";
+import {StakingLibrary} from "../library/StakingLibrary.sol";
+import {IMembershipFeeManager} from "../interfaces/IMembershipFeeManager.sol";
 
-// import "hardhat/console.sol";
+import "hardhat/console.sol";
 
-error ALREADY_A_MEMBER();
-error INSUFFICIENT_FUNDS();
-error FAILED_TO_TRANSFER_BNBS();
-error NOT_A_MEMBER();
-error ALREADY_A_PREMIUM_MEMBER();
-error TOKEN_DONT_EXIST();
-error CONTRACT_IS_PAUSED();
+contract PMMembershipManager is
+    ERC721("PlanetMoon Membership Manager", "PMM"),
+    Ownable
+{
+    error PMMembershipManager__ALREADY_A_MEMBER();
+    error PMMembershipManager__INSUFFICIENT_FUNDS();
+    error PMMembershipManager__FAILED_TO_TRANSFER_BNBS();
+    error PMMembershipManager__TOKEN_DONT_EXIST();
+    error PMMembershipManager__CONTRACT_IS_PAUSED();
+    error PMMembershipManager__OUT_OF_RANGE();
+    error PMMembershipManager__TOKEN_TRANSFER_IS_BLOCKED();
 
-contract PMMembershipManager is ERC721, Ownable {
-
-    address payable public membershipFeeManager;
-    
     using Counters for Counters.Counter;
-    Counters.Counter private _tokenIdCounter;
-    
-    string public regularURI = "https://bafkreifrj2c6ds4j4onfxmoelibfyhwf6xrccroh2tf7ej55lrplbggi6a.ipfs.nftstorage.link";
-    string public premiumURI = "https://bafkreifihh4pd5r7kq6zig7oy6dzm7avtkhphetq6qsjzmdufzv5mumhjy.ipfs.nftstorage.link";
-    
-    bool public pause = true;
+    Counters.Counter private s_tokenIdCounter;
+    address payable private s_membershipFeeManager;
+    mapping(address => User) private s_user;
+    bool private s_isPaused = false;
+    string private constant uri =
+        "https://bafkreic6jbedhzggcaowb6jj5zflhxz4bnuk7l3lhjqktclxii3pll3py4.ipfs.nftstorage.link/";
 
-    mapping (address => StakingLibrary.UserDetail) private userDetail;
-    mapping (uint256 => bool) private isPremium;
-
-    constructor( address _membershipFeeManager) ERC721("PlanetMoon Membership Manager", "PMM") {
-        membershipFeeManager = payable(_membershipFeeManager);
+    struct User {
+        uint256 memberId;
+        uint256 memberSince;
     }
 
-    function getUserTokenData(address userAddress) public view returns (StakingLibrary.UserDetail memory){
-        return userDetail[userAddress];
-    }   
+    constructor(address _membershipFeeManager) {
+        s_membershipFeeManager = payable(_membershipFeeManager);
+    }
 
     function becomeMember(address to) public payable {
-
-        if(pause){
-            revert CONTRACT_IS_PAUSED();
+        if (s_isPaused) {
+            revert PMMembershipManager__CONTRACT_IS_PAUSED();
         }
 
-        if(balanceOf(to) > 0){
-            revert ALREADY_A_MEMBER();
-        }
-        
-        uint256 fee = IMembershipFeeManager(membershipFeeManager)
-            .getMembershipFee(StakingLibrary.MembershipCategories.REGULAR);
-
-        if(msg.value < fee){
-            revert INSUFFICIENT_FUNDS();
+        if (balanceOf(to) > 0) {
+            revert PMMembershipManager__ALREADY_A_MEMBER();
         }
 
-        _tokenIdCounter.increment();
-        uint256 tokenId = _tokenIdCounter.current();
-        userDetail[to].memberSince = block.timestamp;
-        userDetail[to].memberId = tokenId;
+        uint256 fee = IMembershipFeeManager(s_membershipFeeManager)
+            .getMembershipFee(StakingLibrary.MembershipCategories.MEMBER);
+
+        if (msg.value < fee) {
+            revert PMMembershipManager__INSUFFICIENT_FUNDS();
+        }
+
+        s_tokenIdCounter.increment();
+        uint256 tokenId = s_tokenIdCounter.current();
+
+        s_user[to].memberSince = block.timestamp;
+        s_user[to].memberId = tokenId;
 
         _safeMint(to, tokenId);
 
-        (bool sent,) = membershipFeeManager.call{value: msg.value}("");
-        if(!sent){
-            revert FAILED_TO_TRANSFER_BNBS();
+        (bool sent, ) = s_membershipFeeManager.call{value: msg.value}("");
+        if (!sent) {
+            revert PMMembershipManager__FAILED_TO_TRANSFER_BNBS();
         }
-
-    
     }
 
-    function upgradeToPremium(address userAddress) public payable {
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 tokenId,
+        uint256 batchSize
+    ) internal virtual override {
 
-        if(userDetail[userAddress].memberId == 0){
-            revert NOT_A_MEMBER();
-        }
-        if(userDetail[userAddress].isPremium){
-            revert ALREADY_A_PREMIUM_MEMBER();
-        }
-
-        uint256 fee = IMembershipFeeManager(membershipFeeManager)
-            .getMembershipFee(StakingLibrary.MembershipCategories.UPGRAGE);
-
-        userDetail[userAddress].isPremium = true;
-
-        if(msg.value < fee){
-            revert INSUFFICIENT_FUNDS();
+        if(from != address(0)) {
+            revert PMMembershipManager__TOKEN_TRANSFER_IS_BLOCKED();
         }
 
-        (bool sent,) = membershipFeeManager.call{value: msg.value}("");
-        if(!sent){
-            revert FAILED_TO_TRANSFER_BNBS();
-        }
-
-
+        super._beforeTokenTransfer(from, to, tokenId, batchSize);
     }
 
-    function becomePremiumMember(address to) public payable {
-
-        if(pause){
-            revert CONTRACT_IS_PAUSED();
-        }
-
-        if(balanceOf(to) > 0){
-            revert ALREADY_A_MEMBER();
-        }
-
-        uint256 fee = IMembershipFeeManager(membershipFeeManager)
-            .getMembershipFee(StakingLibrary.MembershipCategories.PREMIUIM);
-        
-        if(msg.value < fee){
-            revert INSUFFICIENT_FUNDS();
-        }
-        
-        _tokenIdCounter.increment();
-        uint256 tokenId = _tokenIdCounter.current();
-        userDetail[to] = StakingLibrary.UserDetail(block.timestamp, tokenId, true);
-
-        _safeMint(to, tokenId);
-
-        (bool sent,) = membershipFeeManager.call{value: msg.value}("");
-        if(!sent){
-            revert FAILED_TO_TRANSFER_BNBS();
-        }
-
-
+    function getUserData(address user) public view returns (User memory) {
+        return s_user[user];
     }
 
-    function totalSupply() public view returns (uint256) {
-        return _tokenIdCounter.current();
+    function getUserDataByRange(
+        uint256 from,
+        uint256 length
+    ) public view returns (User[] memory) {
+        if (from > s_tokenIdCounter.current()) {
+            revert PMMembershipManager__OUT_OF_RANGE();
+        }
+
+        if (from < length) {
+            length = from;
+        }
+
+        User[] memory fullData = new User[](length);
+        uint8 index = 0;
+
+        for (uint256 i = from; i > from - length; i--) {
+            fullData[index] = s_user[ownerOf(i)];
+            index++;
+        }
+        return fullData;
     }
 
-    function _beforeTokenTransfer( address from, address to, uint256 tokenId, uint256 batchSize ) internal override virtual {
-        require(from == address(0), "Err: token transfer is BLOCKED");   
-        super._beforeTokenTransfer(from, to, tokenId, batchSize);  
+    function getMemberShipFeeManager() external view returns (address) {
+        return s_membershipFeeManager;
     }
 
-    function tokenURI(uint256 tokenId) public view override returns (string memory){
+    function totalSupply() external view returns (uint256) {
+        return s_tokenIdCounter.current();
+    }
 
-        if(!_exists(tokenId)){
-            revert TOKEN_DONT_EXIST();
+    function tokenURI( uint256 tokenId ) public view override returns (string memory) {
+        if (!_exists(tokenId)) {
+            revert PMMembershipManager__TOKEN_DONT_EXIST();
         }
-        address ownerOfToken = ownerOf(tokenId);
 
-        if(userDetail[ownerOfToken].isPremium){
-            return premiumURI;
-        }
-        else {
-            return regularURI;
-        }
+        return uri;
+    }
+
+    function isMember(address user) external view returns (bool) {
+        return balanceOf(user) > 0;
+    }
+
+    function isPaused() external view returns (bool) {
+        return s_isPaused;
     }
 
     /* Admin Functions */
 
-    function updateMembershipFeeManager(address _membershipFeeManager) public onlyOwner {
-        membershipFeeManager = payable(_membershipFeeManager);
+    function updateMembershipFeeManager(
+        address _membershipFeeManager
+    ) external onlyOwner {
+        s_membershipFeeManager = payable(_membershipFeeManager);
     }
 
-    function giveAwayMembership(address[] memory to) public onlyOwner {
-        
-        for(uint8 i = 0; i < to.length; i++ ){
-            if(balanceOf(to[i]) == 0){
-                _tokenIdCounter.increment();
-                uint256 tokenId = _tokenIdCounter.current();
-                userDetail[to[i]] = StakingLibrary.UserDetail(block.timestamp, tokenId, true);
+    function giveAwayMembership(address[] memory to) external onlyOwner {
+        for (uint8 i = 0; i < to.length; i++) {
+            if (balanceOf(to[i]) == 0) {
+                s_tokenIdCounter.increment();
+                uint256 tokenId = s_tokenIdCounter.current();
+                s_user[to[i]] = User({
+                    memberSince: block.timestamp,
+                    memberId: tokenId
+                });
                 _safeMint(to[i], tokenId);
             }
         }
-
     }
 
     function changePauseStatus(bool action) public onlyOwner {
-        pause = action;
+        s_isPaused = action;
     }
-
 }
+
+// string public regularURI = "https://bafkreifrj2c6ds4j4onfxmoelibfyhwf6xrccroh2tf7ej55lrplbggi6a.ipfs.nftstorage.link";
+// premiumMembership = "https://bafkreifihh4pd5r7kq6zig7oy6dzm7avtkhphetq6qsjzmdufzv5mumhjy.ipfs.nftstorage.link";

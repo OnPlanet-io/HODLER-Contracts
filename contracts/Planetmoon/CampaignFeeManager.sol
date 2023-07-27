@@ -1,30 +1,33 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.14;
+pragma solidity ^0.8.18;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "../library/StakingLibrary.sol";
-import "../interfaces/IUniswapV2Router02.sol";
-import "./PriceFeed.sol";
-import "./SwapETHForTokens.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {StakingLibrary} from "../library/StakingLibrary.sol";
+import {IUniswapV2Router02} from "../interfaces/IUniswapV2Router02.sol";
+import {PriceFeed} from "./PriceFeed.sol";
+import {SwapETHForTokens} from "./SwapETHForTokens.sol";
+import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+import {IUniswapV2Router02} from "../interfaces/IUniswapV2Router02.sol";
 
 // import "hardhat/console.sol";
 
 contract CampaignFeeManager is Ownable, PriceFeed, SwapETHForTokens {
+    mapping(StakingLibrary.CampaignCategories category => uint256 fee)
+        private s_campaingFee;
+    mapping(StakingLibrary.UnstakingCategories category => uint256 fee)
+        private s_unStakingFee;
 
-    mapping (StakingLibrary.CampaignCategories => uint256) public campaingFee;
-    mapping (StakingLibrary.UnstakingCategories => uint256) public unStakingFee;
-    
+    FeeDistributionShares private s_feeDistributionShares;
+    FeeDistributionWallets private s_feeDistributionWallets;
+
     event Received(address, uint);
-    enum FeesType {USD, BNB}
-    
-    FeeDistributionShares public feeDistributionShares;
+
     struct FeeDistributionShares {
         uint8 buyBackAndburn;
         uint8 rewardPool;
         uint8 corporate;
     }
 
-    FeeDistributionWallets public feeDistributionWallets;
     struct FeeDistributionWallets {
         address payable rewardPool;
         address payable corporate;
@@ -32,153 +35,226 @@ contract CampaignFeeManager is Ownable, PriceFeed, SwapETHForTokens {
         address buyBackReceiver;
     }
 
-    constructor( 
-        uint256 silver, uint256 gold, uint256 diamond,
-        uint256 reward_0pc, uint256 reward_30pc, uint256 reward_50pc, uint256 reward_100pc
+    constructor(
+        uint256 silver,
+        uint256 gold,
+        uint256 diamond,
+        uint256 reward_0pc,
+        uint256 reward_30pc,
+        uint256 reward_50pc,
+        uint256 reward_100pc
     ) {
+        s_campaingFee[StakingLibrary.CampaignCategories.SILVER] = silver;
+        s_campaingFee[StakingLibrary.CampaignCategories.GOLD] = gold;
+        s_campaingFee[StakingLibrary.CampaignCategories.DIAMOND] = diamond;
 
-        campaingFee[StakingLibrary.CampaignCategories.SILVER] = silver;
-        campaingFee[StakingLibrary.CampaignCategories.GOLD] = gold;
-        campaingFee[StakingLibrary.CampaignCategories.DIAMOND] = diamond;
-
-        unStakingFee[StakingLibrary.UnstakingCategories.REWARD_0pc] = reward_0pc;
-        unStakingFee[StakingLibrary.UnstakingCategories.REWARD_30pc] = reward_30pc;
-        unStakingFee[StakingLibrary.UnstakingCategories.REWARD_50pc] = reward_50pc;
-        unStakingFee[StakingLibrary.UnstakingCategories.REWARD_100pc] = reward_100pc;
+        s_unStakingFee[
+            StakingLibrary.UnstakingCategories.REWARD_0pc
+        ] = reward_0pc;
+        s_unStakingFee[
+            StakingLibrary.UnstakingCategories.REWARD_30pc
+        ] = reward_30pc;
+        s_unStakingFee[
+            StakingLibrary.UnstakingCategories.REWARD_50pc
+        ] = reward_50pc;
+        s_unStakingFee[
+            StakingLibrary.UnstakingCategories.REWARD_100pc
+        ] = reward_100pc;
     }
 
-    function getCampaignFee(StakingLibrary.CampaignCategories category) public view returns (uint256){
+    function getCampaignFee(
+        StakingLibrary.CampaignCategories category
+    ) public view returns (uint256) {
         uint256 priceOfOneUSD = uint256(getLatestPriceOfOneUSD());
-        return campaingFee[category] * priceOfOneUSD;
+        return s_campaingFee[category] * priceOfOneUSD;
     }
 
-    function getAllCampaignFees(FeesType feeType) public view returns (
-        uint256 silver,  
-        uint256 gold,  
-        uint256 diamond
-    ){
+    function getAllCampaignFees(
+        StakingLibrary.FeesType feeType
+    ) public view returns (uint256 silver, uint256 gold, uint256 diamond) {
+        silver = s_campaingFee[StakingLibrary.CampaignCategories.SILVER];
+        gold = s_campaingFee[StakingLibrary.CampaignCategories.GOLD];
+        diamond = s_campaingFee[StakingLibrary.CampaignCategories.DIAMOND];
 
-        silver = campaingFee[StakingLibrary.CampaignCategories.SILVER];
-        gold = campaingFee[StakingLibrary.CampaignCategories.GOLD];
-        diamond = campaingFee[StakingLibrary.CampaignCategories.DIAMOND];
-
-        if(feeType == FeesType.BNB){
+        if (feeType == StakingLibrary.FeesType.BNB) {
             uint256 priceOfOneUSD = uint256(getLatestPriceOfOneUSD());
             silver = silver * priceOfOneUSD;
             gold = gold * priceOfOneUSD;
             diamond = diamond * priceOfOneUSD;
         }
-
     }
 
-    function setCampaignFees(uint256 silver, uint256 gold, uint256 diamond) public onlyOwner {
-        campaingFee[StakingLibrary.CampaignCategories.SILVER] = silver;
-        campaingFee[StakingLibrary.CampaignCategories.GOLD] = gold;
-        campaingFee[StakingLibrary.CampaignCategories.DIAMOND] = diamond;
+    function getDistributionShares()
+        public
+        view
+        returns (uint8 buyBackAndburn, uint8 rewardPool, uint8 corporate)
+    {
+        buyBackAndburn = s_feeDistributionShares.buyBackAndburn;
+        rewardPool = s_feeDistributionShares.rewardPool;
+        corporate = s_feeDistributionShares.corporate;
     }
 
-    function getUnstakingFee(StakingLibrary.UnstakingCategories category) public view returns (uint256) {
+    function getDistributionWallets()
+        public
+        view
+        returns (
+            address rewardPool,
+            address corporate,
+            address buyBackAndburnToken,
+            address buyBackReceiver
+        )
+    {
+        rewardPool = s_feeDistributionWallets.rewardPool;
+        corporate = s_feeDistributionWallets.corporate;
+        buyBackAndburnToken = s_feeDistributionWallets.buyBackAndburnToken;
+        buyBackReceiver = s_feeDistributionWallets.buyBackReceiver;
+    }
+
+    function setCampaignFees(
+        uint256 silver,
+        uint256 gold,
+        uint256 diamond
+    ) public onlyOwner {
+        s_campaingFee[StakingLibrary.CampaignCategories.SILVER] = silver;
+        s_campaingFee[StakingLibrary.CampaignCategories.GOLD] = gold;
+        s_campaingFee[StakingLibrary.CampaignCategories.DIAMOND] = diamond;
+    }
+
+    function getUnstakingFee(
+        StakingLibrary.UnstakingCategories category
+    ) public view returns (uint256) {
         uint256 priceOfOneUSD = uint256(getLatestPriceOfOneUSD());
-        return unStakingFee[category] * priceOfOneUSD;
+        return s_unStakingFee[category] * priceOfOneUSD;
     }
 
-    function getAllUnstakingFees(FeesType feeType) public view returns (
-        uint256 reward_0pc, 
-        uint256 reward_30pc, 
-        uint256 reward_50pc, 
-        uint256 reward_100pc
-    ){
+    function getAllUnstakingFees(
+        StakingLibrary.FeesType feeType
+    )
+        public
+        view
+        returns (
+            uint256 reward_0pc,
+            uint256 reward_30pc,
+            uint256 reward_50pc,
+            uint256 reward_100pc
+        )
+    {
+        reward_0pc = s_unStakingFee[
+            StakingLibrary.UnstakingCategories.REWARD_0pc
+        ];
+        reward_30pc = s_unStakingFee[
+            StakingLibrary.UnstakingCategories.REWARD_30pc
+        ];
+        reward_50pc = s_unStakingFee[
+            StakingLibrary.UnstakingCategories.REWARD_50pc
+        ];
+        reward_100pc = s_unStakingFee[
+            StakingLibrary.UnstakingCategories.REWARD_100pc
+        ];
 
-        reward_0pc = unStakingFee[StakingLibrary.UnstakingCategories.REWARD_0pc];
-        reward_30pc = unStakingFee[StakingLibrary.UnstakingCategories.REWARD_30pc];
-        reward_50pc = unStakingFee[StakingLibrary.UnstakingCategories.REWARD_50pc];
-        reward_100pc = unStakingFee[StakingLibrary.UnstakingCategories.REWARD_100pc];
-
-        if(feeType == FeesType.BNB){
+        if (feeType == StakingLibrary.FeesType.BNB) {
             uint256 priceOfOneUSD = uint256(getLatestPriceOfOneUSD());
             reward_0pc = reward_0pc * priceOfOneUSD;
             reward_30pc = reward_30pc * priceOfOneUSD;
             reward_50pc = reward_50pc * priceOfOneUSD;
             reward_100pc = reward_100pc * priceOfOneUSD;
         }
-
     }
 
     function setUnstakingFees(
-        uint256 reward_0pc, 
-        uint256 reward_30pc, 
-        uint256 reward_50pc, 
+        uint256 reward_0pc,
+        uint256 reward_30pc,
+        uint256 reward_50pc,
         uint256 reward_100pc
     ) public onlyOwner {
-        unStakingFee[StakingLibrary.UnstakingCategories.REWARD_0pc] = reward_0pc;
-        unStakingFee[StakingLibrary.UnstakingCategories.REWARD_30pc] = reward_30pc;
-        unStakingFee[StakingLibrary.UnstakingCategories.REWARD_50pc] = reward_50pc;
-        unStakingFee[StakingLibrary.UnstakingCategories.REWARD_100pc] = reward_100pc;
+        s_unStakingFee[
+            StakingLibrary.UnstakingCategories.REWARD_0pc
+        ] = reward_0pc;
+        s_unStakingFee[
+            StakingLibrary.UnstakingCategories.REWARD_30pc
+        ] = reward_30pc;
+        s_unStakingFee[
+            StakingLibrary.UnstakingCategories.REWARD_50pc
+        ] = reward_50pc;
+        s_unStakingFee[
+            StakingLibrary.UnstakingCategories.REWARD_100pc
+        ] = reward_100pc;
     }
 
-    function setFeeDistributionShares(uint8 buyBackAndburn, uint8 rewardPool, uint8 corporate ) public onlyOwner {
+    function setFeeDistributionShares(
+        uint8 buyBackAndburn,
+        uint8 rewardPool,
+        uint8 corporate
+    ) public onlyOwner {
         require(
-            corporate > 0 && 
-            rewardPool > 0 &&
-            buyBackAndburn + rewardPool + corporate == 100,
-            "Distribution fees are not adding up to 100pc" 
+            corporate > 0 &&
+                rewardPool > 0 &&
+                buyBackAndburn + rewardPool + corporate == 100,
+            "Distribution fees are not adding up to 100pc"
         );
 
-        feeDistributionShares.buyBackAndburn = buyBackAndburn;
-        feeDistributionShares.rewardPool = rewardPool;
-        feeDistributionShares.corporate = corporate;
+        s_feeDistributionShares.buyBackAndburn = buyBackAndburn;
+        s_feeDistributionShares.rewardPool = rewardPool;
+        s_feeDistributionShares.corporate = corporate;
     }
 
-    function setFeeDistributionWallets(address rewardPool, address corporate, address buyBackAndburnToken, address buyBackReceiver) public onlyOwner {
-        
+    function setFeeDistributionWallets(
+        address rewardPool,
+        address corporate,
+        address buyBackAndburnToken,
+        address buyBackReceiver
+    ) public onlyOwner {
         require(
-            rewardPool != address(0) && 
-            corporate != address(0) &&
-            buyBackAndburnToken != address(0) && 
-            buyBackReceiver != address(0),
-            "Distribution wallets are not being set properly" 
+            rewardPool != address(0) &&
+                corporate != address(0) &&
+                buyBackAndburnToken != address(0) &&
+                buyBackReceiver != address(0),
+            "Distribution wallets are not being set properly"
         );
 
-        feeDistributionWallets.rewardPool = payable(rewardPool);
-        feeDistributionWallets.corporate = payable(corporate);
-        feeDistributionWallets.buyBackAndburnToken = buyBackAndburnToken;
-        feeDistributionWallets.buyBackReceiver = buyBackReceiver;
-        
+        s_feeDistributionWallets.rewardPool = payable(rewardPool);
+        s_feeDistributionWallets.corporate = payable(corporate);
+        s_feeDistributionWallets.buyBackAndburnToken = buyBackAndburnToken;
+        s_feeDistributionWallets.buyBackReceiver = buyBackReceiver;
     }
 
     function SplitFunds() public onlyOwner {
-
-        FeeDistributionWallets memory wallets = feeDistributionWallets;
-        FeeDistributionShares memory fees = feeDistributionShares;
+        FeeDistributionWallets memory wallets = s_feeDistributionWallets;
+        FeeDistributionShares memory fees = s_feeDistributionShares;
 
         require(
-            wallets.rewardPool != address(0) && 
-            wallets.corporate != address(0) &&
-            wallets.buyBackAndburnToken != address(0) && 
-            wallets.buyBackReceiver != address(0),
-            "Distribution wallets are not being set properly" 
+            wallets.rewardPool != address(0) &&
+                wallets.corporate != address(0) &&
+                wallets.buyBackAndburnToken != address(0) &&
+                wallets.buyBackReceiver != address(0),
+            "Distribution wallets are not being set properly"
         );
 
         require(
-            fees.corporate > 0 && 
-            fees.rewardPool > 0 &&
-            fees.buyBackAndburn + fees.rewardPool + fees.corporate == 100,
-            "Distribution fees are not being set properly" 
+            fees.corporate > 0 &&
+                fees.rewardPool > 0 &&
+                fees.buyBackAndburn + fees.rewardPool + fees.corporate == 100,
+            "Distribution fees are not being set properly"
         );
 
         uint256 totalBalance = address(this).balance;
         require(totalBalance > 0, "No balance avaialble for split");
 
-        uint256 corporateShare =  (totalBalance * fees.corporate) / 100;
-        uint256 rewardPoolShare =  (totalBalance * fees.rewardPool) / 100;
-        uint256 buyBackAndBurnShare =  totalBalance - corporateShare - rewardPoolShare;
+        uint256 corporateShare = (totalBalance * fees.corporate) / 100;
+        uint256 rewardPoolShare = (totalBalance * fees.rewardPool) / 100;
+        uint256 buyBackAndBurnShare = totalBalance -
+            corporateShare -
+            rewardPoolShare;
 
         wallets.corporate.transfer(corporateShare);
         wallets.rewardPool.transfer(rewardPoolShare);
-        if(buyBackAndBurnShare > 0){
-            swapETHForTokens(wallets.buyBackAndburnToken, wallets.buyBackReceiver, buyBackAndBurnShare);
+        if (buyBackAndBurnShare > 0) {
+            swapETHForTokens(
+                wallets.buyBackAndburnToken,
+                wallets.buyBackReceiver,
+                buyBackAndBurnShare
+            );
         }
-        
     }
 
     function emergencyWithdraw() public onlyOwner {
@@ -187,8 +263,19 @@ contract CampaignFeeManager is Ownable, PriceFeed, SwapETHForTokens {
         payable(owner()).transfer(totalBalance);
     }
 
+    function updateRouter(
+        IUniswapV2Router02 _uniswapV2Router
+    ) public onlyOwner {
+        uniswapV2Router = _uniswapV2Router;
+    }
+
+    function updatePriceFeed(
+        AggregatorV3Interface _priceFeed
+    ) public onlyOwner {
+        priceFeed = _priceFeed;
+    }
+
     receive() external payable {
         emit Received(msg.sender, msg.value);
     }
-
 }

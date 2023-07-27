@@ -1,7 +1,26 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.14;
+pragma solidity ^0.8.18;
 
 library StakingLibrary {
+    
+    enum ProfileType {
+        NONE,
+        TEAM,
+        USER
+    }
+
+    enum StakingType {
+        ONE_MONTH,
+        THREE_MONTH,
+        SIX_MONTH,
+        NINE_MONTH,
+        TWELVE_MONTH
+    }
+
+    enum MembershipCategories {
+        MEMBER,
+        TEAM
+    }
 
     enum UnstakingCategories {
         REWARD_0pc,
@@ -10,18 +29,17 @@ library StakingLibrary {
         REWARD_100pc
     }
 
-    enum MembershipCategories {
-        REGULAR,
-        UPGRAGE,
-        PREMIUIM,
-        TEAM
-    }
-
     enum CampaignCategories {
         SILVER,
         GOLD,
         DIAMOND
     }
+
+    enum FeesType {
+        USD,
+        BNB
+    }
+
 
     struct PoolInfo {
         uint256 poolId;
@@ -32,10 +50,6 @@ library StakingLibrary {
         uint256 tokenCounter;
         address poolOwner;
     }
-
-    enum ProfileType {NONE, TEAM, USER}
-    
-    enum StakingType { ONE_MONTH, THREE_MONTH, SIX_MONTH, NINE_MONTH, TWELVE_MONTH }
 
     struct ProjectInfo {
         CampaignCategories category;
@@ -66,7 +80,6 @@ library StakingLibrary {
         uint8 APY_12_months;
     }
 
-       
     struct TokenData {
         address poolAddress;
         uint256 poolId;
@@ -76,7 +89,7 @@ library StakingLibrary {
         address creator;
         uint256 tokenId;
         string tokenUri;
-        uint8 stakingType;
+        StakingType stakingType;
         uint256 stakingTime;
         uint256 unlockTime;
         uint256 expectedReward;
@@ -87,17 +100,8 @@ library StakingLibrary {
 
     struct PoolFullInfo {
         PoolInfo poolInfo;
-        ProjectInfo projectInfo; 
-        RewardPoolInfo rewardPoolInfo; 
+        ProjectInfo projectInfo;
+        RewardPoolInfo rewardPoolInfo;
         NFTData nftData;
     }
-
-    struct UserDetail {
-        uint256 memberSince;
-        uint256 memberId;
-        bool isPremium;
-    }
-
 }
-
-

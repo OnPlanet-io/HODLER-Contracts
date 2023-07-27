@@ -1,11 +1,8 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.14;
-
+pragma solidity ^0.8.18;
 
 interface ICreatorManager  {
-
-    function creatorAddress(address user) external view returns (address);
     function createACreator(address user) external returns (address);
-    function walletAddress(address creator) external view returns (address);
-
+    function getCreatorAddressOfUser(address user) external view returns (address);
+    function getWalletAddressOfCreator(address creator) external view returns (address);
 }

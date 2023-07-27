@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-interface IPMTeamManager  {
+interface IPMMembershipManager  {
     function balanceOf(address owner) external view returns (uint256 balance);
-    function ownerOf(uint256 tokenId) external view returns (address owner);
+    function isMember(address user) external view returns (bool);
 }

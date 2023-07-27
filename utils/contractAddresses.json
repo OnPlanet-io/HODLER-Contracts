@@ -16,20 +16,20 @@
         "PMTeamManager": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
         "CampaignFeeManager": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
         "MembershipFeeManager": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
-        "PMRewardDistributor": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
+        "PMRewardDistributor": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
         "StakingToken": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
         "ERC721Token": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
         "ERC20Token": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
         "chainId": 31337
     },
     "11155111": {
-        "CreatorManager": "0xC1Bf42686562F7b03270d07BbC87A589fe55EC03",
-        "StakingPoolFactory": "0x08f17F34c1d7243DB05e07dB3B9cec8b2006FC2b",
-        "PMMembershipManager": "0x1b002ef75A1E5FF04bce3D67808B30fAcdDC26eB",
-        "PMTeamManager": "0x04DFE53A785c0654e85571bBF3Cc813b07B228Cc",
-        "CampaignFeeManager": "0x0b2c1A7D3b5B82f9E0e513E118A8d48DBF0b017E",
-        "MembershipFeeManager": "0x2D2f424B2B3FD9F5E9178b48c359FD776F488890",
-        "PMRewardDistributor": "0x28EEf79ac4f1a81dFE32226C44b461101fDDf989",
+        "CreatorManager": "0x3070083ce731CB8801F604ecb994c7641b9296FB",
+        "StakingPoolFactory": "0x14828bB700712d12fbda5fDF818F9DA8dDd934C2",
+        "PMMembershipManager": "0x724E606f946c3BaA39503EaF74F2292095a1c74c",
+        "PMTeamManager": "0x2CEe002EC9036Da1A4faf1C2fc47d2a3e73b134e",
+        "CampaignFeeManager": "0xF0C13D4Cb19bD7eD2317128Cc1C4a37C79E9b664",
+        "MembershipFeeManager": "0x299Cb71B57A518F1D30C50B9089F36c0Ece3a86C",
+        "PMRewardDistributor": "0x094C9ebc1773F15e8dA6c684Aaf15D1739BE9BA7",
         "chainId": 11155111
     }
 }

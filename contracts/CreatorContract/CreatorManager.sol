@@ -1,55 +1,58 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.14;
+pragma solidity ^0.8.18;
 
-import "hardhat/console.sol";
-import "./CreatorContract.sol";
+import {CreatorContract} from "./CreatorContract.sol";
 
-
-error ALREADY_EXIST();
-error NOT_EXIST();
+// import {console} from "hardhat/console.sol";
 
 contract CreatorManager {
-    
+    error CreatorManager__ALREADY_EXIST();
+    error CreatorManager__NOT_EXIST();
 
-    uint256 creatorsCount;
-    mapping (address => CreatorContract) public creatorAddress;
-    mapping (address => address) public walletAddress;
-    
+    uint256 private s_creatorsCount;
+    mapping(address user => CreatorContract creator) private s_creatorAddress;
+    mapping(address creator => address user) private s_walletAddress;
+
+    event CreatorCreated(address user, address creator);
 
     function createACreator(address user) public returns (address) {
-
-        if(address(creatorAddress[user]) != address(0) ){
-            revert ALREADY_EXIST();
+        if (address(s_creatorAddress[user]) != address(0)) {
+            revert CreatorManager__ALREADY_EXIST();
         }
 
-        CreatorContract newCreator = new CreatorContract(user);
-        creatorAddress[user] = newCreator;
-        walletAddress[address(newCreator)] = user;
-        creatorsCount++;
+        CreatorContract newCreator = new CreatorContract();
+        s_creatorAddress[user] = newCreator;
+        s_walletAddress[address(newCreator)] = user;
+        s_creatorsCount++;
 
         emit CreatorCreated(user, address(newCreator));
 
         return address(newCreator);
-
     }
 
-    function getCreatorAddress(address user) public view returns (address) {
+    function getCreatorAddressOfUser(
+        address user
+    ) external view returns (address) {
+        return address(s_creatorAddress[user]);
+    }
 
-        if(address(creatorAddress[user]) == address(0) ){
-            revert NOT_EXIST();
+    function getWalletAddressOfCreator(
+        address creator
+    ) external view returns (address) {
+        if (address(s_walletAddress[creator]) == address(0)) {
+            revert CreatorManager__NOT_EXIST();
         }
 
-        return address(creatorAddress[user]);
+        return address(s_walletAddress[creator]);
     }
 
-    function getPoolAddressesOfCreator(address user) public view returns(address[] memory) {
-        address creator = address(creatorAddress[user]);
-        if(creator == address(0) ){
-            revert NOT_EXIST();
+    function getPoolAddressesOfCreator(
+        address user
+    ) external view returns (address[] memory) {
+        address creator = address(s_creatorAddress[user]);
+        if (creator == address(0)) {
+            revert CreatorManager__NOT_EXIST();
         }
         return CreatorContract(creator).getPoolAddresses();
     }
-
-    /* Events */
-    event CreatorCreated(address user, address creator);
 }

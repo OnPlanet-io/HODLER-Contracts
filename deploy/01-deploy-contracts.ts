@@ -19,10 +19,10 @@ module.exports = async ({ getNamedAccounts, deployments }: HardhatRuntimeEnviron
     console.log("chainId: ", chainId);
     console.log("master: ", master.address);
     console.log("deployer: ", deployer);
-    const admin = "0xabAe3685B9eac51852466110305CDA62e8822efA";
+    // const admin = "0xabAe3685B9eac51852466110305CDA62e8822efA";
     const giveAwayManager = "0x49EB9ac3e28a22A90D73e3F7B27Bc76628b2442B";
 
-
+    // Local
     if (chainId == 31337) {
         const StakingToken = await deploy("StakingToken", {
             from: deployer,
@@ -47,19 +47,27 @@ module.exports = async ({ getNamedAccounts, deployments }: HardhatRuntimeEnviron
             args: [],
             log: true,
         })
+        
+        const campaignFeeManagerArgs = [
+            // "100", "200", "400", // silver, gold, diamond
+            // "3", "2", "2", "0" // reward_0pc, reward_30pc, reward_50pc, reward_100pc   
 
+            "0", "0", "0", // silver, gold, diamond
+            "0", "0", "0", "0" // reward_0pc, reward_30pc, reward_50pc, reward_100pc   
+        ]
         const CampaignFeeManager = await deploy("CampaignFeeManager", {
             from: deployer,
-            args: [
-                "100", "125", "400", // silver, gold, diamond
-                "3", "2", "2", "0" // reward_0pc, reward_30pc, reward_50pc, reward_100pc   
-            ],
+            args: campaignFeeManagerArgs,
             log: true,
         })
 
+        const membershipFeeManagerAgrs = [
+            "5","8" //"5", "8"
+        ]
         const MembershipFeeManager = await deploy("MembershipFeeManager", {
+            // nonce: await getNonce(),
             from: deployer,
-            args: [ "3", "2", "5", "8"],
+            args: membershipFeeManagerAgrs,
             log: true,
         })
 
@@ -75,14 +83,23 @@ module.exports = async ({ getNamedAccounts, deployments }: HardhatRuntimeEnviron
             log: true,
         })
 
+        const stakingPoolFactoryArgs = [
+            CampaignFeeManager.address,
+            PMMembershipManager.address,
+            PMTeamManager.address,
+            CreatorManager.address
+        ]
+
         const StakingPoolFactory = await deploy("StakingPoolFactory", {
             from: deployer,
-            args: [
-                CampaignFeeManager.address,
-                PMMembershipManager.address,
-                PMTeamManager.address,
-                CreatorManager.address
-            ],
+            args: stakingPoolFactoryArgs,
+            log: true,
+        })
+
+        const PMRewardDistributorArgs = [giveAwayManager]
+        const PMRewardDistributor = await deploy("PMRewardDistributor", {
+            from: deployer,
+            args: PMRewardDistributorArgs,
             log: true,
         })
 
@@ -91,15 +108,9 @@ module.exports = async ({ getNamedAccounts, deployments }: HardhatRuntimeEnviron
 
         const CreatorContract = await deploy("CreatorContract", {
             from: deployer,
-            args: [deployer],
+            args: [],
             log: true,
         })
-
-        const PMRewardDistributor = await deploy("PMRewardDistributor", {
-            from: deployer,
-            args: [deployer]
-        })
-
 
         // const accounts = await ethers.getSigners();
         
@@ -131,6 +142,7 @@ module.exports = async ({ getNamedAccounts, deployments }: HardhatRuntimeEnviron
 
 
     }
+
     else {
        
         const CreatorManager = await deploy("CreatorManager", {
@@ -140,11 +152,11 @@ module.exports = async ({ getNamedAccounts, deployments }: HardhatRuntimeEnviron
         })
         
         const campaignFeeManagerArgs = [
-            "100", "200", "400", // silver, gold, diamond
-            "3", "2", "2", "0" // reward_0pc, reward_30pc, reward_50pc, reward_100pc   
-
-            // "100", "125", "400", // silver, gold, diamond
+            // "100", "200", "400", // silver, gold, diamond
             // "3", "2", "2", "0" // reward_0pc, reward_30pc, reward_50pc, reward_100pc   
+
+            "0", "0", "0", // silver, gold, diamond
+            "0", "0", "0", "0" // reward_0pc, reward_30pc, reward_50pc, reward_100pc   
         ]
         const CampaignFeeManager = await deploy("CampaignFeeManager", {
             from: deployer,
@@ -153,7 +165,7 @@ module.exports = async ({ getNamedAccounts, deployments }: HardhatRuntimeEnviron
         })
 
         const membershipFeeManagerAgrs = [
-            "3","2","5","8" //"3", "2", "5", "8"
+            "5","8" //"5", "8"
         ]
         const MembershipFeeManager = await deploy("MembershipFeeManager", {
             // nonce: await getNonce(),
@@ -232,15 +244,15 @@ module.exports = async ({ getNamedAccounts, deployments }: HardhatRuntimeEnviron
         //     value: ethers.utils.parseEther("0.1"), // Sends exactly 1.0 ether
         // });
 
-        await varify(CreatorManager.address, []);
-        await varify(StakingPoolFactory.address, stakingPoolFactoryArgs);
+        // await varify(CreatorManager.address, []);
+        // await varify(StakingPoolFactory.address, stakingPoolFactoryArgs);
 
-        await varify(CampaignFeeManager.address, campaignFeeManagerArgs);
-        await varify(MembershipFeeManager.address, membershipFeeManagerAgrs);
-        await varify(PMMembershipManager.address, [MembershipFeeManager.address]);
+        // await varify(CampaignFeeManager.address, campaignFeeManagerArgs);
+        // await varify(MembershipFeeManager.address, membershipFeeManagerAgrs);
+        // await varify(PMMembershipManager.address, [MembershipFeeManager.address]);
 
-        await varify(PMTeamManager.address, [MembershipFeeManager.address]);
-        await varify(PMRewardDistributor.address, PMRewardDistributorArgs);
+        // await varify(PMTeamManager.address, [MembershipFeeManager.address]);
+        // await varify(PMRewardDistributor.address, PMRewardDistributorArgs);
 
 
     }
