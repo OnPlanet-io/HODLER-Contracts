@@ -5,5 +5,5 @@ import {PMLibrary} from "../library/PMLibrary.sol";
 
 interface ICampaignFeeManager  {
     function getCampaignFee(PMLibrary.CampaignCategories category) external view returns (uint256);
-    function getUnstakingFee(PMLibrary.UnstakingCategories category) external view returns (uint256);
+    function getClaimFee(PMLibrary.ClaimCategories category) external view returns (uint256);
 }

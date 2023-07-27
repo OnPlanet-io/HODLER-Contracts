@@ -22,7 +22,7 @@ library PMLibrary {
         TEAM
     }
 
-    enum UnstakingCategories {
+    enum ClaimCategories{
         REWARD_0pc,
         REWARD_30pc,
         REWARD_50pc,
@@ -45,7 +45,7 @@ library PMLibrary {
         uint256 poolId;
         address poolAddress;
         uint256 remainingPool;
-        uint256 totalTokensStaked;
+        uint256 totalTokensInvested;
         uint256 totalParicipants;
         uint256 tokenCounter;
         address poolOwner;
@@ -90,7 +90,7 @@ library PMLibrary {
         uint256 tokenId;
         string tokenUri;
         InvestmentType investmentType;
-        uint256 stakingTime;
+        uint256 investmentTime;
         uint256 unlockTime;
         uint256 expectedReward;
         bool isUnskated;

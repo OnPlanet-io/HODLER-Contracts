@@ -16,15 +16,15 @@ contract RewardCampaign is ERC721Enumerable {
     error RewardCampaign__POOL_NOT_STARTED();
     error RewardCampaign__NOT_ENOUGH_REWARD_IN_POOL();
     error RewardCampaign__NOT_AUTHERIZED();
-    error RewardCampaign__NOTHING_TO_UNSTAKE();
-    error RewardCampaign__ALREADY_UNSTAKED();
+    error RewardCampaign__NOTHING_TO_CLAIM();
+    error RewardCampaign__ALREADY_CLAIMED();
     error RewardCampaign__INSUFFICIENT_FUNDS();
     error RewardCampaign__FAILED_TO_TRANSFER_BNBS();
     error RewardCampaign__FAILED_TO_TRANSFER_TOEKNS();
     error RewardCampaign__FAILED_TO_TRANSFER_ORIGNAL_TOEKNS();
     error RewardCampaign__FAILED_TO_TRANSFER_REWARD_TOEKNS();
     error RewardCampaign__NO_CREATOR_CONTRACT_FOUND();
-    error RewardCampaign__NOT_A_VALID_STAKING_TYPE();
+    error RewardCampaign__NOT_A_VALID_CLAIM_TYPE();
 
     uint256 internal constant ONE_DAY = 24 * 60 * 60;
     PMLibrary.PoolInfo private s_poolInfo;
@@ -104,7 +104,7 @@ contract RewardCampaign is ERC721Enumerable {
         s_campaignFeeManager = _campaignFeeManager;
     }
 
-    /// @notice The main function to stake tokens
+    /// @notice The main function to invest tokens
     function investTokens(
         address onBehalf,
         uint256 amount,
@@ -122,7 +122,7 @@ contract RewardCampaign is ERC721Enumerable {
 
         // Check if category is valid
         if (category.rewardPC == 0) {
-            revert RewardCampaign__NOT_A_VALID_STAKING_TYPE();
+            revert RewardCampaign__NOT_A_VALID_CLAIM_TYPE();
         }
 
         // Calculate reward of this person
@@ -135,8 +135,8 @@ contract RewardCampaign is ERC721Enumerable {
 
         // Update the remianing reward pool
         s_poolInfo.remainingPool -= reward;
-        // Update the total staked tokens variable
-        s_poolInfo.totalTokensStaked += amount;
+        // Update the total invested tokens variable
+        s_poolInfo.totalTokensInvested += amount;
         // update totalParicipants
         s_poolInfo.totalParicipants++;
         // Update the tokenID
@@ -150,7 +150,7 @@ contract RewardCampaign is ERC721Enumerable {
             creator = s_creatorManager.createACreator(onBehalf);
         }
 
-        // Record the staking entry
+        // Record the investment entry
         s_tokenData[tokenId] = PMLibrary.TokenData({
             poolAddress: address(this),
             poolId: poolInfo.poolId,
@@ -161,7 +161,7 @@ contract RewardCampaign is ERC721Enumerable {
             tokenId: tokenId,
             tokenUri: category.image,
             investmentType: investmentType,
-            stakingTime: block.timestamp,
+            investmentTime: block.timestamp,
             unlockTime: block.timestamp + category.duration,
             expectedReward: reward,
             isUnskated: false,
@@ -194,8 +194,8 @@ contract RewardCampaign is ERC721Enumerable {
         );
     }
 
-    /// @notice unstakeTokens can only be called by creator contract of the token holder.
-    function unstakeTokens(uint256 tokenId) public payable {
+    /// @notice claimTokensAndReward can only be called by creator contract of the token holder.
+    function claimTokensAndReward(uint256 tokenId) public payable {
         PMLibrary.TokenData memory tokenData = s_tokenData[tokenId];
 
         if (msg.sender != tokenData.owner) {
@@ -209,7 +209,7 @@ contract RewardCampaign is ERC721Enumerable {
             uint256 fee
         ) = findRedeemableReward(
                 tokenData.expectedReward,
-                tokenData.stakingTime,
+                tokenData.investmentTime,
                 tokenData.unlockTime
             );
 
@@ -218,11 +218,11 @@ contract RewardCampaign is ERC721Enumerable {
         }
 
         if (tokenData.expectedReward == 0) {
-            revert RewardCampaign__NOTHING_TO_UNSTAKE();
+            revert RewardCampaign__NOTHING_TO_CLAIM();
         }
 
         if (tokenData.isUnskated) {
-            revert RewardCampaign__ALREADY_UNSTAKED();
+            revert RewardCampaign__ALREADY_CLAIMED();
         }
 
         s_tokenData[tokenId].isUnskated = true;
@@ -275,7 +275,7 @@ contract RewardCampaign is ERC721Enumerable {
     /// @notice an internal function to compute redeemable reward after pelanties.
     function findRedeemableReward(
         uint256 _expectedReward,
-        uint256 _stakingTime,
+        uint256 _investmentTime,
         uint256 _unlockTime
     )
         public
@@ -287,33 +287,33 @@ contract RewardCampaign is ERC721Enumerable {
         );
 
         // Either 90 days, 180 days or 365 days.
-        uint256 stakingPeriod = _unlockTime - _stakingTime;
-        uint256 durationCompleted = block.timestamp - _stakingTime;
-        uint256 pcCompleted = (durationCompleted * 100) / stakingPeriod;
+        uint256 investmentPeriod = _unlockTime - _investmentTime;
+        uint256 durationCompleted = block.timestamp - _investmentTime;
+        uint256 pcCompleted = (durationCompleted * 100) / investmentPeriod;
 
         if (pcCompleted < 50) {
             pcReceived = 0;
             redeemableReward = 0;
-            fee = campaignFeeManager.getUnstakingFee(
-                PMLibrary.UnstakingCategories.REWARD_0pc
+            fee = campaignFeeManager.getClaimFee(
+                PMLibrary.ClaimCategories.REWARD_0pc
             );
         } else if (pcCompleted >= 50 && pcCompleted < 80) {
             pcReceived = 30;
             redeemableReward = (_expectedReward * pcReceived) / 100;
-            fee = campaignFeeManager.getUnstakingFee(
-                PMLibrary.UnstakingCategories.REWARD_30pc
+            fee = campaignFeeManager.getClaimFee(
+                PMLibrary.ClaimCategories.REWARD_30pc
             );
         } else if (pcCompleted >= 80 && pcCompleted < 100) {
             pcReceived = 50;
             redeemableReward = (_expectedReward * 50) / 100;
-            fee = campaignFeeManager.getUnstakingFee(
-                PMLibrary.UnstakingCategories.REWARD_50pc
+            fee = campaignFeeManager.getClaimFee(
+                PMLibrary.ClaimCategories.REWARD_50pc
             );
         } else {
             pcReceived = 100;
             redeemableReward = _expectedReward;
-            fee = campaignFeeManager.getUnstakingFee(
-                PMLibrary.UnstakingCategories.REWARD_100pc
+            fee = campaignFeeManager.getClaimFee(
+                PMLibrary.ClaimCategories.REWARD_100pc
             );
         }
     }
@@ -334,7 +334,7 @@ contract RewardCampaign is ERC721Enumerable {
         expectedReward = tokenData.expectedReward;
         (redeemableReward, pcReceived, fee) = findRedeemableReward(
             tokenData.expectedReward,
-            tokenData.stakingTime,
+            tokenData.investmentTime,
             tokenData.unlockTime
         );
     }

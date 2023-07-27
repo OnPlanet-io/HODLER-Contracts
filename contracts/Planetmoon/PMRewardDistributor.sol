@@ -100,10 +100,10 @@ contract PMRewardDistributor is Ownable, PriceFeed, SwapETHForTokens {
             amount
         );
 
-        // Approve tokens to the staking pool
+        // Approve tokens to the investment pool
         IERC20(tokenAddress).approve(campaign, boughtTokens);
 
-        // Stake tokens on uers behalf
+        // Invest tokens on uers behalf
         IRewardCampaign(campaign).investTokens(user, boughtTokens, _type);
 
         emit RewardApplied(campaign, user, boughtTokens, uint8(_type));
