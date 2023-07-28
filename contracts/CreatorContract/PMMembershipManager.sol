@@ -8,7 +8,7 @@ import {Counters} from "@openzeppelin/contracts/utils/Counters.sol";
 import {PMLibrary} from "../library/PMLibrary.sol";
 import {IMembershipFeeManager} from "../interfaces/IMembershipFeeManager.sol";
 
-import "hardhat/console.sol";
+// import "hardhat/console.sol";
 
 contract PMMembershipManager is 
     ERC721("PlanetMoon Membership Manager", "PMM"),
