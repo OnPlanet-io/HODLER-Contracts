@@ -10,7 +10,7 @@ import {IMembershipFeeManager} from "../interfaces/IMembershipFeeManager.sol";
 
 import "hardhat/console.sol";
 
-contract PMMembershipManager is
+contract PMMembershipManager is 
     ERC721("PlanetMoon Membership Manager", "PMM"),
     Ownable
 {

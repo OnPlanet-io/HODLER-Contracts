@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import {ERC721, ERC721Enumerable} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Counters} from "@openzeppelin/contracts/utils/Counters.sol";
@@ -9,9 +9,10 @@ import {Counters} from "@openzeppelin/contracts/utils/Counters.sol";
 import {IMembershipFeeManager} from "../interfaces/IMembershipFeeManager.sol";
 import {PMLibrary} from "../library/PMLibrary.sol";
 
-// import "hardhat/console.sol";
+// import {console} from "hardhat/console.sol";
 
-contract PMTeamManager is ERC721Enumerable, Ownable {
+contract PMTeamManager is ERC721, ERC721Enumerable, Ownable {
+
     error PMTeamManager__INSUFFICIENT_FUNDS();
     error PMTeamManager__FAILED_TO_TRANSFER_BNBS();
     error PMTeamManager__NOT_OWNER_OF_TEAM();
@@ -36,9 +37,8 @@ contract PMTeamManager is ERC721Enumerable, Ownable {
 
     event TeamCreated(uint256 teamId, uint256 createdAt);
 
-    constructor(
-        address _membershipFeeManager
-    ) ERC721("PlanetMoon Team Manager", "PTM") {
+    constructor(address _membershipFeeManager) 
+    ERC721("PlanetMoon Team Manager", "PTM") {
         s_membershipFeeManager = payable(_membershipFeeManager);
     }
 
@@ -50,7 +50,7 @@ contract PMTeamManager is ERC721Enumerable, Ownable {
         uint256 fee = IMembershipFeeManager(s_membershipFeeManager)
             .getMembershipFee(PMLibrary.MembershipCategories.TEAM);
 
-        if (msg.value < fee) {
+        if (fee > msg.value) {
             revert PMTeamManager__INSUFFICIENT_FUNDS();
         }
 
@@ -145,4 +145,24 @@ contract PMTeamManager is ERC721Enumerable, Ownable {
     function changePauseStatus(bool action) public onlyOwner {
         s_isPaused = action;
     }
+
+    
+    /* Override Functions */
+
+    function _beforeTokenTransfer(address from, address to, uint256 tokenId, uint256 batchSize)
+        internal
+        override(ERC721, ERC721Enumerable)
+    {
+        super._beforeTokenTransfer(from, to, tokenId, batchSize);
+    }
+
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override(ERC721, ERC721Enumerable)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
+    }
+
 }

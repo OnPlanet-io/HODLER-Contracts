@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import {ERC721Enumerable, ERC721} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {PMLibrary} from "../library/PMLibrary.sol";
 
@@ -11,7 +11,7 @@ import {ICampaignFeeManager} from "../interfaces/ICampaignFeeManager.sol";
 
 // import "hardhat/console.sol";
 
-contract RewardCampaign is ERC721Enumerable {
+contract RewardCampaign is ERC721, ERC721Enumerable {
 
     error RewardCampaign__POOL_NOT_STARTED();
     error RewardCampaign__NOT_ENOUGH_REWARD_IN_POOL();
@@ -381,5 +381,24 @@ contract RewardCampaign is ERC721Enumerable {
             }
 
         return (tokensData);
+    }
+
+
+    /* Override Functions */
+    
+    function _beforeTokenTransfer(address from, address to, uint256 tokenId, uint256 batchSize)
+        internal
+        override(ERC721, ERC721Enumerable)
+    {
+        super._beforeTokenTransfer(from, to, tokenId, batchSize);
+    }
+
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override(ERC721, ERC721Enumerable)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
     }
 }

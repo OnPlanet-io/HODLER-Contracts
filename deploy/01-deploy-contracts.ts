@@ -2,7 +2,7 @@ import { Contract } from "@ethersproject/contracts";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { ethers, network } from "hardhat";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { CampaignFeeManager, MembershipFeeManager, PMMembershipManager, PMRewardDistributor, PMTeamManager, StakingPoolFactory } from "../typechain-types";
+import { CampaignFeeManager, MembershipFeeManager, PMMembershipManager, PMRewardDistributor, PMTeamManager, RewardCampaignFactory } from "../typechain-types";
 import varify from "../utils/varify";
 // import {verify} from "../utils/verify"
 
@@ -24,11 +24,6 @@ module.exports = async ({ getNamedAccounts, deployments }: HardhatRuntimeEnviron
 
     // Local
     if (chainId == 31337) {
-        const StakingToken = await deploy("StakingToken", {
-            from: deployer,
-            args: [],
-            log: true,
-        })
 
         const ERC20Token = await deploy("ERC20Token", {
             from: deployer,
@@ -53,7 +48,7 @@ module.exports = async ({ getNamedAccounts, deployments }: HardhatRuntimeEnviron
             // "3", "2", "2", "0" // reward_0pc, reward_30pc, reward_50pc, reward_100pc   
 
             "0", "0", "0", // silver, gold, diamond
-            "0", "0", "0", "0" // reward_0pc, reward_30pc, reward_50pc, reward_100pc   
+            "3", "2", "2", "0" // reward_0pc, reward_30pc, reward_50pc, reward_100pc   
         ]
         const CampaignFeeManager = await deploy("CampaignFeeManager", {
             from: deployer,
@@ -62,7 +57,7 @@ module.exports = async ({ getNamedAccounts, deployments }: HardhatRuntimeEnviron
         })
 
         const membershipFeeManagerAgrs = [
-            "5","8" //"5", "8"
+            "5","8"
         ]
         const MembershipFeeManager = await deploy("MembershipFeeManager", {
             // nonce: await getNonce(),
@@ -83,16 +78,16 @@ module.exports = async ({ getNamedAccounts, deployments }: HardhatRuntimeEnviron
             log: true,
         })
 
-        const stakingPoolFactoryArgs = [
+        const RewardCampaignFactoryArgs = [
             CampaignFeeManager.address,
             PMMembershipManager.address,
             PMTeamManager.address,
             CreatorManager.address
         ]
 
-        const StakingPoolFactory = await deploy("StakingPoolFactory", {
+        const RewardCampaignFactory = await deploy("RewardCampaignFactory", {
             from: deployer,
-            args: stakingPoolFactoryArgs,
+            args: RewardCampaignFactoryArgs,
             log: true,
         })
 
@@ -104,13 +99,7 @@ module.exports = async ({ getNamedAccounts, deployments }: HardhatRuntimeEnviron
         })
 
         // const CreatorManagerContract = await ethers.getContractAt("CreatorManager", CreatorManager.address);
-        // await CreatorManagerContract.setStakingPoolManager(StakingPoolFactory.address);
-
-        const CreatorContract = await deploy("CreatorContract", {
-            from: deployer,
-            args: [],
-            log: true,
-        })
+        // await CreatorManagerContract.setStakingPoolManager(RewardCampaignFactory.address);
 
         // const accounts = await ethers.getSigners();
         
@@ -133,8 +122,8 @@ module.exports = async ({ getNamedAccounts, deployments }: HardhatRuntimeEnviron
         // const pmTeamManager = new Contract(PMTeamManager.address, PMTeamManager.abi, master) as PMTeamManager;
         // await pmTeamManager.transferOwnership(admin);
 
-        // const stakingPoolFactory = new Contract(StakingPoolFactory.address, StakingPoolFactory.abi, master) as StakingPoolFactory;
-        // await stakingPoolFactory.transferOwnership(admin);
+        // const RewardCampaignFactory = new Contract(RewardCampaignFactory.address, RewardCampaignFactory.abi, master) as RewardCampaignFactory;
+        // await RewardCampaignFactory.transferOwnership(admin);
 
         // const pmRewardDistributor = new Contract(PMRewardDistributor.address, PMRewardDistributor.abi, master) as PMRewardDistributor;
         // await pmRewardDistributor.transferOwnership(admin);
@@ -156,7 +145,7 @@ module.exports = async ({ getNamedAccounts, deployments }: HardhatRuntimeEnviron
             // "3", "2", "2", "0" // reward_0pc, reward_30pc, reward_50pc, reward_100pc   
 
             "0", "0", "0", // silver, gold, diamond
-            "0", "0", "0", "0" // reward_0pc, reward_30pc, reward_50pc, reward_100pc   
+            "3", "2", "2", "0" // reward_0pc, reward_30pc, reward_50pc, reward_100pc   
         ]
         const CampaignFeeManager = await deploy("CampaignFeeManager", {
             from: deployer,
@@ -186,15 +175,15 @@ module.exports = async ({ getNamedAccounts, deployments }: HardhatRuntimeEnviron
             log: true,
         })
 
-        const stakingPoolFactoryArgs = [
+        const RewardCampaignFactoryArgs = [
             CampaignFeeManager.address,
             PMMembershipManager.address,
             PMTeamManager.address,
             CreatorManager.address
         ]
-        const StakingPoolFactory = await deploy("StakingPoolFactory", {
+        const RewardCampaignFactory = await deploy("RewardCampaignFactory", {
             from: deployer,
-            args: stakingPoolFactoryArgs,
+            args: RewardCampaignFactoryArgs,
             log: true,
         })
 
@@ -226,10 +215,10 @@ module.exports = async ({ getNamedAccounts, deployments }: HardhatRuntimeEnviron
         // const pmTeamManager = new Contract(PMTeamManager.address, PMTeamManager.abi, master) as PMTeamManager;
         // await pmTeamManager.transferOwnership(admin);
 
-        // console.log("Transfering ownership stakingPoolFactory");
+        // console.log("Transfering ownership RewardCampaignFactory");
 
-        // const stakingPoolFactory = new Contract(StakingPoolFactory.address, StakingPoolFactory.abi, master) as StakingPoolFactory;
-        // let tx = await stakingPoolFactory.transferOwnership(admin);
+        // const RewardCampaignFactory = new Contract(RewardCampaignFactory.address, RewardCampaignFactory.abi, master) as RewardCampaignFactory;
+        // let tx = await RewardCampaignFactory.transferOwnership(admin);
         // await tx.wait(1);
 
         // console.log("Transfering ownership pmRewardDistributor");
@@ -244,15 +233,15 @@ module.exports = async ({ getNamedAccounts, deployments }: HardhatRuntimeEnviron
         //     value: ethers.utils.parseEther("0.1"), // Sends exactly 1.0 ether
         // });
 
-        // await varify(CreatorManager.address, []);
-        // await varify(StakingPoolFactory.address, stakingPoolFactoryArgs);
+        await varify(CreatorManager.address, []);
+        await varify(RewardCampaignFactory.address, RewardCampaignFactoryArgs);
 
-        // await varify(CampaignFeeManager.address, campaignFeeManagerArgs);
-        // await varify(MembershipFeeManager.address, membershipFeeManagerAgrs);
-        // await varify(PMMembershipManager.address, [MembershipFeeManager.address]);
+        await varify(CampaignFeeManager.address, campaignFeeManagerArgs);
+        await varify(MembershipFeeManager.address, membershipFeeManagerAgrs);
+        await varify(PMMembershipManager.address, [MembershipFeeManager.address]);
 
-        // await varify(PMTeamManager.address, [MembershipFeeManager.address]);
-        // await varify(PMRewardDistributor.address, PMRewardDistributorArgs);
+        await varify(PMTeamManager.address, [MembershipFeeManager.address]);
+        await varify(PMRewardDistributor.address, PMRewardDistributorArgs);
 
 
     }

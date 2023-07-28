@@ -1,3 +1,12 @@
+/**
+ Condition to pass all the tests
+ *  In PriceFeed.sol contract, return a custom value from getLatestPriceOfOneUSD();
+ 
+ 
+ */
+
+
+
 import { time } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import { network, ethers } from "hardhat";
@@ -7,7 +16,7 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
 
 import { UniswapV2Factory__factory, UniswapV2Pair__factory, UniswapV2Router02__factory, WETH9__factory } from "../typechain-types";
-import { Token__factory,  } from "../typechain-types";
+import { Token__factory, } from "../typechain-types";
 
 import { PMMembershipManager__factory, PMMembershipManager } from "../typechain-types";
 import { RewardCampaign__factory, RewardCampaign } from "../typechain-types";
@@ -247,7 +256,7 @@ describe("Planet Moon Test Stack", function () {
             it("Only owner can assign giveaway memberships", async () => {
 
                 await expect(pmMembershipManager.connect(user1).giveAwayMembership([user1.address, user2.address]))
-                    .to.be.rejectedWith("Ownable: caller is not the owner");
+                    .to.be.revertedWith("Ownable: caller is not the owner");
 
                 await expect(() => pmMembershipManager.giveAwayMembership([user1.address, user2.address]))
                     .to.changeEtherBalances([deployer, membershipFeeManager], [0, 0]);
@@ -261,7 +270,7 @@ describe("Planet Moon Test Stack", function () {
             it("Giveaway memberships works for already members as well", async () => {
 
                 await expect(pmMembershipManager.connect(user1).giveAwayMembership([user1.address, user2.address]))
-                    .to.be.rejectedWith("Ownable: caller is not the owner");
+                    .to.be.revertedWith("Ownable: caller is not the owner");
 
                 await expect(() => pmMembershipManager.giveAwayMembership([user1.address]))
                     .to.changeEtherBalances([deployer, membershipFeeManager], [0, 0]);
@@ -286,7 +295,7 @@ describe("Planet Moon Test Stack", function () {
 
                 await expect(
                     pmMembershipManager.tokenURI(2)
-                ).to.be.rejectedWith("PMMembershipManager__TOKEN_DONT_EXIST");
+                ).to.be.revertedWithCustomError(pmMembershipManager, "PMMembershipManager__TOKEN_DONT_EXIST");
 
                 await pmMembershipManager.becomeMember(user2.address, { value: Fee });
                 expect(await pmMembershipManager.tokenURI(2)).to.equal(MEMBERSHIP_URI);
@@ -296,7 +305,7 @@ describe("Planet Moon Test Stack", function () {
             it("only owner can update MembershipFee Manager address", async () => {
 
                 await expect(pmMembershipManager.connect(user1).updateMembershipFeeManager(DEAD_ADDRESS))
-                    .to.be.rejectedWith("Ownable: caller is not the owner");
+                    .to.be.revertedWith("Ownable: caller is not the owner");
 
                 await pmMembershipManager.updateMembershipFeeManager(DEAD_ADDRESS);
                 expect(await pmMembershipManager.getMemberShipFeeManager()).to.be.equal(DEAD_ADDRESS);
@@ -308,7 +317,7 @@ describe("Planet Moon Test Stack", function () {
                 expect(await pmMembershipManager.isPaused()).to.be.equal(false);
 
                 await expect(pmMembershipManager.connect(user1).changePauseStatus(true))
-                    .to.be.rejectedWith("Ownable: caller is not the owner");
+                    .to.be.revertedWith("Ownable: caller is not the owner");
 
                 await pmMembershipManager.changePauseStatus(true);
                 expect(await pmMembershipManager.isPaused()).to.be.equal(true);
@@ -331,7 +340,7 @@ describe("Planet Moon Test Stack", function () {
             it("only owner can update MembershipFee Manager address", async () => {
 
                 await expect(pmTeamManager.connect(user1).updateMembershipFeeManager(DEAD_ADDRESS))
-                    .to.be.rejectedWith("Ownable: caller is not the owner");
+                    .to.be.revertedWith("Ownable: caller is not the owner");
 
                 await pmTeamManager.updateMembershipFeeManager(DEAD_ADDRESS);
                 expect(await pmTeamManager.getMemberShipFeeManager()).to.be.equal(DEAD_ADDRESS);
@@ -343,7 +352,8 @@ describe("Planet Moon Test Stack", function () {
                 await pmTeamManager.changePauseStatus(false);
                 const teamFee = await membershipFeeManager.getMembershipFee(MembershipCategory.TEAM);
 
-                await expect(pmTeamManager.connect(user1).createATeam(user1.address)).to.be.rejectedWith("INSUFFICIENT_FUNDS");
+                await expect(pmTeamManager.connect(user1).createATeam(user1.address))
+                    .to.be.revertedWithCustomError(pmTeamManager, "PMTeamManager__INSUFFICIENT_FUNDS");
 
                 await expect(() => pmTeamManager.connect(user1).createATeam(user1.address, { value: teamFee }))
                     .to.changeEtherBalances([user1, membershipFeeManager], [teamFee.mul(-1), teamFee]);
@@ -354,11 +364,8 @@ describe("Planet Moon Test Stack", function () {
                 expect(teamData.inceptionDate).to.be.greaterThan(0);
 
                 expect(await pmTeamManager.totalSupply()).to.equal(1);
-                await expect(pmTeamManager.getTeamData("2")).to.be.rejectedWith("TOKEN_DONT_EXIST");
-                // expect((await pmTeamManager.getTeamData("1")).teamId).to.be.equal("1");
-                // await expect(pmTeamManager.getTeamData("2")).to.be.rejectedWith("TOKEN_DONT_EXIST");
-                // expect((await pmTeamManager.getTeamData("1")).teamId).to.be.equal("1");
-                // await expect(pmTeamManager.getTeamData("2")).to.be.rejectedWith("TOKEN_DONT_EXIST");
+                await expect(pmTeamManager.getTeamData("2"))
+                    .to.be.revertedWithCustomError(pmTeamManager, "PMTeamManager__TOKEN_DONT_EXIST");
 
 
             })
@@ -371,11 +378,12 @@ describe("Planet Moon Test Stack", function () {
                 await expect(() => pmTeamManager.connect(user1).createATeam(user1.address, { value: teamFee }))
                     .to.changeEtherBalances([user1, membershipFeeManager], [teamFee.mul(-1), teamFee]);
 
-                await expect(pmTeamManager.connect(user2).updateTeamMembers(1, [user1.address, user2.address, user3.address]))
-                    .to.be.rejectedWith("NOT_OWNER_OF_TEAM");
+                await expect(
+                    pmTeamManager.connect(user2).updateTeamMembers(1, [user1.address, user2.address, user3.address]))
+                    .to.be.revertedWithCustomError(pmTeamManager, "PMTeamManager__NOT_OWNER_OF_TEAM");
 
                 await expect(pmTeamManager.connect(user1).updateTeamMembers(2, [user1.address, user2.address, user3.address]))
-                    .to.be.rejectedWith("ERC721: invalid token ID");
+                    .to.be.revertedWith("ERC721: invalid token ID");
 
                 await pmTeamManager.connect(user1).updateTeamMembers(1, [user1.address, user2.address, user3.address])
 
@@ -402,7 +410,7 @@ describe("Planet Moon Test Stack", function () {
             it("only owner can change the pause status of teamManager of the contract", async () => {
 
                 await expect(pmTeamManager.connect(user1).changePauseStatus(true))
-                    .to.be.rejectedWith("Ownable: caller is not the owner");
+                    .to.be.revertedWith("Ownable: caller is not the owner");
 
                 await pmTeamManager.changePauseStatus(true);
 
@@ -434,7 +442,7 @@ describe("Planet Moon Test Stack", function () {
             it("Only Owner can update the fees", async () => {
 
                 await expect(membershipFeeManager.connect(user1).setMembershipFee("0", "0"))
-                    .to.be.rejectedWith("Ownable: caller is not the owner");
+                    .to.be.revertedWith("Ownable: caller is not the owner");
 
                 await membershipFeeManager.setMembershipFee("0", "0");
                 const allFeesUSD = await membershipFeeManager.getAllFees(FeesType.USD);
@@ -457,14 +465,14 @@ describe("Planet Moon Test Stack", function () {
                 const { buyBackToken } = await launchOPAndProvideLiquidity();
 
                 await expect(membershipFeeManager.connect(user1).setFeeDistributionShares(20, 20, 60))
-                    .to.be.rejectedWith("Ownable: caller is not the owner");
+                    .to.be.revertedWith("Ownable: caller is not the owner");
 
                 await expect(membershipFeeManager.connect(user1).setFeeDistributionWallets(
                     rewardPool.address,
                     corporate.address,
                     buyBackToken.address,
                     DEAD_ADDRESS
-                )).to.be.rejectedWith("Ownable: caller is not the owner");
+                )).to.be.revertedWith("Ownable: caller is not the owner");
 
                 await membershipFeeManager.setFeeDistributionShares(20, 20, 60);
                 await membershipFeeManager.setFeeDistributionWallets(
@@ -504,7 +512,7 @@ describe("Planet Moon Test Stack", function () {
             it("Only Owner can update the router address for buyingback", async () => {
 
                 await expect(membershipFeeManager.connect(user1).updateRouter(DEAD_ADDRESS))
-                    .to.be.rejectedWith("Ownable: caller is not the owner");
+                    .to.be.revertedWith("Ownable: caller is not the owner");
 
                 await membershipFeeManager.updateRouter(DEAD_ADDRESS);
                 expect(await membershipFeeManager.uniswapV2Router()).to.be.equal(DEAD_ADDRESS);
@@ -529,7 +537,7 @@ describe("Planet Moon Test Stack", function () {
                 );
 
                 await expect(membershipFeeManager.connect(user1).splitFunds())
-                    .to.be.rejectedWith("Ownable: caller is not the owner");
+                    .to.be.revertedWith("Ownable: caller is not the owner");
 
                 await expect(() => membershipFeeManager.splitFunds())
                     .to.changeEtherBalances(
@@ -589,7 +597,7 @@ describe("Planet Moon Test Stack", function () {
                 });
 
                 await expect(membershipFeeManager.connect(user1).emergencyWithdraw())
-                    .to.be.rejectedWith("Ownable: caller is not the owner");
+                    .to.be.revertedWith("Ownable: caller is not the owner");
 
                 await expect(() => membershipFeeManager.emergencyWithdraw())
                     .to.changeEtherBalances(
@@ -625,9 +633,9 @@ describe("Planet Moon Test Stack", function () {
                     .to.changeEtherBalances([user2, membershipFeeManager], [fee.mul(-1), fee]);
 
                 await expect(pmMembershipManager.connect(user1).transferFrom(user1.address, user3.address, 1))
-                    .to.be.rejectedWith("PMMembershipManager__TOKEN_TRANSFER_IS_BLOCKED");
+                    .to.be.revertedWithCustomError(pmMembershipManager, "PMMembershipManager__TOKEN_TRANSFER_IS_BLOCKED");
                 await expect(pmMembershipManager.connect(user2).transferFrom(user2.address, user3.address, 2))
-                    .to.be.rejectedWith("PMMembershipManager__TOKEN_TRANSFER_IS_BLOCKED");
+                    .to.be.revertedWithCustomError(pmMembershipManager, "PMMembershipManager__TOKEN_TRANSFER_IS_BLOCKED");
 
             })
 
@@ -637,7 +645,7 @@ describe("Planet Moon Test Stack", function () {
                 const fee = await membershipFeeManager.getMembershipFee(MembershipCategory.MEMBER);
 
                 await expect(pmMembershipManager.connect(user1).becomeMember(user1.address))
-                    .to.be.rejectedWith("PMMembershipManager__INSUFFICIENT_FUNDS");
+                    .to.be.revertedWithCustomError(pmMembershipManager, "PMMembershipManager__INSUFFICIENT_FUNDS");
 
                 await expect(
                     () => pmMembershipManager.connect(user1).becomeMember(user1.address, { value: fee }))
@@ -649,7 +657,7 @@ describe("Planet Moon Test Stack", function () {
 
                 // // Check if these tokens are soulbound
                 await expect(pmMembershipManager.connect(user1).transferFrom(user1.address, user2.address, 1))
-                    .to.be.rejectedWith("PMMembershipManager__TOKEN_TRANSFER_IS_BLOCKED");
+                    .to.be.revertedWithCustomError(pmMembershipManager, "PMMembershipManager__TOKEN_TRANSFER_IS_BLOCKED");
 
 
             })
@@ -661,7 +669,7 @@ describe("Planet Moon Test Stack", function () {
                 const teamFee = await membershipFeeManager.getMembershipFee(MembershipCategory.TEAM);
 
                 await expect(pmTeamManager.connect(user1).createATeam(user1.address))
-                    .to.be.rejectedWith("PMTeamManager__INSUFFICIENT_FUNDS");
+                    .to.be.revertedWithCustomError(pmTeamManager, "PMTeamManager__INSUFFICIENT_FUNDS");
 
                 await expect(() => pmTeamManager.connect(user1).createATeam(user1.address, { value: teamFee }))
                     .to.changeEtherBalances([user1, membershipFeeManager], [teamFee.mul(-1), teamFee]);
@@ -676,7 +684,7 @@ describe("Planet Moon Test Stack", function () {
 
                 await expect(
                     pmTeamManager.connect(user1).createATeam(user1.address, { value: teamFee }))
-                    .to.be.rejectedWith("PMTeamManager__CONTRACT_IS_PAUSED");
+                    .to.be.revertedWithCustomError(pmTeamManager, "PMTeamManager__CONTRACT_IS_PAUSED");
 
                 await pmTeamManager.changePauseStatus(false);
 
@@ -693,7 +701,7 @@ describe("Planet Moon Test Stack", function () {
                 await pmMembershipManager.changePauseStatus(true);
 
                 await expect(pmMembershipManager.connect(user1).becomeMember(user1.address, { value: fee }))
-                    .to.be.rejectedWith("PMMembershipManager__CONTRACT_IS_PAUSED");
+                    .to.be.revertedWithCustomError(pmMembershipManager, "PMMembershipManager__CONTRACT_IS_PAUSED");
 
                 await pmMembershipManager.changePauseStatus(false);
 
@@ -718,7 +726,7 @@ describe("Planet Moon Test Stack", function () {
             it("only owner can change the pause status of pool factory contract", async () => {
 
                 await expect(rewardCampaignFactory.connect(user1).changePauseStatus(true))
-                    .to.be.rejectedWith("Ownable: caller is not the owner");
+                    .to.be.revertedWith("Ownable: caller is not the owner");
 
                 await rewardCampaignFactory.changePauseStatus(true);
 
@@ -732,7 +740,7 @@ describe("Planet Moon Test Stack", function () {
                 await pmMembershipManager.changePauseStatus(false);
 
                 await expect(startACampaign(CampaignCategories.SILVER, user2))
-                    .to.be.rejectedWith("RewardCampaignFactory__NOT_MEMBER_OR_TEAM");
+                    .to.be.revertedWithCustomError(rewardCampaignFactory, "RewardCampaignFactory__NOT_MEMBER_OR_TEAM");
 
                 await expect(() => pmMembershipManager.connect(user2).becomeMember(user2.address, { value: membershipFee }))
                     .to.changeEtherBalances([user2, membershipFeeManager], [membershipFee.mul(-1), membershipFee]);
@@ -742,7 +750,7 @@ describe("Planet Moon Test Stack", function () {
 
                 await rewardCampaignFactory.changePauseStatus(true);
                 await expect(startACampaign(CampaignCategories.SILVER, user2))
-                    .to.be.rejectedWith("RewardCampaignFactory__CONTRACT_IS_PAUSED");
+                    .to.be.revertedWithCustomError(rewardCampaignFactory, "RewardCampaignFactory__CONTRACT_IS_PAUSED");
                 await rewardCampaignFactory.changePauseStatus(false);
 
                 const { poolId: poolId2 } = await startACampaign(CampaignCategories.SILVER, user2);
@@ -757,7 +765,7 @@ describe("Planet Moon Test Stack", function () {
 
                 // Create a campaign with a regular + upgraded member
                 await expect(startACampaign(CampaignCategories.SILVER, user2))
-                    .to.be.rejectedWith("RewardCampaignFactory__NOT_MEMBER_OR_TEAM");
+                    .to.be.revertedWithCustomError(rewardCampaignFactory, "RewardCampaignFactory__NOT_MEMBER_OR_TEAM");
 
                 await expect(() => pmMembershipManager.connect(user2).becomeMember(user2.address, { value: memberFee }))
                     .to.changeEtherBalances([user2, membershipFeeManager], [memberFee.mul(-1), memberFee]);
@@ -773,7 +781,7 @@ describe("Planet Moon Test Stack", function () {
 
                 // Create a campaign with a premium member
                 await expect(startACampaign(CampaignCategories.SILVER, user3))
-                    .to.be.rejectedWith("RewardCampaignFactory__NOT_MEMBER_OR_TEAM");
+                    .to.be.revertedWithCustomError(rewardCampaignFactory, "RewardCampaignFactory__NOT_MEMBER_OR_TEAM");
 
                 await expect(() => pmMembershipManager.connect(user3).becomeMember(user3.address, { value: memberFee }))
                     .to.changeEtherBalances([user3, membershipFeeManager], [memberFee.mul(-1), memberFee]);
@@ -789,7 +797,7 @@ describe("Planet Moon Test Stack", function () {
 
                 // Create a campaign with a team
                 await expect(startACampaign(CampaignCategories.SILVER))
-                    .to.be.rejectedWith("RewardCampaignFactory__NOT_MEMBER_OR_TEAM");
+                    .to.be.revertedWithCustomError(rewardCampaignFactory, "RewardCampaignFactory__NOT_MEMBER_OR_TEAM");
 
                 await expect(() => pmTeamManager.connect(user1).createATeam(user1.address, { value: teamFee }))
                     .to.changeEtherBalances([user1, membershipFeeManager], [teamFee.mul(-1), teamFee]);
@@ -855,7 +863,7 @@ describe("Planet Moon Test Stack", function () {
                             value: campaignFee
                         }
                     )
-                ).to.rejectedWith("RewardCampaignFactory__NOT_OWNER_OF_TEAM");
+                ).to.revertedWithCustomError(rewardCampaignFactory, "RewardCampaignFactory__NOT_OWNER_OF_TEAM");
 
             })
 
@@ -911,7 +919,7 @@ describe("Planet Moon Test Stack", function () {
                             value: campaignFee.sub(1)
                         }
                     )
-                ).to.rejectedWith("RewardCampaignFactory__INSUFFICIENT_FUNDS");
+                ).to.revertedWithCustomError(rewardCampaignFactory, "RewardCampaignFactory__INSUFFICIENT_FUNDS");
 
             })
 
@@ -967,7 +975,7 @@ describe("Planet Moon Test Stack", function () {
                             value: campaignFee
                         }
                     )
-                ).to.rejectedWith("RewardCampaignFactory__START_TIME_SHOULD_BE_FUTURE");
+                ).to.revertedWithCustomError(rewardCampaignFactory, "RewardCampaignFactory__START_TIME_SHOULD_BE_FUTURE");
 
             })
 
@@ -1021,7 +1029,7 @@ describe("Planet Moon Test Stack", function () {
                             value: campaignFee
                         }
                     )
-                ).to.rejectedWith("ERC20: insufficient allowance");
+                ).to.revertedWith("ERC20: insufficient allowance");
 
             })
 
@@ -1045,13 +1053,11 @@ describe("Planet Moon Test Stack", function () {
 
                     await expect(
                         poolContract.connect(user2).investTokens(user2.address, tokens, InvestmentType.THREE_MONTH)
-                    ).to.rejectedWith("RewardCampaign__POOL_NOT_STARTED")
+                    ).to.revertedWithCustomError(poolContract, "RewardCampaign__POOL_NOT_STARTED")
 
                     await expect(
                         poolContract.connect(user3).investTokens(user3.address, tokens, InvestmentType.THREE_MONTH)
-                    ).to.rejectedWith("RewardCampaign__POOL_NOT_STARTED()")
-
-
+                    ).to.revertedWithCustomError(poolContract, "RewardCampaign__POOL_NOT_STARTED")
 
 
                 })
@@ -1120,7 +1126,7 @@ describe("Planet Moon Test Stack", function () {
 
                     await expect(
                         poolContract.connect(user2).investTokens(user2.address, tokens, InvestmentType.THREE_MONTH)
-                    ).to.rejectedWith("RewardCampaign__NOT_ENOUGH_REWARD_IN_POOL");
+                    ).to.revertedWithCustomError(poolContract, "RewardCampaign__NOT_ENOUGH_REWARD_IN_POOL");
 
                 })
 
@@ -1144,7 +1150,7 @@ describe("Planet Moon Test Stack", function () {
 
                     const { fee } = await poolContract.checkTokenReward(`1`);
                     await expect(poolContract.connect(user1).claimTokensAndReward(1, { value: fee }))
-                        .to.be.rejectedWith("RewardCampaign__NOT_AUTHERIZED");
+                        .to.be.revertedWithCustomError(poolContract, "RewardCampaign__NOT_AUTHERIZED");
 
                 });
 
@@ -1171,7 +1177,7 @@ describe("Planet Moon Test Stack", function () {
                     await poolContract.connect(user2).claimTokensAndReward(2);
 
                     await expect(poolContract.connect(user2).claimTokensAndReward(1))
-                        .to.be.rejectedWith("RewardCampaign__ALREADY_CLAIMED");
+                        .to.be.revertedWithCustomError(poolContract, "RewardCampaign__ALREADY_CLAIMED");
 
                 });
 
@@ -1189,7 +1195,7 @@ describe("Planet Moon Test Stack", function () {
                     await poolContract.connect(user2).investTokens(user2.address, ethers.utils.parseEther("1000"), InvestmentType.THREE_MONTH);
 
                     await expect(poolContract.connect(user2).claimTokensAndReward(2))
-                        .to.be.rejectedWith("RewardCampaign__NOT_AUTHERIZED");
+                        .to.be.revertedWithCustomError(poolContract, "RewardCampaign__NOT_AUTHERIZED");
 
                 });
 
@@ -1262,7 +1268,7 @@ describe("Planet Moon Test Stack", function () {
                     expect(fee).to.be.equal(useToBNB.mul("3"));
 
                     await expect(poolContract.connect(user2).claimTokensAndReward(1, { value: "0" }))
-                        .to.be.rejectedWith("RewardCampaign__INSUFFICIENT_FUNDS");
+                        .to.be.revertedWithCustomError(poolContract, "RewardCampaign__INSUFFICIENT_FUNDS");
 
                     await expect(() => poolContract.connect(user2).claimTokensAndReward(1, { value: fee }))
                         .to.changeEtherBalances(
@@ -1308,7 +1314,7 @@ describe("Planet Moon Test Stack", function () {
                     expect(fee).to.be.equal(useToBNB.mul("2"));
 
                     await expect(poolContract.connect(user2).claimTokensAndReward(1, { value: "0" }))
-                        .to.be.rejectedWith("RewardCampaign__INSUFFICIENT_FUNDS");
+                        .to.be.revertedWithCustomError(poolContract, "RewardCampaign__INSUFFICIENT_FUNDS");
 
                     await expect(() => poolContract.connect(user2).claimTokensAndReward(1, { value: fee }))
                         .to.changeEtherBalances(
@@ -1354,7 +1360,7 @@ describe("Planet Moon Test Stack", function () {
                     expect(fee).to.be.equal(useToBNB.mul("2"));
 
                     await expect(poolContract.connect(user2).claimTokensAndReward(1, { value: "0" }))
-                        .to.be.rejectedWith("RewardCampaign__INSUFFICIENT_FUNDS");
+                        .to.be.revertedWithCustomError(poolContract, "RewardCampaign__INSUFFICIENT_FUNDS");
 
                     await expect(() => poolContract.connect(user2).claimTokensAndReward(1, { value: fee }))
                         .to.changeEtherBalances(
@@ -1552,7 +1558,7 @@ describe("Planet Moon Test Stack", function () {
             it("Only Owner can update claiming fees", async () => {
 
                 await expect(campaignFeeManager.connect(user1).setClaimFees("0", "0", "0", "0"))
-                    .to.be.rejectedWith("Ownable: caller is not the owner");
+                    .to.be.revertedWith("Ownable: caller is not the owner");
 
                 await campaignFeeManager.setClaimFees("0", "0", "0", "0");
                 const allFeesUSD = await campaignFeeManager.getAllClaimFees(FeesType.USD);
@@ -1579,14 +1585,14 @@ describe("Planet Moon Test Stack", function () {
                 const { buyBackToken } = await launchOPAndProvideLiquidity();
 
                 await expect(campaignFeeManager.connect(user1).setFeeDistributionShares(20, 20, 60))
-                    .to.be.rejectedWith("Ownable: caller is not the owner");
+                    .to.be.revertedWith("Ownable: caller is not the owner");
 
                 await expect(campaignFeeManager.connect(user1).setFeeDistributionWallets(
                     rewardPool.address,
                     corporate.address,
                     buyBackToken.address,
                     DEAD_ADDRESS
-                )).to.be.rejectedWith("Ownable: caller is not the owner");
+                )).to.be.revertedWith("Ownable: caller is not the owner");
 
                 await campaignFeeManager.setFeeDistributionShares(20, 20, 60);
                 await campaignFeeManager.setFeeDistributionWallets(
@@ -1626,7 +1632,7 @@ describe("Planet Moon Test Stack", function () {
             it("Only Owner can update the router address for buyingback", async () => {
 
                 await expect(campaignFeeManager.connect(user1).updateRouter(DEAD_ADDRESS))
-                    .to.be.rejectedWith("Ownable: caller is not the owner");
+                    .to.be.revertedWith("Ownable: caller is not the owner");
 
                 await campaignFeeManager.updateRouter(DEAD_ADDRESS);
                 expect(await campaignFeeManager.uniswapV2Router()).to.be.equal(DEAD_ADDRESS);
@@ -1651,7 +1657,7 @@ describe("Planet Moon Test Stack", function () {
                 );
 
                 await expect(campaignFeeManager.connect(user1).SplitFunds())
-                    .to.be.rejectedWith("Ownable: caller is not the owner");
+                    .to.be.revertedWith("Ownable: caller is not the owner");
 
                 await expect(() => campaignFeeManager.SplitFunds())
                     .to.changeEtherBalances(
@@ -1710,7 +1716,7 @@ describe("Planet Moon Test Stack", function () {
                 });
 
                 await expect(campaignFeeManager.connect(user1).emergencyWithdraw())
-                    .to.be.rejectedWith("Ownable: caller is not the owner");
+                    .to.be.revertedWith("Ownable: caller is not the owner");
 
                 await expect(() => campaignFeeManager.emergencyWithdraw())
                     .to.changeEtherBalances(
@@ -1740,7 +1746,8 @@ describe("Planet Moon Test Stack", function () {
 
                 it("If someone's creator contract already exists, then no one can create again", async () => {
                     await creatorManager.createACreator(user1.address);
-                    await expect(creatorManager.createACreator(user1.address)).to.rejectedWith("CreatorManager__ALREADY_EXIST")
+                    await expect(creatorManager.createACreator(user1.address))
+                        .to.revertedWithCustomError(creatorManager, "CreatorManager__ALREADY_EXIST")
                 })
 
                 it("If someone's creator contract exists, then it can be queried", async () => {
@@ -1791,7 +1798,7 @@ describe("Planet Moon Test Stack", function () {
                     await poolContract.connect(user2).investTokens(user2.address, tokens, InvestmentType.THREE_MONTH);
 
                     await expect(creatorManager.createACreator(user2.address))
-                        .to.rejectedWith("CreatorManager__ALREADY_EXIST")
+                        .to.revertedWithCustomError(creatorManager, "CreatorManager__ALREADY_EXIST")
 
                     const tokenDataForUser = await poolContract.getTokenData("1");
                     expect(await creatorManager.getCreatorAddressOfUser(user2.address)).to.be.equal(tokenDataForUser.creator);
@@ -1983,8 +1990,10 @@ describe("Planet Moon Test Stack", function () {
 
 
 
-                    await expect(poolContract1.connect(user2).claimTokensAndReward(1)).to.rejectedWith("RewardCampaign__ALREADY_CLAIMED")
-                    await expect(poolContract1.connect(user2).claimTokensAndReward(2)).to.rejectedWith("RewardCampaign__ALREADY_CLAIMED")
+                    await expect(poolContract1.connect(user2).claimTokensAndReward(1))
+                        .to.revertedWithCustomError(poolContract1, "RewardCampaign__ALREADY_CLAIMED")
+                    await expect(poolContract1.connect(user2).claimTokensAndReward(2))
+                        .to.revertedWithCustomError(poolContract1, "RewardCampaign__ALREADY_CLAIMED")
 
                     await expect(() => poolContract2.connect(user2).claimTokensAndReward(1))
                         .changeTokenBalances(investmentToken,
@@ -2006,9 +2015,12 @@ describe("Planet Moon Test Stack", function () {
 
 
 
-                    await expect(poolContract1.connect(user2).claimTokensAndReward(1)).to.rejectedWith("RewardCampaign__ALREADY_CLAIMED")
-                    await expect(poolContract1.connect(user2).claimTokensAndReward(2)).to.rejectedWith("RewardCampaign__ALREADY_CLAIMED")
-                    await expect(poolContract2.connect(user2).claimTokensAndReward(1)).to.rejectedWith("RewardCampaign__ALREADY_CLAIMED")
+                    await expect(poolContract1.connect(user2).claimTokensAndReward(1))
+                        .to.revertedWithCustomError(poolContract1, "RewardCampaign__ALREADY_CLAIMED")
+                    await expect(poolContract1.connect(user2).claimTokensAndReward(2))
+                        .to.revertedWithCustomError(poolContract1, "RewardCampaign__ALREADY_CLAIMED")
+                    await expect(poolContract2.connect(user2).claimTokensAndReward(1))
+                        .to.revertedWithCustomError(poolContract2, "RewardCampaign__ALREADY_CLAIMED")
 
                     await expect(() => poolContract2.connect(user2).claimTokensAndReward(2))
                         .changeTokenBalances(investmentToken,
@@ -2030,10 +2042,14 @@ describe("Planet Moon Test Stack", function () {
 
 
 
-                    await expect(poolContract1.connect(user2).claimTokensAndReward(1)).to.rejectedWith("RewardCampaign__ALREADY_CLAIMED")
-                    await expect(poolContract1.connect(user2).claimTokensAndReward(2)).to.rejectedWith("RewardCampaign__ALREADY_CLAIMED")
-                    await expect(poolContract2.connect(user2).claimTokensAndReward(1)).to.rejectedWith("RewardCampaign__ALREADY_CLAIMED")
-                    await expect(poolContract2.connect(user2).claimTokensAndReward(2)).to.rejectedWith("RewardCampaign__ALREADY_CLAIMED")
+                    await expect(poolContract1.connect(user2).claimTokensAndReward(1))
+                        .to.revertedWithCustomError(poolContract1, "RewardCampaign__ALREADY_CLAIMED")
+                    await expect(poolContract1.connect(user2).claimTokensAndReward(2))
+                        .to.revertedWithCustomError(poolContract1, "RewardCampaign__ALREADY_CLAIMED")
+                    await expect(poolContract2.connect(user2).claimTokensAndReward(1))
+                        .to.revertedWithCustomError(poolContract2, "RewardCampaign__ALREADY_CLAIMED")
+                    await expect(poolContract2.connect(user2).claimTokensAndReward(2))
+                        .to.revertedWithCustomError(poolContract2, "RewardCampaign__ALREADY_CLAIMED")
 
                     await expect(() => poolContract3.connect(user2).claimTokensAndReward(1))
                         .changeTokenBalances(investmentToken,
@@ -2054,11 +2070,16 @@ describe("Planet Moon Test Stack", function () {
                     expect((await creatorManager.getPoolAddressesOfCreator(user2.address)).length).to.equal(1);
 
 
-                    await expect(poolContract1.connect(user2).claimTokensAndReward(1)).to.rejectedWith("RewardCampaign__ALREADY_CLAIMED")
-                    await expect(poolContract1.connect(user2).claimTokensAndReward(2)).to.rejectedWith("RewardCampaign__ALREADY_CLAIMED")
-                    await expect(poolContract2.connect(user2).claimTokensAndReward(1)).to.rejectedWith("RewardCampaign__ALREADY_CLAIMED")
-                    await expect(poolContract2.connect(user2).claimTokensAndReward(2)).to.rejectedWith("RewardCampaign__ALREADY_CLAIMED")
-                    await expect(poolContract3.connect(user2).claimTokensAndReward(1)).to.rejectedWith("RewardCampaign__ALREADY_CLAIMED")
+                    await expect(poolContract1.connect(user2).claimTokensAndReward(1))
+                        .to.revertedWithCustomError(poolContract1, "RewardCampaign__ALREADY_CLAIMED")
+                    await expect(poolContract1.connect(user2).claimTokensAndReward(2))
+                        .to.revertedWithCustomError(poolContract1, "RewardCampaign__ALREADY_CLAIMED")
+                    await expect(poolContract2.connect(user2).claimTokensAndReward(1))
+                        .to.revertedWithCustomError(poolContract2, "RewardCampaign__ALREADY_CLAIMED")
+                    await expect(poolContract2.connect(user2).claimTokensAndReward(2))
+                        .to.revertedWithCustomError(poolContract2, "RewardCampaign__ALREADY_CLAIMED")
+                    await expect(poolContract3.connect(user2).claimTokensAndReward(1))
+                        .to.revertedWithCustomError(poolContract3, "RewardCampaign__ALREADY_CLAIMED")
 
 
                     await expect(() => poolContract3.connect(user2).claimTokensAndReward(2))
@@ -2079,12 +2100,18 @@ describe("Planet Moon Test Stack", function () {
                     expect(await investmentToken.balanceOf(user2.address)).to.equal(ethers.utils.parseEther("780"));
                     expect(await investmentToken.balanceOf(creatorContract.address)).to.equal(ethers.utils.parseEther("0"));
 
-                    await expect(poolContract1.connect(user2).claimTokensAndReward(1)).to.rejectedWith("RewardCampaign__ALREADY_CLAIMED")
-                    await expect(poolContract1.connect(user2).claimTokensAndReward(2)).to.rejectedWith("RewardCampaign__ALREADY_CLAIMED")
-                    await expect(poolContract2.connect(user2).claimTokensAndReward(1)).to.rejectedWith("RewardCampaign__ALREADY_CLAIMED")
-                    await expect(poolContract2.connect(user2).claimTokensAndReward(2)).to.rejectedWith("RewardCampaign__ALREADY_CLAIMED")
-                    await expect(poolContract3.connect(user2).claimTokensAndReward(1)).to.rejectedWith("RewardCampaign__ALREADY_CLAIMED")
-                    await expect(poolContract3.connect(user2).claimTokensAndReward(2)).to.rejectedWith("RewardCampaign__ALREADY_CLAIMED")
+                    await expect(poolContract1.connect(user2).claimTokensAndReward(1))
+                        .to.revertedWithCustomError(poolContract1, "RewardCampaign__ALREADY_CLAIMED")
+                    await expect(poolContract1.connect(user2).claimTokensAndReward(2))
+                        .to.revertedWithCustomError(poolContract1, "RewardCampaign__ALREADY_CLAIMED")
+                    await expect(poolContract2.connect(user2).claimTokensAndReward(1))
+                        .to.revertedWithCustomError(poolContract1, "RewardCampaign__ALREADY_CLAIMED")
+                    await expect(poolContract2.connect(user2).claimTokensAndReward(2))
+                        .to.revertedWithCustomError(poolContract1, "RewardCampaign__ALREADY_CLAIMED")
+                    await expect(poolContract3.connect(user2).claimTokensAndReward(1))
+                        .to.revertedWithCustomError(poolContract1, "RewardCampaign__ALREADY_CLAIMED")
+                    await expect(poolContract3.connect(user2).claimTokensAndReward(2))
+                        .to.revertedWithCustomError(poolContract1, "RewardCampaign__ALREADY_CLAIMED")
 
                 })
 
@@ -2171,16 +2198,16 @@ describe("Planet Moon Test Stack", function () {
 
                 await expect(
                     poolContract.connect(user2).investTokens(user2.address, tokens, InvestmentType.THREE_MONTH)
-                ).to.rejectedWith("RewardCampaign__NOT_A_VALID_CLAIM_TYPE")
+                ).to.revertedWithCustomError(poolContract, "RewardCampaign__NOT_A_VALID_CLAIM_TYPE")
                 await expect(
                     poolContract.connect(user2).investTokens(user2.address, tokens, InvestmentType.SIX_MONTH)
-                ).to.rejectedWith("RewardCampaign__NOT_A_VALID_CLAIM_TYPE")
+                ).to.revertedWithCustomError(poolContract, "RewardCampaign__NOT_A_VALID_CLAIM_TYPE")
                 await expect(
                     poolContract.connect(user2).investTokens(user2.address, tokens, InvestmentType.NINE_MONTH)
-                ).to.rejectedWith("RewardCampaign__NOT_A_VALID_CLAIM_TYPE")
+                ).to.revertedWithCustomError(poolContract, "RewardCampaign__NOT_A_VALID_CLAIM_TYPE")
                 await expect(
                     poolContract.connect(user2).investTokens(user2.address, tokens, InvestmentType.TWELVE_MONTH)
-                ).to.rejectedWith("RewardCampaign__NOT_A_VALID_CLAIM_TYPE")
+                ).to.revertedWithCustomError(poolContract, "RewardCampaign__NOT_A_VALID_CLAIM_TYPE")
 
                 await network.provider.send("evm_increaseTime", [30 * 24 * 60 * 60]);
                 await network.provider.send("evm_mine");
@@ -2199,8 +2226,8 @@ describe("Planet Moon Test Stack", function () {
 
                 await expect(
                     poolContract.connect(user2).investTokens(user2.address, tokensToInvest, InvestmentType.ONE_MONTH)
-                ).to.rejectedWith("RewardCampaign__NOT_ENOUGH_REWARD_IN_POOL()");
-
+                )
+                    .to.revertedWithCustomError(poolContract, "RewardCampaign__NOT_ENOUGH_REWARD_IN_POOL");
 
             })
 
@@ -2277,11 +2304,11 @@ describe("Planet Moon Test Stack", function () {
 
                 await expect(
                     poolContract.connect(user2).investTokens(user2.address, tokens, InvestmentType.THREE_MONTH)
-                ).to.rejectedWith("RewardCampaign__NOT_A_VALID_CLAIM_TYPE");
+                ).to.revertedWithCustomError(poolContract, "RewardCampaign__NOT_A_VALID_CLAIM_TYPE");
 
                 await expect(
                     poolContract.connect(user2).investTokens(user2.address, tokens, InvestmentType.NINE_MONTH)
-                ).to.rejectedWith("RewardCampaign__NOT_A_VALID_CLAIM_TYPE");
+                ).to.revertedWithCustomError(poolContract, "RewardCampaign__NOT_A_VALID_CLAIM_TYPE");
 
             });
 
@@ -2379,7 +2406,7 @@ describe("Planet Moon Test Stack", function () {
 
         it("Only Owner can change the pause status of the contract", async () => {
             await expect(pmRewardDistributor.connect(user1).changePauseStatus(false))
-                .to.be.rejectedWith("Ownable: caller is not the owner");
+                .to.be.revertedWith("Ownable: caller is not the owner");
         })
 
         it("Only owner can drain the contract in case of emergency", async () => {
@@ -2390,7 +2417,7 @@ describe("Planet Moon Test Stack", function () {
             });
 
             await expect(pmRewardDistributor.connect(user1).emergencyWithdraw())
-                .to.be.rejectedWith("Ownable: caller is not the owner");
+                .to.be.revertedWith("Ownable: caller is not the owner");
 
             await expect(() => pmRewardDistributor.emergencyWithdraw())
                 .to.changeEtherBalances(
@@ -2412,9 +2439,9 @@ describe("Planet Moon Test Stack", function () {
             });
 
             await expect(pmRewardDistributor.connect(user1).distributeReward(user1.address, 1))
-                .to.be.rejectedWith("Not Authorized");
+                .to.be.revertedWithCustomError(pmRewardDistributor, "PMRewardDistributor__Not_Authorized");
             await expect(pmRewardDistributor.connect(deployer).distributeReward(user1.address, 1))
-                .to.be.rejectedWith("Not Authorized");
+                .to.be.revertedWithCustomError(pmRewardDistributor, "PMRewardDistributor__Not_Authorized");
 
             await pmRewardDistributor.connect(rewardManger).distributeReward(user1.address, 1);
 
@@ -2422,7 +2449,7 @@ describe("Planet Moon Test Stack", function () {
             await pmRewardDistributor.connect(deployer).changePauseStatus(true);
 
             await expect(pmRewardDistributor.connect(rewardManger).distributeReward(user1.address, 1))
-                .to.be.rejectedWith("CONTRACT_IS_PAUSED");
+                .to.be.revertedWithCustomError(pmRewardDistributor, "PMRewardDistributor__CONTRACT_IS_PAUSED");
 
             await pmRewardDistributor.connect(deployer).changePauseStatus(false);
             await pmRewardDistributor.connect(rewardManger).distributeReward(user1.address, 1);
@@ -2439,9 +2466,9 @@ describe("Planet Moon Test Stack", function () {
             });
 
             await expect(pmRewardDistributor.connect(user1).distributeReward(user1.address, 1))
-                .to.be.rejectedWith("Not Authorized");
+                .to.be.revertedWithCustomError(pmRewardDistributor, "PMRewardDistributor__Not_Authorized");
             await expect(pmRewardDistributor.connect(deployer).distributeReward(user1.address, 1))
-                .to.be.rejectedWith("Not Authorized");
+                .to.be.revertedWithCustomError(pmRewardDistributor, "PMRewardDistributor__Not_Authorized");
 
             await pmRewardDistributor.connect(rewardManger).distributeReward(user1.address, 1);
 
@@ -2457,7 +2484,7 @@ describe("Planet Moon Test Stack", function () {
             await pmRewardDistributor.changePauseStatus(false);
 
             await expect(pmRewardDistributor.connect(rewardManger).distributeReward(user1.address, 1))
-                .to.be.rejectedWith("PMRewardDistributor__NOT_ENOUGH_BALANCE");
+                .to.be.revertedWithCustomError(pmRewardDistributor, "PMRewardDistributor__NOT_ENOUGH_BALANCE");
         })
 
         it("Giveaway winner will receive his reward as expected", async () => {
@@ -2498,7 +2525,7 @@ describe("Planet Moon Test Stack", function () {
 
             await expect(pmRewardDistributor.connect(user1)
                 .applyRewardToACampaing(poolContract.address, user1.address, 2, InvestmentType.THREE_MONTH))
-                .to.be.rejectedWith("Not Authorized");
+                .to.be.revertedWithCustomError(pmRewardDistributor, "PMRewardDistributor__Not_Authorized");
 
         })
 
@@ -2515,7 +2542,7 @@ describe("Planet Moon Test Stack", function () {
 
             await expect(pmRewardDistributor.connect(rewardManger)
                 .applyRewardToACampaing(poolContract.address, user1.address, 2, InvestmentType.THREE_MONTH))
-                .to.be.rejectedWith("PMRewardDistributor__NOT_ENOUGH_BALANCE");
+                .to.be.revertedWithCustomError(pmRewardDistributor, "PMRewardDistributor__NOT_ENOUGH_BALANCE");
         })
 
         it("if contract is paused then should throw an error on applyRewardToACampaing", async () => {
@@ -2543,7 +2570,7 @@ describe("Planet Moon Test Stack", function () {
 
             await expect(pmRewardDistributor.connect(rewardManger)
                 .applyRewardToACampaing(poolContract.address, user1.address, 2, InvestmentType.THREE_MONTH))
-                .to.be.rejectedWith("PMRewardDistributor__CONTRACT_IS_PAUSED");
+                .to.be.revertedWithCustomError(pmRewardDistributor, "PMRewardDistributor__CONTRACT_IS_PAUSED");
 
             await pmRewardDistributor.connect(deployer).changePauseStatus(false);
 

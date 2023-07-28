@@ -17,6 +17,7 @@ contract PMRewardDistributor is Ownable, PriceFeed, SwapETHForTokens {
 
     error PMRewardDistributor__NOT_ENOUGH_BALANCE();
     error PMRewardDistributor__CONTRACT_IS_PAUSED();
+    error PMRewardDistributor__Not_Authorized();
 
     address private s_giveAwayManager;
     bool private s_isPaused = true;
@@ -30,7 +31,9 @@ contract PMRewardDistributor is Ownable, PriceFeed, SwapETHForTokens {
     }
 
     modifier onlyGiveAwayManager() {
-        require(msg.sender == s_giveAwayManager, "Not Authorized");
+        if(msg.sender != s_giveAwayManager){
+            revert PMRewardDistributor__Not_Authorized();
+        }
         _;
     }
 

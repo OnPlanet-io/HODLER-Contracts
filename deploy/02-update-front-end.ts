@@ -10,52 +10,50 @@ module.exports = async () => {
         console.log("")
         console.log("Writing to front end...")
         await updateContractAddresses()
-
         await updateAbi()
         console.log("Front end written!")
     }
 }
 
 async function updateAbi() {
-    
-    const chainId = network.config.chainId;
-    
-    if(chainId !== 31337) return;
 
-    const CreatorContract = await deployments.get("CreatorContract");
-    const CreatorManager = await deployments.get("CreatorManager");
-    const StakingPoolFactory = await deployments.get("StakingPoolFactory");
-    const StakingPool = await deployments.getArtifact("StakingPool");
+    const chainId = network.config.chainId;
+
+    // if(chainId !== 31337) return;
+
+    const CreatorContract = await deployments.getArtifact("CreatorContract");
+    const CreatorManager = await deployments.getArtifact("CreatorManager");
+    const RewardCampaignFactory = await deployments.getArtifact("RewardCampaignFactory");
+    const RewardCampaign = await deployments.getArtifact("RewardCampaign");
     const PMTeamManager = await deployments.getArtifact("PMTeamManager");
     const PMMembershipManager = await deployments.getArtifact("PMMembershipManager");
     const CampaignFeeManager = await deployments.getArtifact("CampaignFeeManager");
     const MembershipFeeManager = await deployments.getArtifact("MembershipFeeManager");
-    const PMRewardDistributor = await deployments.get("PMRewardDistributor");
+    const PMRewardDistributor = await deployments.getArtifact("PMRewardDistributor");
 
 
     //helpers
-    const StakingToken = await deployments.get("StakingToken");
-    const ERC20Token = await deployments.get("ERC20Token");
-    const ERC721Token = await deployments.get("ERC721Token");
+    // const StakingToken = await deployments.get("StakingToken");
+    const ERC20Token = await deployments.getArtifact("ERC20Token");
+    const ERC721Token = await deployments.getArtifact("ERC721Token");
 
-    fs.writeFileSync(frontEndAbiFile, JSON.stringify({
-
-
+    let contractABIs = {
         CreatorManager: CreatorManager.abi,
         CreatorContract: CreatorContract.abi,
-        StakingPoolFactory: StakingPoolFactory.abi,
-        StakingPool: StakingPool.abi,
+        RewardCampaignFactory: RewardCampaignFactory.abi,
+        RewardCampaign: RewardCampaign.abi,
         PMMembershipManager: PMMembershipManager.abi,
         PMTeamManager: PMTeamManager.abi,
         CampaignFeeManager: CampaignFeeManager.abi,
         MembershipFeeManager: MembershipFeeManager.abi,
         PMRewardDistributor: PMRewardDistributor.abi,
 
-        StakingToken: StakingToken.abi,
+        // StakingToken: StakingToken.abi,
         ERC721Token: ERC721Token.abi,
         ERC20Token: ERC20Token.abi
+    }
 
-    }))
+    fs.writeFileSync(frontEndAbiFile, JSON.stringify(contractABIs));
 
 
 }
@@ -64,52 +62,13 @@ async function updateContractAddresses() {
 
     const chainId = network.config.chainId;
 
-    if (chainId === 31337 ) {
-        
-        const CreatorManager = await deployments.get("CreatorManager");
-        const StakingPoolFactory = await deployments.get("StakingPoolFactory");
-        
-        const PMMembershipManager = await deployments.get("PMMembershipManager");
-        const PMTeamManager = await deployments.get("PMTeamManager");
-        
-        const CampaignFeeManager = await deployments.get("CampaignFeeManager");
-        const MembershipFeeManager = await deployments.get("MembershipFeeManager");
-        const PMRewardDistributor = await deployments.get("PMRewardDistributor");
-        
-
-        const StakingToken = await deployments.get("StakingToken");
-        const ERC721Token = await deployments.get("ERC721Token");
-        const ERC20Token = await deployments.get("ERC20Token");
-        // const onPlanet = await deployments.get("onPlanet");
-
-        let contractAddresses = JSON.parse(fs.readFileSync(frontEndContractsFile, "utf8"))
-
-        contractAddresses[chainId] = {
-            CreatorManager: CreatorManager.address,
-            StakingPoolFactory: StakingPoolFactory.address,
-            PMMembershipManager: PMMembershipManager.address,
-            PMTeamManager: PMTeamManager.address,
-            CampaignFeeManager: CampaignFeeManager.address,
-            MembershipFeeManager: MembershipFeeManager.address, 
-            PMRewardDistributor:PMRewardDistributor.address,
-
-            StakingToken: StakingToken.address,
-            ERC721Token: ERC721Token.address,
-            ERC20Token: ERC20Token.address,
-            chainId: chainId
-        }
-
-        fs.writeFileSync(frontEndContractsFile, JSON.stringify(contractAddresses))
-
-    }
-
-    else if (chainId){
+    if (chainId) {
 
         const CreatorManager = await deployments.get("CreatorManager");
-        const StakingPoolFactory = await deployments.get("StakingPoolFactory");
+        const RewardCampaignFactory = await deployments.get("RewardCampaignFactory");
         const PMMembershipManager = await deployments.get("PMMembershipManager");
         const PMTeamManager = await deployments.get("PMTeamManager");
-        
+
         const CampaignFeeManager = await deployments.get("CampaignFeeManager");
         const MembershipFeeManager = await deployments.get("MembershipFeeManager");
         const PMRewardDistributor = await deployments.get("PMRewardDistributor");
@@ -118,13 +77,21 @@ async function updateContractAddresses() {
 
         contractAddresses[chainId] = {
             CreatorManager: CreatorManager.address,
-            StakingPoolFactory: StakingPoolFactory.address,
+            RewardCampaignFactory: RewardCampaignFactory.address,
             PMMembershipManager: PMMembershipManager.address,
             PMTeamManager: PMTeamManager.address,
             CampaignFeeManager: CampaignFeeManager.address,
             MembershipFeeManager: MembershipFeeManager.address,
-            PMRewardDistributor:PMRewardDistributor.address,
+            PMRewardDistributor: PMRewardDistributor.address,
             chainId: chainId
+        }
+
+        if (chainId == 31337) {
+            const ERC721Token = await deployments.get("ERC721Token");
+            const ERC20Token = await deployments.get("ERC20Token");
+
+            contractAddresses[chainId].ERC721Token = ERC721Token.address;
+            contractAddresses[chainId].ERC20Token = ERC20Token.address;
         }
 
         fs.writeFileSync(frontEndContractsFile, JSON.stringify(contractAddresses))
